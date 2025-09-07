@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NAMASTE-ICD11 Morbidity Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        h1 { color: #333; }
+        canvas { max-width: 600px; margin: 20px auto; }
+    </style>
+</head>
+<body>
+    <h1>NAMASTE-ICD11 Morbidity Dashboard</h1>
+    <canvas id="diseaseChart" width="600" height="400"></canvas>
+    <script>
+        async function fetchAnalytics() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/analytics', {
+                    headers: { 'Authorization': 'Bearer mock-abha-token' }
+                });
+                if (!response.ok) throw new Error('Failed to fetch analytics');
+                const data = await response.json();
+                const ctx = document.getElementById('diseaseChart').getContext('2d');
+                new Chart(ctx, data.chart);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        fetchAnalytics();
+    </script>
+</body>
+</html>

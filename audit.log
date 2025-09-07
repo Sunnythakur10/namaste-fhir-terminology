@@ -1,0 +1,69 @@
+2025-08-31 14:23:56,417 - INFO - Access granted with token: mock-abha-token
+2025-08-31 14:26:18,845 - INFO - Access granted with token: mock-abha-token
+2025-08-31 14:26:18,849 - INFO - Synced ICD data for query: traditional medicine
+2025-08-31 14:26:18,849 - INFO - NAMASTE ingested and synced
+2025-08-31 14:57:39,448 - ERROR - Form data requires "python-multipart" to be installed. 
+You can install "python-multipart" with: 
+
+pip install python-multipart
+
+2025-08-31 14:57:47,263 - ERROR - Form data requires "python-multipart" to be installed. 
+You can install "python-multipart" with: 
+
+pip install python-multipart
+
+2025-08-31 15:02:23,636 - INFO - Access granted with token: mock-abha-token
+2025-08-31 15:03:34,571 - INFO - Access granted with token: mock-abha-token
+2025-08-31 15:04:08,668 - INFO - Access granted with token: mock-abha-token
+2025-08-31 15:04:50,832 - INFO - Access granted with token: mock-abha-token
+2025-08-31 15:04:50,888 - INFO - Lookup for fever
+2025-08-31 15:04:53,673 - INFO - Access granted with token: mock-abha-token
+2025-08-31 15:04:53,695 - INFO - Lookup for fever
+2025-08-31 15:05:19,677 - INFO - Access granted with token: mock-abha-token
+2025-08-31 15:05:19,678 - INFO - Lookup for fever
+2025-09-06 18:44:46,336 - INFO - Access granted with token: mock-abha-token
+2025-09-06 18:44:46,606 - INFO - Synced ICD data for query: traditional medicine
+2025-09-06 18:44:46,608 - INFO - NAMASTE dummy data ingested, mapped, and synced
+2025-09-06 18:45:06,698 - INFO - Access granted with token: mock-abha-token
+2025-09-06 18:45:06,753 - INFO - Lookup for Diabetes
+2025-09-06 18:45:54,086 - INFO - Access granted with token: mock-abha-token
+2025-09-06 18:46:25,745 - INFO - Access granted with token: mock-abha-token
+2025-09-06 18:46:25,764 - INFO - Analytics requested
+2025-09-07 18:56:05,570 - INFO - Access granted with token: mock-abha-token
+2025-09-07 18:56:05,918 - INFO - Synced ICD data for query: traditional medicine
+2025-09-07 18:56:05,918 - INFO - NAMASTE dummy data ingested, mapped, and synced
+2025-09-07 18:56:23,042 - INFO - Access granted with token: mock-abha-token
+2025-09-07 18:56:23,059 - INFO - Lookup for Diabetes
+2025-09-07 18:56:52,394 - INFO - Access granted with token: mock-abha-token
+2025-09-07 18:56:52,401 - INFO - Analytics requested
+2025-09-07 19:15:30,440 - INFO - Access granted with token: mock-abha-token
+2025-09-07 19:15:30,463 - INFO - Synced ICD data for query: traditional medicine
+2025-09-07 19:15:30,463 - INFO - NAMASTE ingested and synced
+2025-09-07 19:15:44,551 - INFO - Access granted with token: mock-abha-token
+2025-09-07 19:15:44,585 - INFO - Lookup for Diabetes
+2025-09-07 19:16:08,492 - INFO - Access granted with token: mock-abha-token
+2025-09-07 19:16:08,494 - INFO - Analytics requested
+2025-09-07 19:22:14,559 - INFO - Access granted with token: mock-abha-token
+2025-09-07 19:22:14,582 - INFO - Synced ICD data for query: traditional medicine
+2025-09-07 19:22:14,582 - INFO - NAMASTE ingested and synced
+2025-09-07 19:22:29,531 - INFO - Access granted with token: mock-abha-token
+2025-09-07 19:22:29,544 - INFO - Lookup for Diabetes
+2025-09-07 19:22:57,376 - INFO - Access granted with token: mock-abha-token
+2025-09-07 19:22:57,395 - INFO - Analytics requested
+2025-09-07 19:23:12,362 - INFO - Access granted with token: mock-abha-token
+2025-09-07 19:29:40,995 - INFO - Access granted with token: mock-abha-token
+2025-09-07 19:29:41,001 - INFO - Lookup for Diabetes
+2025-09-07 19:30:22,977 - INFO - Access granted with token: mock-abha-token
+2025-09-07 19:30:22,983 - INFO - Lookup for Cough
+2025-09-07 20:31:43,363 - INFO - Access granted with token: mock-abha-token
+2025-09-07 20:38:56,912 - INFO - Access granted with token: mock-abha-token
+2025-09-07 20:38:57,230 - INFO - Access granted with token: mock-abha-token
+2025-09-07 20:38:57,286 - INFO - Access granted with token: mock-abha-token
+2025-09-07 20:39:04,803 - INFO - Access granted with token: mock-abha-token
+2025-09-07 20:46:53,752 - INFO - Access granted with token: mock-abha-token
+2025-09-07 20:46:53,816 - INFO - Synced ICD data for query: traditional medicine
+2025-09-07 20:46:53,816 - INFO - NAMASTE ingested and synced
+2025-09-07 20:47:26,001 - INFO - Access granted with token: mock-abha-token
+2025-09-07 20:47:26,026 - INFO - Lookup for Cough
+2025-09-07 20:52:29,123 - INFO - Access granted with token: mock-abha-token
+2025-09-07 20:52:29,223 - INFO - Analytics requested with chart
