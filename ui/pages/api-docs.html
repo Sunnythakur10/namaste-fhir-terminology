@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation | NAMASTE-FHIR Terminology</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/ui/assets/css/main.css">
+    <style>
+        .api-endpoint {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+        }
+        
+        .endpoint-path {
+            font-family: monospace;
+            background-color: #272822;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .http-method {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        .method-get {
+            background-color: #61affe;
+            color: white;
+        }
+        
+        .method-post {
+            background-color: #49cc90;
+            color: white;
+        }
+        
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .parameter-table th, .parameter-table td {
+            text-align: left;
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .parameter-table th {
+            background-color: #f1f1f1;
+        }
+        
+        .code-block {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+        }
+        
+        .required {
+            color: #e53935;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">NAMASTE-FHIR</div>
+                <ul class="nav-menu">
+                    <li><a href="/ui/pages/index.html">Home</a></li>
+                    <li><a href="/ui/pages/doctor-workflow.html">Doctor Workflow</a></li>
+                    <li><a href="/ui/pages/researcher-workflow.html">Researcher</a></li>
+                    <li><a href="/ui/pages/insurance-workflow.html">Insurance</a></li>
+                    <li><a href="/ui/pages/api-docs.html">API Docs</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="api-docs">
+            <div class="card">
+                <h1>API Documentation</h1>
+                <p>Complete documentation for the NAMASTE-FHIR Terminology Translation API.</p>
+            </div>
+            
+            <div class="card">
+                <h2>Authentication</h2>
+                <p>All API endpoints require OAuth 2.0 authentication with ABHA token.</p>
+                <p>Include the following header with all requests:</p>
+                <pre class="code-block">Authorization: Bearer &lt;abha-token&gt;</pre>
+            </div>
+            
+            <div class="api-endpoint">
+                <div class="endpoint-path">
+                    <span class="http-method method-get">GET</span>/api/search
+                </div>
+                <h3>Search NAMASTE/ICD Terms</h3>
+                <p>Search for terms in NAMASTE, ICD-11 TM2, and biomedicine terminology.</p>
+                
+                <h4>Parameters</h4>
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>q</td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Search query string</td>
+                        </tr>
+                        <tr>
+                            <td>system</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by system: "namaste", "icd11", or "tm2"</td>
+                        </tr>
+                        <tr>
+                            <td>limit</td>
+                            <td>integer</td>
+                            <td>No</td>
+                            <td>Maximum number of results (default: 20)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4>Response Example</h4>
+                <pre class="code-block">{
+  "results": [
+    {
+      "term": "Amlapitta",
+      "namasteCode": "A.9.1.1",
+      "namasteSystem": "http://ayush.gov.in/namaste",
+      "icdCode": "TM1.A50",
+      "icdSystem": "http://id.who.int/icd11/mms"
+    },
+    {
+      "term": "Vata-Kaphaja Jwara",
+      "namasteCode": "A.5.1.3",
+      "namasteSystem": "http://ayush.gov.in/namaste",
+      "icdCode": "TM1.F10.2",
+      "icdSystem": "http://id.who.int/icd11/mms"
+    }
+  ],
+  "total": 2
+}</pre>
+            </div>
+            
+            <div class="api-endpoint">
+                <div class="endpoint-path">
+                    <span class="http-method method-get">GET</span>/api/autocomplete
+                </div>
+                <h3>Autocomplete Suggestions</h3>
+                <p>Get autocomplete suggestions for diagnosis terms.</p>
+                
+                <h4>Parameters</h4>
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>term</td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Partial search term (minimum 2 characters)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4>Response Example</h4>
+                <pre class="code-block">{
+  "results": [
+    {
+      "term": "Amlapitta",
+      "namasteCode": "A.9.1.1",
+      "icdCode": "TM1.A50"
+    },
+    {
+      "term": "Pittaja Amlapitta",
+      "namasteCode": "A.9.1.1.1",
+      "icdCode": "TM1.A50.1"
+    }
+  ]
+}</pre>
+            </div>
+            
+            <div class="api-endpoint">
+                <div class="endpoint-path">
+                    <span class="http-method method-get">GET</span>/api/translate
+                </div>
+                <h3>Translate Between Coding Systems</h3>
+                <p>Translate between NAMASTE and ICD-11 TM2/Biomedicine codes.</p>
+                
+                <h4>Parameters</h4>
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>code</td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>The code to translate</td>
+                        </tr>
+                        <tr>
+                            <td>system</td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Source system: "namaste" or "icd11"</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4>Response Example</h4>
+                <pre class="code-block">{
+  "source": {
+    "system": "http://ayush.gov.in/namaste",
+    "code": "A.9.1.1",
+    "display": "Amlapitta"
+  },
+  "target": {
+    "system": "http://id.who.int/icd11/mms",
+    "code": "TM1.A50",
+    "display": "Amlapitta"
+  }
+}</pre>
+            </div>
+            
+            <div class="api-endpoint">
+                <div class="endpoint-path">
+                    <span class="http-method method-post">POST</span>/api/fhir-upload
+                </div>
+                <h3>Upload FHIR Bundle</h3>
+                <p>Upload a FHIR Bundle with dual-coded diagnoses.</p>
+                
+                <h4>Request Body</h4>
+                <p>A FHIR Bundle containing resources with dual coding.</p>
+                
+                <h4>Example Request Body</h4>
+                <pre class="code-block">{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "code": {
+          "coding": [
+            {
+              "system": "http://ayush.gov.in/namaste",
+              "code": "A.9.1.1",
+              "display": "Amlapitta"
+            },
+            {
+              "system": "http://id.who.int/icd11/mms",
+              "code": "TM1.A50",
+              "display": "Amlapitta"
+            }
+          ],
+          "text": "Amlapitta"
+        },
+        "subject": {
+          "reference": "Patient/example"
+        },
+        "recordedDate": "2025-09-09"
+      }
+    }
+  ]
+}</pre>
+                
+                <h4>Response Example</h4>
+                <pre class="code-block">{
+  "status": "success",
+  "message": "Bundle uploaded successfully",
+  "id": "bundle-12345"
+}</pre>
+            </div>
+            
+            <div class="api-endpoint">
+                <div class="endpoint-path">
+                    <span class="http-method method-get">GET</span>/api/analytics
+                </div>
+                <h3>Get Analytics Data</h3>
+                <p>Get analytics data for morbidity reporting and dashboards.</p>
+                
+                <h4>Parameters</h4>
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>period</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Time period: "day", "week", "month", "year" (default: "month")</td>
+                        </tr>
+                        <tr>
+                            <td>format</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Response format: "json" or "chart" (default: "json")</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4>Response Example (format=json)</h4>
+                <pre class="code-block">{
+  "period": "month",
+  "data": [
+    {
+      "term": "Amlapitta",
+      "namasteCode": "A.9.1.1",
+      "icdCode": "TM1.A50",
+      "count": 42
+    },
+    {
+      "term": "Vata-Kaphaja Jwara",
+      "namasteCode": "A.5.1.3",
+      "icdCode": "TM1.F10.2",
+      "count": 28
+    }
+  ]
+}</pre>
+                
+                <h4>Response Example (format=chart)</h4>
+                <pre class="code-block">{
+  "chart": {
+    "type": "bar",
+    "data": {
+      "labels": ["Amlapitta", "Vata-Kaphaja Jwara", ...],
+      "datasets": [{
+        "label": "Cases",
+        "data": [42, 28, ...],
+        "backgroundColor": ["#4CAF50", "#FFC107", ...]
+      }]
+    },
+    "options": {
+      "responsive": true,
+      "plugins": {
+        "title": {
+          "display": true,
+          "text": "Monthly Disease Distribution"
+        }
+      }
+    }
+  }
+}</pre>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Ministry of Ayush | All India Institute of Ayurveda (AIIA)</p>
+        </div>
+    </footer>
+
+    <script src="/ui/assets/js/main.js"></script>
+</body>
+</html>

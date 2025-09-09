@@ -1,0 +1,112 @@
+1. What ICD & NAMASTE actually are
+
+ICD-11 (International Classification of Diseases, 11th Revision):
+A globally recognized coding framework published by WHO.
+
+Covers all biomedical diseases (e.g., diabetes, anemia, psychiatric disorders).
+
+Includes Chapter 26: Traditional Medicine Module 2 (TM2) → introduces 529 diagnostic categories + 196 pattern codes specific to traditional medicine.
+
+Primary purpose: standardized diagnosis, reporting, epidemiology, and billing.
+
+NAMASTE (National AYUSH Morbidity & Standardized Terminologies Electronic):
+India’s AYUSH-specific coding database.
+
+Over 4,500 standardized Ayurveda, Siddha, Unani terms.
+
+Developed for digitizing AYUSH morbidity data.
+
+Not directly interoperable with global ICD-11 → hence the need for mapping.
+
+2. Why integration matters
+
+Problem today:
+AYUSH doctors record cases in their own terms (e.g., Jwara for fever). Allopathy uses ICD-10/11 (e.g., Fever = “MG44”). Data stays siloed.
+
+Solution:
+A dual-coding system where:
+
+NAMASTE → preserves authenticity of Ayurveda diagnosis.
+
+ICD-11 TM2 / Biomedicine → makes it interoperable internationally.
+
+Impact:
+
+Clinical continuity → Patients moving between Ayurveda and modern medicine are understood consistently.
+
+National analytics → Morbidity trends visible across systems.
+
+Global interoperability → Indian AYUSH research joins global datasets.
+
+Insurance + billing → Claims processed under ICD-11 compliant standards.
+
+3. Real-life medical use cases
+
+Clinical Diagnosis:
+
+AYUSH doctor enters Raktakshaya Janya Pandu (anemia type in Ayurveda).
+
+System auto-maps → ICD-11 code “5C70 – Iron deficiency anemia”.
+
+Both codes saved in patient’s EMR.
+
+Public Health Surveillance:
+
+During an outbreak (e.g., dengue), government sees data from both AYUSH and Allopathy streams standardized under ICD-11.
+
+Enables epidemic tracking, resource allocation (beds, oxygen, vaccines).
+
+Research:
+
+Comparative studies possible (e.g., how Ayurveda’s Madhumeha aligns with ICD-11’s E10–E14 Diabetes mellitus).
+
+Facilitates clinical trials, population studies, outcome research.
+
+Insurance/Claims:
+
+Payers (insurance companies) accept ICD-11 codes.
+
+AYUSH treatments, when coded in ICD-11, become eligible for reimbursement.
+
+4. Doctor workflow (input/output)
+
+Input:
+Doctor enters symptoms (fever, fatigue, jaundice) or a diagnosis in local system (Jwara).
+
+Processing:
+Terminology microservice:
+
+Looks up NAMASTE → ICD-11 TM2 / Biomedicine mappings.
+
+Ensures compliance with ICD-11 coding rules (e.g., diagnosis + pattern).
+
+Output (EMR):
+
+Displays both terms side-by-side.
+
+Stores both codes in FHIR ProblemList or Condition resources.
+
+5. Technical system behavior
+
+Terminology Microservice Features:
+
+FHIR R4 API: Provides CodeSystem, ValueSet, ConceptMap.
+
+Auto-complete lookup: Clinician types → suggestions from both NAMASTE + ICD-11.
+
+Translate Operation: Converts NAMASTE ↔ ICD-11 TM2 codes.
+
+Bundle ingestion: Accepts dual-coded encounters in EMR.
+
+Security: OAuth 2.0 via ABHA (Ayushman Bharat Health Account), ISO 22600 access control.
+
+Audit-ready: Consent, versioning, and traceability for medico-legal safety.
+
+✅ In short:
+You are not just making a translator. You are making a FHIR-compliant terminology bridge that:
+
+Preserves traditional AYUSH vocabularies.
+
+Standardizes them into ICD-11 for global interoperability.
+
+Supports clinical care, research, insurance, and public health surveillance.

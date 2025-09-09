@@ -1,0 +1,101 @@
+Problem Statement
+
+ID: 25026
+Title: Develop APIs to Integrate NAMASTE and ICD-11 (TM2) into FHIR-Compliant EMR Systems Aligned with India’s EHR Standards
+
+Background
+
+India’s AYUSH sector is undergoing a digital transformation, moving from paper-based systems to interoperable Electronic Health Records (EHRs). Central to this transition are two standardized coding frameworks:
+
+NAMASTE (National AYUSH Morbidity & Standardized Terminologies Electronic): Contains 4,500+ standardized terms for Ayurveda, Siddha, and Unani.
+
+ICD-11 (WHO International Classification of Diseases, Chapter 26 – TM2): Includes 529 disorder categories and 196 pattern codes for traditional medicine, integrated into the global ICD framework.
+
+Harmonizing these vocabularies within EMR platforms enables:
+
+Accurate clinical documentation and decision support.
+
+Compliance with India’s 2016 EHR Standards, which mandate FHIR R4 APIs, SNOMED CT/LOINC semantics, ISO 22600 access control, ABHA-linked OAuth 2.0 authentication, and audit trails for consent and versioning.
+
+A terminology microservice is required that:
+
+Ingests NAMASTE CSVs.
+
+Synchronizes with the WHO ICD-11 API (covering both Biomedicine and TM2).
+
+Provides EMR interfaces with auto-complete diagnosis widgets returning both NAMASTE and ICD-11 codes.
+
+Supports dual/double-coding: one for traditional medicine (Ayurveda/Siddha/Unani) and another for Biomedicine.
+
+This integration will:
+
+Empower clinicians with both traditional and biomedical insights.
+
+Facilitate AYUSH insurance claims under ICD-11 standards.
+
+Enable real-time morbidity analytics for the Ministry of Ayush aligned with global reporting frameworks.
+
+Problem Description
+
+Design and prototype an API integration layer to bring together:
+
+NAMASTE terminologies,
+
+WHO standardized international terminology for Ayurveda, and
+
+ICD-11 (Traditional Medicine Module 2 + Biomedicine).
+
+This API must operate within a FHIR-compliant EMR system, enabling clinicians to record AYUSH diagnoses with NAMASTE codes and automatically map them to ICD-11 identifiers for interoperability, analytics, and insurance purposes.
+
+Deliverables
+
+A lightweight microservice or FHIR terminology plugin that provides:
+
+FHIR-compliant CodeSystem for NAMASTE, linked to WHO terminologies and ICD-11 TM2/Biomedicine.
+
+REST endpoint for auto-complete value-set lookup.
+
+Translation operation: NAMASTE ↔ ICD-11 TM2.
+
+Encounter upload API to ingest FHIR Bundles with both coding systems.
+
+OAuth 2.0–secured access via ABHA tokens, with audit-ready metadata.
+
+Team Demonstrations
+
+Participants should demonstrate the following:
+
+Ingesting NAMASTE CSVs and generating FHIR CodeSystem + ConceptMap.
+
+Fetching ICD-11 TM2 and Biomedicine updates via WHO ICD-API and merging them.
+
+Providing a CLI or web interface to:
+
+Search NAMASTE and WHO Ayurveda terminologies.
+
+View mapped TM2 codes.
+
+Construct FHIR ProblemList entries.
+
+Version tracking and consent metadata in line with India’s 2016 EHR Standards (FHIR R4, ISO 22600, SNOMED CT/LOINC compliance).
+
+Expected Solution
+
+A FHIR R4–compliant terminology microservice, adhering to India’s 2016 EHR Standards, with:
+
+NAMASTE CodeSystem.
+
+WHO International Terminologies of Ayurveda.
+
+ICD-11 TM2 & Biomedicine ConceptMap.
+
+Auto-complete value-set lookup endpoint.
+
+NAMASTE ↔ TM2 translation operation.
+
+Secure FHIR Bundle upload interface to support dual coding.
+
+Organization: Ministry of Ayush
+Department: All India Institute of Ayurveda (AIIA)
+Category: Software
+Theme: MedTech / BioTech / HealthTech
