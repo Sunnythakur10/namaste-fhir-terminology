@@ -16,8 +16,8 @@ ui/
 
 ## Pages
 
-- **index.html**: Main landing page
-- **doctor-workflow.html**: Interface for doctors to search and add diagnoses
+- **landing.html**: Modern landing page with feature overview
+- **doctor-sandbox.html**: Advanced interface for doctors to search and add diagnoses with dual-coding
 - **researcher-workflow.html**: Tools for researchers to analyze morbidity data
 - **insurance-workflow.html**: Workflow for insurance claim verification
 - **api-docs.html**: API documentation
@@ -42,7 +42,7 @@ To serve the UI locally, you can use any simple HTTP server. For example:
 python -m http.server 8000
 ```
 
-Then navigate to `http://localhost:8000/ui/pages/index.html` in your browser.
+Then navigate to `http://localhost:8000/ui/pages/landing.html` in your browser.
 
 ## Implementation Notes
 
