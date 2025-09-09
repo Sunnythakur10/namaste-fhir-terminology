@@ -1,0 +1,241 @@
+Proposed Terminology Translation Framework
+Integrating AYUSH (traditional Indian medicine) terms with global standards demands a robust, standardsbased solution. We propose a FHIR-based terminology service that uses HL7’s ConceptMap (and related
+Terminology resources) to map NAMASTE/Ayush morbidity codes bi-directionally to ICD-11 (including the
+new Traditional Medicine chapter). This leverages existing interoperability standards (FHIR, ICD-11, ISO
+coding) and builds a repeatable, API-driven protocol. The framework would ensure that each AYUSH
+diagnosis can be reliably translated into an ICD-11 code (and vice versa), preserving meaning and clinical
+nuance.
+Scope and Background
+Figure: Timeline of AYUSH terminology standardization leading up to ICD-11 Traditional Medicine (TM) integration.
+India’s NAMASTE portal (launched 2017) consolidated standardized morbidity codes for Ayurveda, Siddha
+and Unani . Subsequent efforts (2017–2024) refined these terminologies and prepared for global
+integration . In 2025 WHO officially released the ICD-11 update with a TM chapter, enabling optional
+dual coding of traditional medicine diagnoses . In practice this means a patient encounter can be coded
+with both a NAMASTE (AYUSH) code and a corresponding ICD-11 code, allowing comprehensive data
+collection on TM use. WHO explicitly notes that the TM chapter “is used only for optional dual coding in the
+morbidity data collection (e.g. morbidity reporting, reimbursement, patient safety, research)” . In short,
+the global environment now supports systematic digitization of AYUSH diagnoses alongside conventional
+diagnoses, a capability our framework will exploit.
+International Standards Alignment
+Our protocol builds on ICD-11’s Traditional Medicine chapter and the broader WHO classification. The
+WHO FAQ emphasizes that including TM in ICD-11 allows “digitization of Traditional Medicine diagnostic
+data and easier integration into Electronic Health Record (EHR) systems,” as well as “better integration of
+Traditional Medicine diagnostic data in adverse-event reporting, insurance coverage and
+reimbursement” . In other words, mapping AYUSH terms into ICD-11 ties Indian TM practice into the
+international health-data infrastructure. By aligning with ICD-11 and other ISO/HL7 standards, our
+framework meets regulatory goals (e.g. digital health strategies, Universal Health Coverage) and enables
+country-to-country comparability of TM data .
+Technical Architecture
+The core of the solution is an API-based translation service using HL7 FHIR Terminology resources. The
+steps are:
+CodeSystem definitions: Publish the AYUSH term set (from NAMASTE) and the ICD-11 code system
+(including TM chapter codes) as FHIR CodeSystem and ValueSet resources. These define all valid
+codes in each system. 
+1 2
+2 1
+3
+3
+4
+5 6
+• 
+1
+ConceptMap resources: Create FHIR ConceptMaps that explicitly map AYUSH codes to ICD-11
+codes. Each ConceptMap entry links a source concept (e.g. an Ayurveda diagnosis code) to one or
+more target concepts in ICD-11, with a relationship qualifier (e.g. equivalent, narrower, broader)
+to capture semantic nuance. For example, an Ayurvedic condition might map as “equivalent” to a
+specific ICD-11 code if meanings align, or “narrower than” if the ICD code is more general .
+(Mappings that lack a good ICD-11 counterpart could be flagged as unmapped or map to a broader
+category.) The FHIR ConceptMap model supports recording these relationships and any provenance
+data. As HL7 notes, “a concept map defines a mapping from a set of concepts in a code system… to
+one or more concepts in other code systems” , with a formal relationship to describe each
+pairing . 
+Terminology Server / APIs: Host these resources on a FHIR Terminology Service. Conformant FHIR
+servers provide built-in operations (e.g. $translate , $lookup ) to query code mappings and
+validate codes. A terminology service “is simply a set of functions built on the definitions provided by
+a collection of CodeSystem, ValueSet and ConceptMap resources” . Once deployed, any client
+(EHR, mobile app, public health system) can call a RESTful API (e.g. /ConceptMap/$translate?
+source=...&code=... ) to get the mapped code(s). For example, a provider entering a NAMASTE
+code could automatically retrieve the ICD-11 equivalent. The service would be secured (e.g. OAuth2/
+TLS) and offer audit logs for compliance. 
+Key architecture elements can be summarized:
+Terminology Repository: A FHIR server storing CodeSystem and ConceptMap artifacts, ideally
+under an implementation guide or namespace. 
+APIs: FHIR REST endpoints for $translate , code validation ( ValueSet/$expand , 
+CodeSystem/lookup ), etc. 
+Data Flow: EHR systems submit AYUSH codes or queries; the translation API returns matching
+ICD-11 codes (and vice versa). The dual coding is recorded in patient records or aggregated reports.
+Example: In FHIR, a ConceptMap entry might link NAMASTE:AYU12345 (an Ayurveda “lower back pain”
+code) to ICD-11:ME05.1 with a relationship “equivalent”. The terminology service’s $translate
+operation would use this ConceptMap to answer queries: e.g. /ConceptMap/$translate?
+code=NAMASTE:AYU12345&system=NAMASTE → returns {code: ME05.1, display: 
+"Lumbago" (ICD-11)} .
+Ensuring Semantic and Clinical Accuracy
+Semantic interoperability requires careful curation. We would engage clinical experts in Ayurveda, Siddha,
+etc., to vet mappings. Each ConceptMap element can carry equivalence (or relationship ) levels to
+reflect how close a match is . For instance, if an Indian term has no exact Western analogue, it might
+map to a broader ICD-11 category (with broaderMatch ) or even be left unmapped with a note for review.
+By explicitly encoding these relationships, the framework avoids false equivalences. Moreover, because
+mappings are context-sensitive, we recommend versioning and contextual qualifiers (e.g. depending on
+patient age, symptom context). The concept of FHIR ConceptMaps supports dependent mappings (multiple
+targets or condition-based mapping) and provenance (who authored the map). With FHIR’s expressive
+model, we can document these nuances so that implementers (or even machine-learning QA tools) know if
+a mapping is exact or approximate .
+• 
+7 8
+7
+8
+• 
+9
+• 
+• 
+• 
+8
+8
+2
+Implementation and Use Cases
+This protocol can be implemented in stages, supporting multiple contexts:
+EHR and Clinical Coding: Clinicians enter AYUSH diagnoses using NAMASTE codes in the EHR. The
+system calls the terminology API to retrieve the ICD-11 code for that condition. Both codes are
+stored in the patient record (dual coding), enabling AYUSH practitioners to document in their own
+terms while making the data usable for billing and analytics. NAMASTE itself envisions a “futuristic
+double coding system” using both ASU codes and ICD-10/11 . This ensures clinical accuracy in
+documentation and meets coding requirements for integrations. 
+Public Health and Reporting: Aggregated statistics on disease burden can use ICD-11 as the
+common language. For example, AYUSH clinics reporting monthly morbidity would send ICD-11
+codes (translated from NAMASTE codes) into national health databases. This permits consistent
+epidemiology across conventional and traditional medicine. WHO notes that counting TM
+encounters and enabling international comparability is a key benefit of the ICD-11 TM chapter .
+Our service automates that translation, so public-health systems can ingest mixed data and
+categorize AYUSH cases under ICD codes. 
+Research and Analytics: Researchers conducting integrative medicine studies can merge AYUSH
+trial data with global data sets via ICD-11. The translation service provides a systematic “crosswalk”
+so that outcomes coded in traditional terms become analyzable with conventional health statistics.
+This fosters evidence-based policy: as one senior AYUSH official notes, dual coding “improves data
+collection” and “fosters evidence-based policymaking” for traditional medicine . 
+Insurance and Policy: Indian health policy is already exploring insurance coverage for AYUSH
+treatments. By mapping to ICD-11, insurers can align AYUSH claims with global diagnostic
+categories. Indeed, NAMASTE aims to integrate TM into reimbursement systems . For example,
+an insurer might only recognize ICD codes for claims; our translation allows a clinic to bill under the
+correct ICD-11 code for an AYUSH treatment, streamlining claims. This respects regulations: ICD-11
+coding can be used for non-mortality purposes like reimbursement , and NAMASTE explicitly
+supports reporting of AYUSH services in standard formats .
+Regulatory and Security Considerations
+Our framework is designed to comply with Indian and global regulations. In India, the Ayushman Bharat
+Digital Mission (ABDM) mandates use of open standards (FHIR, SNOMED, LOINC, ICD) for all health data
+exchanges. The ABDM FHIR Implementation Guide explicitly “refers to relevant standards and coding
+systems… such as EHR Standards for India (2016)” . By using HL7 FHIR and WHO’s ICD-11, we align with
+ABDM and MoHFW directives. The service would require patient consent (as per Indian privacy law) before
+translating or sharing identifiable health data.
+Security measures include OAuth2 authentication for API access, TLS encryption for all data in transit, and
+audit logging of requests. HL7 guidance notes that even terminology servers should use SSL/TLS, since
+“observers may be able to infer information about patients by observing the codes… so encryption is still
+recommended” . We would enforce role-based access (only authorized providers or systems can call the
+service) and record all translations in an audit trail. Data at rest (e.g. the ConceptMap definitions) would be
+hosted on a secure server (cloud or on-premises) compliant with healthcare IT regulations (e.g. HIPAA in the
+US, proposed Digital Health Data Protection laws in India).
+• 
+2
+• 
+5
+• 
+6
+• 
+10
+3
+2
+11
+12
+3
+Compliance with clinical standards is ensured by relying on approved code sets. NAMASTE codes are
+issued by MoA (along with English definitions), and ICD-11 is maintained by WHO. Any mappings would be
+reviewed by a joint committee (including clinical experts and informatics specialists) to ensure they meet
+medical guidelines. The FHIR resources themselves are standard artifacts that can be version-controlled and
+updated through normal governance (e.g. a new NAMASTE release or ICD-11 update simply leads to
+updated resources).
+Key Components (Summary)
+HL7 FHIR Terminology Service: Hosts CodeSystem (NAMASTE, ICD-11), ValueSet, and ConceptMap
+resources. Supports $translate and related operations . 
+ConceptMap Mappings: AYUSH-to-ICD and ICD-to-AYUSH ConceptMap resources, with explicit 
+relationship labels for semantic accuracy . Optionally, a single ConceptMap can include
+bidirectional groups. 
+FHIR API Layer: A RESTful interface for applications to query codes. Must support OAuth2 scopes
+(e.g. translate:read ) and return JSON. 
+Governance Process: A workflow for domain experts to propose, vet, and publish mappings.
+ConceptMap metadata can record author, date, and mapping rationale. 
+Integration Hooks: Adaptors or FHIR clients in EHRs and health apps to call the translation service
+when needed (e.g. on code entry, or on data export). 
+Practical Use Cases
+AYUSH Clinic (EHR Integration): An Ayurvedic physician documents “Amaja shula” (digestive colic)
+using the NAMASTE code AYU123. The EHR calls our service’s ConceptMap $translate API, which
+returns ICD-11 code “DK90 Digestive colic” (for example). The system records both codes. If later the
+patient is referred to a general hospital, the ICD code ensures other clinicians understand the
+diagnosis. 
+Public Health Dashboard: Monthly HMIS reports from AYUSH units come coded with ICD-11 (via our
+service). The Ministry of Health can then aggregate AYUSH and allopathic cases seamlessly, meeting
+WHO’s push for integrated data . 
+Research Study: A multi-center study on “integrative treatment of arthritis” uses both Ayurveda and
+Western diagnostics. Investigators use our service to cross-tabulate AYUSH symptoms to ICD-11
+rheumatologic categories, enabling combined analysis of efficacy. 
+Insurance Claim Processing: An insurance scheme recognizes ICD-11 codes for reimbursement. An
+Ayurvedic hospital submits claims using ICD-11 codes obtained via the translation service, facilitating
+payout. This supports NAMASTE’s goal of extending insurance to AYUSH treatments .
+Security and Privacy
+All service endpoints use HTTPS with strong ciphers. User authentication (e.g. via OAuth2 bearer tokens)
+ensures only authorized actors (clinics, health departments, researchers) may translate codes. Audit logs
+record the user ID, timestamp, and codes translated. No patient-identifying information needs to be sent to
+this service (only coded diagnoses), minimizing privacy risk. Nevertheless, encrypting these requests is
+recommended since inferences could potentially be made (for example, a very rare code might hint at a
+patient’s identity). The system will comply with data protection laws (for India: IT Act and forthcoming
+Digital Health Act; for other regions: GDPR, HIPAA) by design.
+• 
+13 9
+• 
+8
+• 
+• 
+• 
+1. 
+2. 
+5
+3. 
+4. 
+10
+12
+4
+Conclusion
+By leveraging HL7 FHIR and WHO ICD-11, we can build a standardized, bi-directional translation protocol
+for AYUSH terminologies. The proposed FHIR Terminology Service (ConceptMaps, CodeSystems) provides a
+technical backbone that is already widely adopted and tested for interoperability . This ensures
+semantic interoperability: codes from diverse medical paradigms are linked in a computable way. Clinical
+accuracy is maintained through explicit relationship semantics and expert validation. Regulatory
+compliance is met by aligning with national digital health guidelines (ABDM/NDHM) and international
+standards. In practice, this framework will let Indian traditional medicine practitioners participate fully in
+the digital health ecosystem—entering diagnoses in familiar terms while simultaneously populating
+standardized health records. Over time, broader adoption can enable richer data analytics and integrative
+health insights, fulfilling WHO and national goals for inclusive health information. 
+Sources: We base this design on the NAMASTE initiative and WHO’s ICD-11 updates , and on
+HL7 FHIR standards documentation . All mappings and APIs would be version-controlled and
+open-access to ensure transparency and continual improvement. 
+Initiatives: National Ayush Morbidity and Standardized Terminologies Electronic (NAMASTE)
+Portal - PMC 
+https://pmc.ncbi.nlm.nih.gov/articles/PMC10410508/
+Traditional medicine 
+https://www.who.int/standards/classifications/frequently-asked-questions/traditional-medicine
+WHO's Historic ICD-11 Update: A Landmark for Traditional Medicine Recognition and Global Research
+https://ayush.gov.in/resources/pdf/PressRelease/WHO_releases_update_in_ICD.docxR.pdf
+ConceptMap - FHIR v6.0.0-ballot3
+https://build.fhir.org/conceptmap.html
+Terminology-service - FHIR v6.0.0-ballot3
+https://build.fhir.org/terminology-service.html
+Home - FHIR Implementation Guide for ABDM v6.5.0
+https://www.nrces.in/ndhm/fhir/r4/index.html
+7 9
+1 2 3 4
+7 8 9
+1 2 10
+3 4 5
+6
+7 8 13
+9 12
+11
+5

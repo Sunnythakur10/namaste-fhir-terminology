@@ -1,36 +1,103 @@
 /**
- * Main JavaScript for NAMASTE-FHIR UI
+ * NAMASTE-FHIR Terminology Bridge - Main JavaScript
+ * 
+ * This file provides core functionality for the NAMASTE-FHIR terminology translation UI
+ * including autocomplete, API interactions, and UI utilities.
  */
 
-// API endpoint constants
-const API_ENDPOINTS = {
-  SEARCH: '/api/search',
-  TRANSLATE: '/api/translate',
-  AUTOCOMPLETE: '/api/autocomplete',
-  FHIR_UPLOAD: '/api/fhir-upload',
-  ANALYTICS: '/api/analytics'
+// Configuration and Constants
+const CONFIG = {
+  // API endpoint constants (would connect to actual backend in production)
+  API_ENDPOINTS: {
+    SEARCH: '/api/search',
+    TRANSLATE: '/api/translate',
+    AUTOCOMPLETE: '/api/autocomplete',
+    FHIR_UPLOAD: '/api/fhir-upload',
+    ANALYTICS: '/api/analytics',
+    PREVALENCE: '/api/prevalence',
+    POLICY_CHECK: '/api/policy-check',
+    VALUE_SET: '/api/valueSet/$expand'
+  },
+  // Default options
+  DEFAULTS: {
+    AUTOCOMPLETE_DELAY: 300,
+    RESULT_LIMIT: 10,
+    DATE_FORMAT: 'YYYY-MM-DD'
+  },
+  // Mock authentication for demo purposes
+  AUTH: {
+    TOKEN: 'mock-abha-token',
+    TOKEN_TYPE: 'Bearer'
+  }
 };
 
-// Mock token for demo purposes
-const MOCK_AUTH_TOKEN = 'mock-abha-token';
-
 /**
- * Autocomplete functionality for diagnosis search
+ * Enhanced Autocomplete for Terminology Search
+ * 
+ * Provides real-time suggestions as users type, with dual-coding support
+ * showing both NAMASTE and ICD-11 codes.
  */
 class TerminologyAutocomplete {
-  constructor(inputElement, resultsContainer) {
+  /**
+   * Create a new autocomplete instance
+   * 
+   * @param {HTMLElement} inputElement - The input field for search
+   * @param {Object} options - Configuration options
+   */
+  constructor(inputElement, options = {}) {
+    // Elements
     this.inputElement = inputElement;
-    this.resultsContainer = resultsContainer;
+    this.containerId = options.containerId || inputElement.id + '-autocomplete';
+    this.resultsContainer = document.getElementById(this.containerId);
+    
+    if (!this.resultsContainer) {
+      // Create container if it doesn't exist
+      this.resultsContainer = document.createElement('div');
+      this.resultsContainer.id = this.containerId;
+      this.resultsContainer.className = 'autocomplete-items';
+      this.resultsContainer.style.display = 'none';
+      inputElement.parentNode.appendChild(this.resultsContainer);
+    }
+    
+    // State
     this.debounceTimeout = null;
     this.selectedTerm = null;
+    this.currentFocus = -1;
+    this.results = [];
     
-    this.init();
+    // Options
+    this.minChars = options.minChars || 2;
+    this.delay = options.delay || CONFIG.DEFAULTS.AUTOCOMPLETE_DELAY;
+    this.limit = options.limit || CONFIG.DEFAULTS.RESULT_LIMIT;
+    this.onSelect = options.onSelect || null;
+    this.mockMode = options.mockMode || true;
+    this.mockData = options.mockData || this._getMockTerminology();
+    
+    // Initialize
+    this._setupEventListeners();
   }
   
-  init() {
+  /**
+   * Set up event listeners for the autocomplete
+   * @private
+   */
+  _setupEventListeners() {
+    // Input events for searching
     this.inputElement.addEventListener('input', () => {
       clearTimeout(this.debounceTimeout);
-      this.debounceTimeout = setTimeout(() => {
+      this.debounceTimeout = setTimeout(() => this._performSearch(), this.delay);
+    });
+    
+    // Handle keyboard navigation
+    this.inputElement.addEventListener('keydown', (e) => this._handleKeyDown(e));
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (e.target !== this.inputElement && e.target !== this.resultsContainer) {
+        this._closeDropdown();
+      }
+    });
+  }
         this.fetchSuggestions();
       }, 300);
     });
@@ -43,32 +110,42 @@ class TerminologyAutocomplete {
     });
   }
   
-  async fetchSuggestions() {
-    const searchTerm = this.inputElement.value.trim();
-    if (searchTerm.length < 2) {
-      this.clearResults();
+  /**
+   * Perform search and display results
+   * @private
+   */
+  _performSearch: function() {
+    const query = this.inputElement.value.trim();
+    
+    if (query.length < this.minChars) {
+      this._closeDropdown();
       return;
     }
     
-    try {
-      const response = await fetch(`${API_ENDPOINTS.AUTOCOMPLETE}?term=${encodeURIComponent(searchTerm)}`, {
-        headers: {
-          'Authorization': `Bearer ${MOCK_AUTH_TOKEN}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch suggestions');
-      }
-      
-      const data = await response.json();
-      this.displayResults(data.results);
-    } catch (error) {
-      console.error('Error fetching suggestions:', error);
-      this.clearResults();
+    if (this.mockMode) {
+      // For demo, use mock data
+      this._searchMockData(query);
+    } else {
+      // In production, this would call the actual API
+      this._searchAPI(query);
     }
-  }
+  },
+  
+  /**
+   * Search within mock data (for demo purposes)
+   * @private
+   * @param {string} query - The search query
+   */
+  _searchMockData: function(query) {
+    const lowercaseQuery = query.toLowerCase();
+    const results = this.mockData.filter(item => {
+      return item.term.toLowerCase().includes(lowercaseQuery) ||
+             (item.namasteCode && item.namasteCode.toLowerCase().includes(lowercaseQuery)) ||
+             (item.icdCode && item.icdCode.toLowerCase().includes(lowercaseQuery));
+    }).slice(0, this.limit);
+    
+    this._displayResults(results);
+  },
   
   displayResults(results) {
     this.clearResults();
