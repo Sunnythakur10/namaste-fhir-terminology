@@ -67,3 +67,8 @@ pip install python-multipart
 2025-09-07 20:47:26,026 - INFO - Lookup for Cough
 2025-09-07 20:52:29,123 - INFO - Access granted with token: mock-abha-token
 2025-09-07 20:52:29,223 - INFO - Analytics requested with chart
+2025-09-09 10:04:59,747 - ERROR - Form data requires "python-multipart" to be installed. 
+You can install "python-multipart" with: 
+
+pip install python-multipart
+

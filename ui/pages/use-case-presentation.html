@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Use Case Presentation | NAMASTE-FHIR Terminology Bridge</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #38e07b;
+            --primary-dark: #2d5016;
+            --accent-color: #ff6b6b;
+            --warning-color: #ffd93d;
+            --success-color: #6bcf7f;
+            --text-primary: #111714;
+            --text-secondary: #648772;
+            --bg-primary: #f9fafb;
+            --bg-secondary: #ffffff;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, "Noto Sans", sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        /* Section Styles */
+        .section {
+            margin-bottom: 4rem;
+            padding: 3rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Problem Section */
+        .problem-section {
+            background: linear-gradient(135deg, #fff5f5, #fef2f2);
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), #ff8e8e);
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .problem-card {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .problem-icon {
+            width: 3rem;
+            height: 3rem;
+            background: #fee2e2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        /* Solution Section */
+        .solution-section {
+            background: linear-gradient(135deg, #f0fff4, #f7fafc);
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .solution-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+        }
+
+        .solution-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1fae5;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: #dcfce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: var(--success-color);
+        }
+
+        /* Demo Section */
+        .demo-section {
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            min-height: 500px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .demo-input, .demo-output {
+            padding: 2rem;
+        }
+
+        .demo-input {
+            background: #fafafb;
+            border-right: 1px solid var(--border-color);
+            border-radius: 1rem 0 0 1rem;
+        }
+
+        .demo-output {
+            background: var(--bg-secondary);
+            border-radius: 0 1rem 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .demo-input {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                border-radius: 1rem 1rem 0 0;
+            }
+            .demo-output {
+                border-radius: 0 0 1rem 1rem;
+            }
+        }
+
+        .demo-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(56, 224, 123, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-codes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .code-tag {
+            background: var(--primary-color);
+            color: var(--text-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .code-tag.icd11 {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Use Case Summary */
+        .summary-section {
+            background: linear-gradient(135deg, #fffbf0, #fefcf7);
+            border-radius: 1rem;
+            border: 1px solid #fed7aa;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .summary-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .summary-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: #fef3c7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: #d97706;
+        }
+
+        .workflow-steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border-radius: 2rem;
+            border: 1px solid var(--border-color);
+            font-weight: 500;
+        }
+
+        .step-number {
+            background: var(--primary-color);
+            color: var(--text-primary);
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+
+        .arrow {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 0 0.5rem;
+            }
+            
+            .workflow-steps {
+                flex-direction: column;
+            }
+            
+            .arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <span class="material-symbols-outlined">healing</span>
+                    NAMASTE-FHIR Bridge
+                </div>
+                <ul class="nav-links">
+                    <li><a href="/ui/pages/landing.html">Home</a></li>
+                    <li><a href="#problem">Problem</a></li>
+                    <li><a href="#solution">Solution</a></li>
+                    <li><a href="#demo">Demo</a></li>
+                    <li><a href="#summary">Use Cases</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Problem Definition Section -->
+            <section id="problem" class="section problem-section">
+                <div class="section-header">
+                    <h1 class="section-title">The Gap: What is the Current Challenge?</h1>
+                    <p class="section-subtitle">
+                        Traditional medical systems face critical interoperability challenges that prevent seamless integration with global healthcare standards.
+                    </p>
+                </div>
+
+                <div class="problem-grid">
+                    <div class="problem-card">
+                        <div class="problem-icon">
+                            <span class="material-symbols-outlined">language</span>
+                        </div>
+                        <h3>Terminology Fragmentation</h3>
+                        <p>AYUSH (Ayurveda, Yoga, Unani, Siddha, Homeopathy) medical systems use distinct vocabularies that don't map to international standards like ICD-11, creating data silos.</p>
+                    </div>
+
+                    <div class="problem-card">
+                        <div class="problem-icon">
+                            <span class="material-symbols-outlined">sync_problem</span>
+                        </div>
+                        <h3>Interoperability Crisis</h3>
+                        <p>Healthcare providers cannot seamlessly share patient data across traditional and modern medical systems, limiting coordinated care and research opportunities.</p>
+                    </div>
+
+                    <div class="problem-card">
+                        <div class="problem-icon">
+                            <span class="material-symbols-outlined">payments</span>
+                        </div>
+                        <h3>Insurance Complexity</h3>
+                        <p>Insurance companies struggle to process claims for traditional medicine treatments due to lack of standardized coding, leading to delays and denials.</p>
+                    </div>
+
+                    <div class="problem-card">
+                        <div class="problem-icon">
+                            <span class="material-symbols-outlined">analytics</span>
+                        </div>
+                        <h3>Research Limitations</h3>
+                        <p>Public health researchers cannot effectively analyze morbidity patterns across traditional and modern medicine systems due to inconsistent data coding.</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: #fef2f2; border-radius: 0.5rem;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 0.5rem;">Current State Impact</h4>
+                    <p><strong>40%</strong> of global healthcare data is fragmented • <strong>60%</strong> longer claim processing • <strong>Limited</strong> cross-system research</p>
+                </div>
+            </section>
+
+            <!-- Solution Introduction Section -->
+            <section id="solution" class="section solution-section">
+                <div class="section-header">
+                    <h2 class="section-title">The Solution: How We Bridge the Gap</h2>
+                    <p class="section-subtitle">
+                        NAMASTE-FHIR Terminology Bridge provides seamless, bidirectional mapping between traditional AYUSH vocabularies and international ICD-11 standards.
+                    </p>
+                </div>
+
+                <div class="workflow-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <span>Input Traditional Term</span>
+                    </div>
+                    <span class="arrow material-symbols-outlined">arrow_forward</span>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <span>FHIR Processing</span>
+                    </div>
+                    <span class="arrow material-symbols-outlined">arrow_forward</span>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <span>Dual-Code Output</span>
+                    </div>
+                </div>
+
+                <div class="solution-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <span class="material-symbols-outlined">code</span>
+                        </div>
+                        <h4>FHIR-Compliant</h4>
+                        <p>Built on HL7 FHIR standards ensuring seamless integration with existing healthcare systems.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <span class="material-symbols-outlined">swap_horiz</span>
+                        </div>
+                        <h4>Bidirectional Mapping</h4>
+                        <p>Supports translation from NAMASTE to ICD-11 and vice versa, preserving semantic meaning.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <span class="material-symbols-outlined">speed</span>
+                        </div>
+                        <h4>Real-Time Translation</h4>
+                        <p>Instant terminology lookup and translation with autocomplete functionality.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <span class="material-symbols-outlined">security</span>
+                        </div>
+                        <h4>ABHA Integration</h4>
+                        <p>Secure authentication through India's Ayushman Bharat Health Account system.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <span class="material-symbols-outlined">analytics</span>
+                        </div>
+                        <h4>Analytics Ready</h4>
+                        <p>Generates structured data suitable for research and analytics across healthcare systems.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <span class="material-symbols-outlined">cloud</span>
+                        </div>
+                        <h4>API-First Design</h4>
+                        <p>RESTful APIs enable easy integration with EHRs, insurance systems, and research platforms.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Demo Section -->
+            <section id="demo" class="section demo-section">
+                <div class="section-header">
+                    <h2 class="section-title">How It Works: A Practical Demonstration</h2>
+                    <p class="section-subtitle">
+                        Experience the power of dual-coding in action. Search for any traditional AYUSH condition and see instant ICD-11 mapping.
+                    </p>
+                </div>
+
+                <div class="demo-container">
+                    <div class="demo-input">
+                        <div class="demo-header">
+                            <span class="material-symbols-outlined">input</span>
+                            Input: Traditional Medicine Search
+                        </div>
+
+                        <form id="demoForm">
+                            <div class="form-group">
+                                <label class="form-label" for="searchTerm">Search Traditional Condition</label>
+                                <input 
+                                    type="text" 
+                                    id="searchTerm" 
+                                    class="form-input" 
+                                    placeholder="e.g., Sandhigatvata, Madhumeha, Kasa..."
+                                    list="suggestions"
+                                >
+                                <datalist id="suggestions">
+                                    <option value="Sandhigatvata">
+                                    <option value="Madhumeha">
+                                    <option value="Kasa">
+                                    <option value="Arsha">
+                                    <option value="Vatavyadhi">
+                                </datalist>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="userType">User Context</label>
+                                <select id="userType" class="form-select">
+                                    <option value="doctor">Healthcare Provider</option>
+                                    <option value="researcher">Researcher</option>
+                                    <option value="insurer">Insurance Professional</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn" id="searchBtn">
+                                <span class="material-symbols-outlined">search</span>
+                                Translate to ICD-11
+                            </button>
+                        </form>
+
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: #f0f9ff; border-radius: 0.5rem; border-left: 4px solid #3b82f6;">
+                            <h5 style="margin-bottom: 0.5rem; color: #1e40af;">💡 Try These Examples:</h5>
+                            <p style="margin: 0; font-size: 0.875rem; color: #1e40af;">
+                                <strong>Sandhigatvata</strong> (Joint disorder) • <strong>Madhumeha</strong> (Diabetes) • <strong>Kasa</strong> (Cough)
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="demo-output">
+                        <div class="demo-header">
+                            <span class="material-symbols-outlined">output</span>
+                            Output: Dual-Coded Result
+                        </div>
+
+                        <div id="results">
+                            <div style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                                <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block;">search</span>
+                                <p>Enter a traditional medicine term to see the dual-coding magic!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Use Case Summary Section -->
+            <section id="summary" class="section summary-section">
+                <div class="section-header">
+                    <h2 class="section-title">Customer Use Cases: Real-World Applications</h2>
+                    <p class="section-subtitle">
+                        Discover how different stakeholders can leverage NAMASTE-FHIR Bridge to transform their healthcare workflows.
+                    </p>
+                </div>
+
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <span class="material-symbols-outlined">local_hospital</span>
+                        </div>
+                        <h4>Healthcare Providers</h4>
+                        <p><strong>Challenge:</strong> Integrating traditional medicine practices with modern EHR systems.</p>
+                        <p><strong>Solution:</strong> Dual-code patient diagnoses in real-time, ensuring comprehensive medical records that capture both traditional and modern perspectives.</p>
+                        <p><strong>Impact:</strong> 50% faster documentation, improved care coordination, and enhanced patient safety.</p>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <span class="material-symbols-outlined">science</span>
+                        </div>
+                        <h4>Research Institutions</h4>
+                        <p><strong>Challenge:</strong> Analyzing health trends across different medical systems for population health studies.</p>
+                        <p><strong>Solution:</strong> Standardized data collection enabling cross-system analysis and evidence-based traditional medicine research.</p>
+                        <p><strong>Impact:</strong> Unified health analytics, better policy decisions, and validated traditional treatments.</p>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <span class="material-symbols-outlined">account_balance</span>
+                        </div>
+                        <h4>Insurance Companies</h4>
+                        <p><strong>Challenge:</strong> Processing claims for traditional medicine treatments without standardized codes.</p>
+                        <p><strong>Solution:</strong> Automated claim validation using dual-coded diagnoses, reducing manual review and processing time.</p>
+                        <p><strong>Impact:</strong> 40% faster claim processing, reduced fraud, and expanded coverage for traditional treatments.</p>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <span class="material-symbols-outlined">policy</span>
+                        </div>
+                        <h4>Government Health Agencies</h4>
+                        <p><strong>Challenge:</strong> Creating unified health policies that integrate traditional and modern medicine.</p>
+                        <p><strong>Solution:</strong> Standardized reporting and analytics across all healthcare systems for informed policy making.</p>
+                        <p><strong>Impact:</strong> Evidence-based healthcare policies, better resource allocation, and improved public health outcomes.</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: var(--bg-secondary); border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Ready to Transform Your Healthcare Workflow?</h4>
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="/ui/pages/doctor-sandbox.html" class="btn">Try Doctor Demo</a>
+                        <a href="/ui/pages/researcher-sandbox.html" class="btn" style="background: #3b82f6; color: white;">Explore Research Tools</a>
+                        <a href="/ui/pages/insurance-sandbox.html" class="btn" style="background: #8b5cf6; color: white;">Test Insurance Flow</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Demo functionality
+        const mockData = {
+            'sandhigatvata': {
+                namaste_code: 'AAE-16',
+                namaste_name: 'Sandhigatvata',
+                description: 'Vitiated Vata in Sandhi (Joints) - Similar to Osteoarthritis',
+                icd11_tm2: 'SP00',
+                icd11_biomed: 'FA01',
+                confidence: 95,
+                category: 'Musculoskeletal'
+            },
+            'madhumeha': {
+                namaste_code: 'EF-2.4.4',
+                namaste_name: 'Madhumeha/Kshaudrameha',
+                description: 'Sweet urine disease - Diabetes mellitus in Ayurveda',
+                icd11_tm2: 'SJ00',
+                icd11_biomed: '5A11',
+                confidence: 98,
+                category: 'Endocrine'
+            },
+            'kasa': {
+                namaste_code: 'EA-3',
+                namaste_name: 'Kasa',
+                description: 'Cough - Respiratory disorder in Ayurveda',
+                icd11_tm2: 'SB00',
+                icd11_biomed: 'CA22',
+                confidence: 92,
+                category: 'Respiratory'
+            },
+            'arsha': {
+                namaste_code: 'EE-3',
+                namaste_name: 'Arsha',
+                description: 'Hemorrhoids - Anorectal disorder',
+                icd11_tm2: 'SL01',
+                icd11_biomed: 'ME83',
+                confidence: 94,
+                category: 'Digestive'
+            },
+            'vatavyadhi': {
+                namaste_code: 'AA',
+                namaste_name: 'Vatavyadhi',
+                description: 'Vata disorders - Neurological and movement disorders',
+                icd11_tm2: 'SP10',
+                icd11_biomed: 'FA20',
+                confidence: 89,
+                category: 'Neurological'
+            }
+        };
+
+        document.getElementById('demoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const searchTerm = document.getElementById('searchTerm').value.toLowerCase().trim();
+            const userType = document.getElementById('userType').value;
+            const resultsDiv = document.getElementById('results');
+            const searchBtn = document.getElementById('searchBtn');
+
+            // Show loading state
+            searchBtn.disabled = true;
+            resultsDiv.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <span>Translating terminology...</span>
+                </div>
+            `;
+
+            // Simulate API call delay
+            setTimeout(() => {
+                const result = mockData[searchTerm] || mockData[Object.keys(mockData).find(key => 
+                    key.includes(searchTerm) || searchTerm.includes(key)
+                )];
+
+                if (result) {
+                    resultsDiv.innerHTML = `
+                        <div class="result-card">
+                            <div class="result-header">
+                                <div class="result-title">${result.namaste_name}</div>
+                                <span style="background: #dcfce7; color: #166534; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">
+                                    ${result.confidence}% match
+                                </span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">${result.description}</p>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <strong>Category:</strong> <span style="color: var(--primary-color);">${result.category}</span>
+                            </div>
+
+                            <div class="result-codes">
+                                <div class="code-tag">NAMASTE: ${result.namaste_code}</div>
+                                <div class="code-tag icd11">ICD-11 TM2: ${result.icd11_tm2}</div>
+                                <div class="code-tag icd11">ICD-11 Bio: ${result.icd11_biomed}</div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f0f9ff; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
+                            <h5 style="margin-bottom: 0.5rem; color: #1e40af;">For ${userType === 'doctor' ? 'Healthcare Providers' : userType === 'researcher' ? 'Researchers' : 'Insurance Professionals'}:</h5>
+                            <p style="margin: 0; font-size: 0.875rem; color: #1e40af;">
+                                ${userType === 'doctor' ? 'Use these codes in your EHR system for comprehensive patient records and better care coordination.' : 
+                                  userType === 'researcher' ? 'This standardized coding enables cross-system analysis and evidence-based research on traditional treatments.' :
+                                  'These dual codes streamline claim processing and ensure accurate reimbursement for traditional medicine treatments.'}
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                            <span class="material-symbols-outlined" style="font-size: 2rem; margin-bottom: 1rem; display: block;">search_off</span>
+                            <p>Term "${searchTerm}" not found in our database.</p>
+                            <p style="font-size: 0.875rem;">Try one of the suggested examples or contact support to add new terms.</p>
+                        </div>
+                    `;
+                }
+
+                searchBtn.disabled = false;
+            }, 1500);
+        });
+
+        // Auto-focus search input
+        document.getElementById('searchTerm').focus();
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
