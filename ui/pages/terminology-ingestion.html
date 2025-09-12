@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAMASTE-FHIR: Terminology Ingestion & Representation Interface</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007aff;
+            --primary-dark: #0051d5;
+            --accent-color: #ff3b30;
+            --warning-color: #ff9500;
+            --success-color: #34c759;
+            --text-primary: #1d1d1f;
+            --text-secondary: #86868b;
+            --text-tertiary: #a1a1a6;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f7;
+            --bg-tertiary: #fafafa;
+            --border-color: #d2d2d7;
+            --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            font-size: 17px;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .header p {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Feature Requirements */
+        .feature-spec {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-light);
+        }
+
+        .feature-spec h2 {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .requirements-list {
+            display: grid;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .requirement-item .material-symbols-outlined {
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+
+        /* Mode Selection */
+        .mode-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .mode-card {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-light);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--primary-color);
+        }
+
+        .mode-card.active {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f3ff 100%);
+        }
+
+        .mode-card h3 {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .mode-card .material-symbols-outlined {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        /* CLI Interface */
+        .cli-interface {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-light);
+        }
+
+        .terminal {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            color: #ffffff;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+
+        .terminal .prompt {
+            color: #00d4aa;
+            font-weight: 600;
+        }
+
+        .terminal .command {
+            color: #ffd60a;
+        }
+
+        .terminal .output {
+            color: #a8a8a8;
+            margin: 0.5rem 0;
+        }
+
+        .terminal .success {
+            color: #00d4aa;
+        }
+
+        .terminal .error {
+            color: #ff453a;
+        }
+
+        /* UI Interface */
+        .ui-interface {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-light);
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-color);
+            background: var(--bg-tertiary);
+        }
+
+        .file-upload.dragover {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f3ff 100%);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .upload-button:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Results Display */
+        .results-container {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .results-tabs {
+            display: flex;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .tab-button {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: var(--bg-primary);
+            color: var(--primary-color);
+            box-shadow: var(--shadow-light);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-light);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .json-preview {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Data Summary */
+        .data-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .summary-card {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .summary-card .number {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .summary-card .label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 0.5rem;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mode-selection {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .data-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>Terminology Ingestion & Representation</h1>
+            <p>Parse NAMASTE CSV exports and generate FHIR CodeSystem and ConceptMap resources</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Feature Specification -->
+        <div class="feature-spec">
+            <h2>Feature Requirements</h2>
+            <div class="requirements-list">
+                <div class="requirement-item">
+                    <span class="material-symbols-outlined">upload_file</span>
+                    <span>Parse the NAMASTE CSV export</span>
+                </div>
+                <div class="requirement-item">
+                    <span class="material-symbols-outlined">schema</span>
+                    <span>Generate and expose it as a FHIR CodeSystem</span>
+                </div>
+                <div class="requirement-item">
+                    <span class="material-symbols-outlined">link</span>
+                    <span>Create FHIR ConceptMap linking NAMASTE → ICD-11 TM2 / Biomedicine codes</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mode Selection -->
+        <div class="mode-selection">
+            <div class="mode-card" id="cliMode" onclick="selectMode('cli')">
+                <span class="material-symbols-outlined">terminal</span>
+                <h3>CLI Mode</h3>
+                <p>Command-line interface with full functionality for system integration and automation</p>
+            </div>
+            <div class="mode-card active" id="uiMode" onclick="selectMode('ui')">
+                <span class="material-symbols-outlined">web</span>
+                <h3>UI Mode</h3>
+                <p>User interface with equivalent functionality for interactive terminology management</p>
+            </div>
+        </div>
+
+        <!-- CLI Interface -->
+        <div class="cli-interface" id="cliInterface" style="display: none;">
+            <h2>Command-Line Interface</h2>
+            <p>Use the NAMASTE Terminology CLI tool for automated processing and system integration:</p>
+            
+            <div class="terminal">
+                <div><span class="prompt">$</span> <span class="command">python namaste_cli.py --help</span></div>
+                <div class="output">
+NAMASTE-FHIR Terminology CLI Tool
+
+positional arguments:
+  --input, -i          Path to NAMASTE CSV file (required)
+
+optional arguments:
+  --output, -o         Output file path (for single resource)
+  --output-dir, -d     Output directory (for multiple resources)
+  --codesystem         Generate FHIR CodeSystem
+  --conceptmap         Generate FHIR ConceptMap
+  --all                Generate all FHIR resources
+  --summary            Display data summary only
+  --verbose, -v        Verbose output
+
+Examples:
+  # Parse CSV and generate all FHIR resources
+  python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --all --output-dir fhir-output/
+
+  # Generate only CodeSystem
+  python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --codesystem --output codesystem.json
+
+  # Display data summary
+  python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --summary
+                </div>
+            </div>
+
+            <div class="terminal">
+                <div><span class="prompt">$</span> <span class="command">python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --summary</span></div>
+                <div class="output success">✅ Successfully parsed 50 records from dataset/namaste_dummy_dataset.csv
+
+📊 NAMASTE Data Summary:
+   • Total records: 50
+   • Unique codes: 5
+   • Unique diseases: 5
+
+🔗 Available Code Mappings:
+   • AAE-16 → TM2: SP00, Biomed: FA01
+   • AA → TM2: SP10, Biomed: FA20
+   • EE-3 → TM2: SL01, Biomed: ME83
+   • EF-2.4.4 → TM2: SJ00, Biomed: 5A11
+   • EA-3 → TM2: SB00, Biomed: CA22</div>
+            </div>
+
+            <div class="terminal">
+                <div><span class="prompt">$</span> <span class="command">python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --all --output-dir fhir-output</span></div>
+                <div class="output success">✅ Successfully parsed 50 records from dataset/namaste_dummy_dataset.csv
+✅ Generated FHIR CodeSystem with 5 concepts
+✅ Saved CodeSystem to fhir-output/namaste-codesystem.json
+✅ Generated FHIR ConceptMap with 5 concept mappings
+✅ Saved ConceptMap to fhir-output/namaste-conceptmap.json
+
+🎉 Terminology ingestion completed successfully!</div>
+            </div>
+        </div>
+
+        <!-- UI Interface -->
+        <div class="ui-interface" id="uiInterface">
+            <h2>Interactive User Interface</h2>
+            <p>Upload your NAMASTE CSV file to generate FHIR resources:</p>
+
+            <div class="file-upload" id="fileUpload">
+                <span class="material-symbols-outlined" style="font-size: 48px; color: var(--text-secondary); margin-bottom: 1rem;">cloud_upload</span>
+                <h3>Upload NAMASTE CSV File</h3>
+                <p style="margin: 0.5rem 0; color: var(--text-secondary);">Drag and drop your CSV file here or click to browse</p>
+                <button class="upload-button" onclick="document.getElementById('fileInput').click()">
+                    Choose File
+                </button>
+                <input type="file" id="fileInput" class="file-input" accept=".csv" onchange="handleFileSelect(event)">
+            </div>
+
+            <!-- Results Container -->
+            <div class="results-container" id="resultsContainer">
+                <div class="data-summary" id="dataSummary">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+
+                <div class="results-tabs">
+                    <button class="tab-button active" onclick="switchTab('summary')">Data Summary</button>
+                    <button class="tab-button" onclick="switchTab('codesystem')">FHIR CodeSystem</button>
+                    <button class="tab-button" onclick="switchTab('conceptmap')">FHIR ConceptMap</button>
+                </div>
+
+                <div class="tab-content active" id="summaryTab">
+                    <h3>Data Analysis</h3>
+                    <div id="summaryContent">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="tab-content" id="codesystemTab">
+                    <h3>FHIR CodeSystem Resource</h3>
+                    <p>Generated FHIR CodeSystem containing all unique NAMASTE terminology concepts:</p>
+                    <div class="json-preview" id="codesystemJson">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="tab-content" id="conceptmapTab">
+                    <h3>FHIR ConceptMap Resource</h3>
+                    <p>Generated FHIR ConceptMap linking NAMASTE codes to ICD-11 TM2 and Biomedicine codes:</p>
+                    <div class="json-preview" id="conceptmapJson">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mode selection
+        function selectMode(mode) {
+            document.getElementById('cliMode').classList.remove('active');
+            document.getElementById('uiMode').classList.remove('active');
+            document.getElementById('cliInterface').style.display = 'none';
+            document.getElementById('uiInterface').style.display = 'none';
+
+            if (mode === 'cli') {
+                document.getElementById('cliMode').classList.add('active');
+                document.getElementById('cliInterface').style.display = 'block';
+            } else {
+                document.getElementById('uiMode').classList.add('active');
+                document.getElementById('uiInterface').style.display = 'block';
+            }
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Remove active from all tabs
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Add active to selected tab
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // File upload handling
+        const fileUpload = document.getElementById('fileUpload');
+        const fileInput = document.getElementById('fileInput');
+
+        // Drag and drop
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.classList.add('dragover');
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.classList.remove('dragover');
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileUpload.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        // ICD-11 mappings (same as CLI tool)
+        const icdMappings = {
+            "AAE-16": {"tm2": "SP00", "biomed": "FA01", "name": "Sandhigatvata"},
+            "AA": {"tm2": "SP10", "biomed": "FA20", "name": "Vatavyadhi"},
+            "EE-3": {"tm2": "SL01", "biomed": "ME83", "name": "Arsha"},
+            "EF-2.4.4": {"tm2": "SJ00", "biomed": "5A11", "name": "Madhumeha/Kshaudrameha"},
+            "EA-3": {"tm2": "SB00", "biomed": "CA22", "name": "Kasa"}
+        };
+
+        function handleFile(file) {
+            if (!file.name.endsWith('.csv')) {
+                alert('Please select a CSV file');
+                return;
+            }
+
+            // Show loading
+            fileUpload.innerHTML = `
+                <div class="loading"></div>
+                <p>Processing ${file.name}...</p>
+            `;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const csv = e.target.result;
+                    const data = parseCSV(csv);
+                    generateFHIRResources(data);
+                    displayResults(data);
+                } catch (error) {
+                    console.error('Error processing file:', error);
+                    alert('Error processing file: ' + error.message);
+                    resetFileUpload();
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n').filter(line => line.trim());
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim());
+                if (values.length === headers.length) {
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index];
+                    });
+
+                    // Add ICD-11 mappings
+                    const code = row.Code || '';
+                    const mapping = icdMappings[code] || {"tm2": "UNKNOWN", "biomed": "UNKNOWN"};
+                    row.icd11_tm2_code = mapping.tm2;
+                    row.icd11_biomed_code = mapping.biomed;
+
+                    data.push(row);
+                }
+            }
+
+            return data;
+        }
+
+        function generateFHIRResources(data) {
+            // Get unique codes
+            const uniqueCodes = {};
+            data.forEach(row => {
+                const code = row.Code || '';
+                if (code && !uniqueCodes[code]) {
+                    uniqueCodes[code] = row;
+                }
+            });
+
+            // Generate CodeSystem
+            window.generatedCodeSystem = {
+                "resourceType": "CodeSystem",
+                "id": "namaste-terminology",
+                "url": "http://ayush.gov.in/namaste",
+                "version": "1.0.0",
+                "name": "NAMASTE",
+                "title": "NAMASTE Traditional Medicine Terminology",
+                "status": "active",
+                "experimental": false,
+                "date": new Date().toISOString(),
+                "publisher": "Ministry of AYUSH, Government of India",
+                "description": "NAMASTE (National AYUSH Morbidity and Standardized Terminologies Electronic) terminology system for traditional medicine",
+                "content": "complete",
+                "count": Object.keys(uniqueCodes).length,
+                "concept": Object.values(uniqueCodes).map(row => ({
+                    "code": row.Code,
+                    "display": row.Disease,
+                    "definition": row.Short_Definition
+                }))
+            };
+
+            // Generate ConceptMap
+            window.generatedConceptMap = {
+                "resourceType": "ConceptMap",
+                "id": "namaste-to-icd11",
+                "url": "http://example.com/namaste-to-icd11",
+                "version": "1.0.0",
+                "name": "NamasteToICD11",
+                "title": "NAMASTE to ICD-11 Concept Map",
+                "status": "active",
+                "experimental": false,
+                "date": new Date().toISOString(),
+                "publisher": "Ministry of AYUSH, Government of India",
+                "description": "Mapping from NAMASTE traditional medicine terminology to ICD-11 Traditional Medicine 2 (TM2) and Biomedicine codes",
+                "sourceUri": "http://ayush.gov.in/namaste",
+                "targetUri": "http://hl7.org/fhir/sid/icd-11",
+                "group": [
+                    {
+                        "source": "http://ayush.gov.in/namaste",
+                        "target": "http://hl7.org/fhir/sid/icd-11",
+                        "element": Object.values(uniqueCodes).map(row => ({
+                            "code": row.Code,
+                            "display": row.Disease,
+                            "target": [
+                                {
+                                    "code": row.icd11_tm2_code,
+                                    "display": `ICD-11 TM2: ${row.icd11_tm2_code}`,
+                                    "equivalence": "equivalent",
+                                    "comment": "Traditional Medicine 2 (TM2) mapping"
+                                },
+                                {
+                                    "code": row.icd11_biomed_code,
+                                    "display": `ICD-11 Biomedicine: ${row.icd11_biomed_code}`,
+                                    "equivalence": "equivalent",
+                                    "comment": "Biomedicine mapping"
+                                }
+                            ]
+                        }))
+                    }
+                ]
+            };
+        }
+
+        function displayResults(data) {
+            // Calculate summary statistics
+            const totalRecords = data.length;
+            const uniqueCodes = new Set(data.map(row => row.Code)).size;
+            const uniqueDiseases = new Set(data.map(row => row.Disease)).size;
+            const mappedCodes = data.filter(row => 
+                row.icd11_tm2_code !== 'UNKNOWN' && row.icd11_biomed_code !== 'UNKNOWN'
+            ).length;
+
+            // Update data summary cards
+            document.getElementById('dataSummary').innerHTML = `
+                <div class="summary-card">
+                    <div class="number">${totalRecords}</div>
+                    <div class="label">Total Records</div>
+                </div>
+                <div class="summary-card">
+                    <div class="number">${uniqueCodes}</div>
+                    <div class="label">Unique Codes</div>
+                </div>
+                <div class="summary-card">
+                    <div class="number">${uniqueDiseases}</div>
+                    <div class="label">Unique Diseases</div>
+                </div>
+                <div class="summary-card">
+                    <div class="number">${Math.round((mappedCodes / totalRecords) * 100)}%</div>
+                    <div class="label">Mapped to ICD-11</div>
+                </div>
+            `;
+
+            // Update summary content
+            const uniqueCodesSet = new Set();
+            const codeMap = {};
+            data.forEach(row => {
+                const code = row.Code;
+                if (code && !uniqueCodesSet.has(code)) {
+                    uniqueCodesSet.add(code);
+                    codeMap[code] = row;
+                }
+            });
+
+            let mappingsList = '';
+            Object.keys(codeMap).sort().forEach(code => {
+                const row = codeMap[code];
+                const hasMapping = row.icd11_tm2_code !== 'UNKNOWN';
+                mappingsList += `
+                    <div class="requirement-item" style="border-left-color: ${hasMapping ? 'var(--success-color)' : 'var(--warning-color)'}">
+                        <span class="material-symbols-outlined" style="color: ${hasMapping ? 'var(--success-color)' : 'var(--warning-color)'}">${hasMapping ? 'check_circle' : 'warning'}</span>
+                        <span>${code} (${row.Disease}) → TM2: ${row.icd11_tm2_code}, Biomed: ${row.icd11_biomed_code}</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('summaryContent').innerHTML = `
+                <h4>Code Mappings:</h4>
+                <div class="requirements-list">
+                    ${mappingsList}
+                </div>
+            `;
+
+            // Update JSON previews
+            document.getElementById('codesystemJson').textContent = JSON.stringify(window.generatedCodeSystem, null, 2);
+            document.getElementById('conceptmapJson').textContent = JSON.stringify(window.generatedConceptMap, null, 2);
+
+            // Show results
+            document.getElementById('resultsContainer').style.display = 'block';
+
+            // Reset file upload
+            resetFileUpload();
+        }
+
+        function resetFileUpload() {
+            fileUpload.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size: 48px; color: var(--text-secondary); margin-bottom: 1rem;">cloud_upload</span>
+                <h3>Upload NAMASTE CSV File</h3>
+                <p style="margin: 0.5rem 0; color: var(--text-secondary);">Drag and drop your CSV file here or click to browse</p>
+                <button class="upload-button" onclick="document.getElementById('fileInput').click()">
+                    Choose File
+                </button>
+            `;
+        }
+
+        // Initialize UI mode on load
+        selectMode('ui');
+    </script>
+</body>
+</html>
