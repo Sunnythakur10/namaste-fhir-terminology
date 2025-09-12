@@ -1,0 +1,42 @@
+{
+  "resourceType": "CodeSystem",
+  "id": "namaste-terminology",
+  "url": "http://ayush.gov.in/namaste",
+  "version": "1.0.0",
+  "name": "NAMASTE",
+  "title": "NAMASTE Traditional Medicine Terminology",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-09-12T10:10:45.354677",
+  "publisher": "Ministry of AYUSH, Government of India",
+  "description": "NAMASTE (National AYUSH Morbidity and Standardized Terminologies Electronic) terminology system for traditional medicine",
+  "content": "complete",
+  "count": 5,
+  "concept": [
+    {
+      "code": "AAE-16",
+      "display": "Sandhigatvata",
+      "definition": "Vitiated Vata in Sandhi"
+    },
+    {
+      "code": "AA",
+      "display": "Vatavyadhi",
+      "definition": "Disorders due to Vata"
+    },
+    {
+      "code": "EE-3",
+      "display": "Arsha",
+      "definition": "Hemorrhoids"
+    },
+    {
+      "code": "EF-2.4.4",
+      "display": "Madhumeha/Kshaudrameha",
+      "definition": "Diabetes Mellitus"
+    },
+    {
+      "code": "EA-3",
+      "display": "Kasa",
+      "definition": "Cough/Tussis"
+    }
+  ]
+}

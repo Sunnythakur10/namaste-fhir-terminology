@@ -1,0 +1,2902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAMASTE-FHIR: Bridging Traditional Medicine with Global Standards | Use Case Presentation</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@100;200;300;400;500;600;700;800;900&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007aff;
+            --primary-dark: #0051d5;
+            --accent-color: #ff3b30;
+            --warning-color: #ff9500;
+            --success-color: #34c759;
+            --text-primary: #1d1d1f;
+            --text-secondary: #86868b;
+            --text-tertiary: #a1a1a6;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f7;
+            --bg-tertiary: #fafafa;
+            --border-color: #d2d2d7;
+            --hero-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --section-spacing: 8rem;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            font-size: 17px;
+            font-weight: 400;
+            overflow-x: hidden;
+        }
+
+        /* Typography System - Apple Style */
+        .display-large {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.025em;
+        }
+
+        .display-medium {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .display-small {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.015em;
+        }
+
+        .headline-large {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 600;
+            line-height: 1.25;
+            letter-spacing: -0.01em;
+        }
+
+        .headline-medium {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .body-large {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .body-emphasis {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: clamp(1rem, 2vw, 1.125rem);
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .caption {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1.3;
+            color: var(--text-secondary);
+        }
+
+        .serif-accent {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 clamp(1rem, 4vw, 3rem);
+        }
+
+        /* Header - Apple Style */
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background: rgba(0, 122, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .nav-links a.active {
+            color: var(--primary-color);
+            background: rgba(0, 122, 255, 0.15);
+        }
+
+        /* Hero Section - Apple Style */
+        .hero-section {
+            background: var(--hero-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="30" cy="30" r="1"/></g></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            max-width: 1000px;
+            padding: 4rem 0;
+        }
+
+        .hero-title {
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+        }
+
+        .hero-subtitle {
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.8s forwards;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1.1s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .cta-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button.primary {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .cta-button.primary:hover {
+            background: var(--bg-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Story Sections - Apple Style */
+        .story-section {
+            padding: var(--section-spacing) 0;
+            position: relative;
+        }
+
+        .story-section.alternate {
+            background: var(--bg-secondary);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-eyebrow {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Chapter Navigation - Apple Style */
+        .chapter-nav {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chapter-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--text-tertiary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .chapter-dot.active {
+            background: var(--primary-color);
+            transform: scale(1.3);
+        }
+
+        .chapter-dot:hover {
+            background: var(--primary-color);
+            transform: scale(1.2);
+        }
+
+        .chapter-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--text-primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .chapter-dot:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Problem Presentation - Dramatic Style */
+        .problem-showcase {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: var(--section-spacing) 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-showcase::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(255, 59, 48, 0.1) 0%, transparent 50%);
+        }
+
+        .problem-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin: 4rem 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Solution Presentation - Clean & Modern */
+        .solution-showcase {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            padding: var(--section-spacing) 0;
+        }
+
+        .solution-flow {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: center;
+            margin: 4rem 0;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .flow-step {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .flow-step:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .flow-arrow {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin: 0 auto 2rem;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .step-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+        }
+
+        .solution-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1fae5;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: #dcfce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: var(--success-color);
+        }
+
+        /* Demo Section */
+        .demo-section {
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            min-height: 500px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .demo-input, .demo-output {
+            padding: 2rem;
+        }
+
+        .demo-input {
+            background: #fafafb;
+            border-right: 1px solid var(--border-color);
+            border-radius: 1rem 0 0 1rem;
+        }
+
+        .demo-output {
+            background: var(--bg-secondary);
+            border-radius: 0 1rem 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .demo-input {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                border-radius: 1rem 1rem 0 0;
+            }
+            .demo-output {
+                border-radius: 0 0 1rem 1rem;
+            }
+        }
+
+        .demo-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(56, 224, 123, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-codes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .code-tag {
+            background: var(--primary-color);
+            color: var(--text-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .code-tag.icd11 {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Use Case Summary */
+        .summary-section {
+            background: linear-gradient(135deg, #fffbf0, #fefcf7);
+            border-radius: 1rem;
+            border: 1px solid #fed7aa;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .summary-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .summary-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: #fef3c7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: #d97706;
+        }
+
+        .workflow-steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border-radius: 2rem;
+            border: 1px solid var(--border-color);
+            font-weight: 500;
+        }
+
+        .step-number {
+            background: var(--primary-color);
+            color: var(--text-primary);
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+
+        .arrow {
+            color: var(--text-secondary);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-on-scroll {
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 0 0.5rem;
+            }
+            
+            .workflow-steps {
+                flex-direction: column;
+            }
+            
+            .arrow {
+                transform: rotate(90deg);
+            }
+
+            .demo-container {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="/ui/pages/landing.html" class="logo">
+                    <span class="material-symbols-outlined">healing</span>
+                    NAMASTE-FHIR Bridge
+                </a>
+                <ul class="nav-links">
+                    <li><a href="/ui/pages/landing.html">Home</a></li>
+                    <li><a href="#story" class="active">Story</a></li>
+                    <li><a href="#gap">The Gap</a></li>
+                    <li><a href="#solution">Solution</a></li>
+                    <li><a href="#demo">Experience</a></li>
+                    <li><a href="#future">Future</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Chapter Navigation -->
+    <div class="chapter-nav">
+        <div class="chapter-dot active" data-label="Introduction" onclick="scrollToSection('hero')"></div>
+        <div class="chapter-dot" data-label="The Challenge" onclick="scrollToSection('gap')"></div>
+        <div class="chapter-dot" data-label="Our Solution" onclick="scrollToSection('solution')"></div>
+        <div class="chapter-dot" data-label="Experience" onclick="scrollToSection('demo')"></div>
+        <div class="chapter-dot" data-label="The Future" onclick="scrollToSection('future')"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+        <div class="hero-content">
+            <div class="section-eyebrow serif-accent">Introducing</div>
+            <h1 class="display-large hero-title">
+                The Future of<br>
+                <span class="serif-accent">Medical Interoperability</span>
+            </h1>
+            <p class="body-large hero-subtitle">
+                Bridging the gap between traditional AYUSH medicine and global healthcare standards with intelligent dual-coding technology that transforms how medical data flows across diverse healthcare systems.
+            </p>
+            <div class="hero-cta">
+                <a href="#demo" class="cta-button primary">
+                    <span class="material-symbols-outlined">play_arrow</span>
+                    Experience the Demo
+                </a>
+                <a href="#gap" class="cta-button">
+                    <span class="material-symbols-outlined">insights</span>
+                    Discover the Challenge
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapter 1: The Challenge -->
+    <section id="gap" class="problem-showcase">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Chapter 1</div>
+                <h2 class="display-medium section-title" style="color: white;">
+                    The Healthcare <span class="serif-accent">Divide</span>
+                </h2>
+                <p class="body-large section-subtitle" style="color: rgba(255,255,255,0.8);">
+                    Traditional medicine and modern healthcare exist in separate worlds, creating barriers that limit patient care and medical advancement.
+                </p>
+            </div>
+            
+            <div class="problem-stats">
+                <div class="stat-card">
+                    <span class="stat-number">40%</span>
+                    <span class="stat-label">Healthcare Data Fragmented</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">60%</span>
+                    <span class="stat-label">Longer Processing Times</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">Limited</span>
+                    <span class="stat-label">Cross-System Integration</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">Zero</span>
+                    <span class="stat-label">Universal Standards</span>
+                </div>
+            </div>
+            
+            <div class="section-header" style="margin-top: 4rem;">
+                <h3 class="headline-large" style="color: white; margin-bottom: 2rem;">The Reality Today</h3>
+                <p class="body-large" style="color: rgba(255,255,255,0.8); max-width: 800px; margin: 0 auto;">
+                    Healthcare providers struggle with disconnected systems where traditional AYUSH terminologies cannot communicate with modern ICD-11 standards, creating silos that prevent comprehensive patient care and medical research advancement.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapter 2: The Solution -->
+    <section id="solution" class="story-section solution-showcase">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Chapter 2</div>
+                <h2 class="display-medium section-title">
+                    Intelligent <span class="serif-accent">Bridge Technology</span>
+                </h2>
+                <p class="body-large section-subtitle">
+                    NAMASTE-FHIR creates seamless connections between traditional and modern medical systems through advanced dual-coding architecture.
+                </p>
+            </div>
+
+            <div class="solution-flow">
+                <div class="flow-step">
+                    <div class="step-icon">
+                        <span class="material-symbols-outlined">input</span>
+                    </div>
+                    <h3 class="step-title">Traditional Input</h3>
+                    <p class="step-description">
+                        AYUSH practitioners input traditional medical terms using familiar terminology like Sandhigatvata, Madhumeha, or Kasa.
+                    </p>
+                </div>
+                
+                <div class="flow-arrow">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-icon">
+                        <span class="material-symbols-outlined">settings</span>
+                    </div>
+                    <h3 class="step-title">FHIR Processing</h3>
+                    <p class="step-description">
+                        Our intelligent engine processes inputs through FHIR-compliant architecture with real-time mapping algorithms.
+                    </p>
+                </div>
+                
+                <div class="flow-arrow">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-icon">
+                        <span class="material-symbols-outlined">language</span>
+                    </div>
+                    <h3 class="step-title">Dual Output</h3>
+                    <p class="step-description">
+                        Receive both traditional codes and international ICD-11 mappings with confidence scoring and clinical context.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapter 3: Interactive Experience -->
+    <section id="demo" class="story-section alternate">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Chapter 3</div>
+                <h2 class="display-medium section-title">
+                    Experience the <span class="serif-accent">Technology</span>
+                </h2>
+                <p class="body-large section-subtitle">
+                    See real-time dual-coding in action with our interactive demonstration system.
+                </p>
+            </div>
+
+            <div id="demo-container" style="
+                background: white;
+                border-radius: 2rem;
+                padding: 3rem;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+                margin: 4rem 0;
+            ">
+                <div style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 3rem;
+                    align-items: start;
+                ">
+                    <!-- Input Section -->
+                    <div style="
+                        padding: 2rem;
+                        background: linear-gradient(135deg, #f8fafc, #ffffff);
+                        border-radius: 1.5rem;
+                        border: 2px solid #e2e8f0;
+                    ">
+                        <h3 class="headline-medium" style="margin-bottom: 2rem; color: var(--primary-color);">
+                            System Input Specification
+                        </h3>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label class="body-emphasis" style="display: block; margin-bottom: 0.75rem;">
+                                Traditional Medicine Term
+                            </label>
+                            <input type="text" id="medical-term" 
+                                placeholder="Enter term (e.g., Sandhigatvata, Madhumeha, Kasa)"
+                                style="
+                                    width: 100%;
+                                    padding: 1rem;
+                                    border: 2px solid #e2e8f0;
+                                    border-radius: 0.75rem;
+                                    font-size: 1rem;
+                                    transition: all 0.3s ease;
+                                "
+                                onfocus="this.style.borderColor='var(--primary-color)'"
+                                onblur="this.style.borderColor='#e2e8f0'"
+                            >
+                        </div>
+
+                        <div style="margin-bottom: 2rem;">
+                            <label class="body-emphasis" style="display: block; margin-bottom: 0.75rem;">
+                                User Context
+                            </label>
+                            <select id="user-context" style="
+                                width: 100%;
+                                padding: 1rem;
+                                border: 2px solid #e2e8f0;
+                                border-radius: 0.75rem;
+                                font-size: 1rem;
+                                background: white;
+                            ">
+                                <option value="healthcare">Healthcare Provider</option>
+                                <option value="researcher">Medical Researcher</option>
+                                <option value="insurance">Insurance Professional</option>
+                            </select>
+                        </div>
+
+                        <button onclick="translateTerm()" style="
+                            width: 100%;
+                            background: var(--primary-color);
+                            color: white;
+                            border: none;
+                            padding: 1.25rem;
+                            border-radius: 0.75rem;
+                            font-size: 1rem;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                        " onmouseover="this.style.background='var(--primary-dark)'" onmouseout="this.style.background='var(--primary-color)'">
+                            <span class="material-symbols-outlined" style="margin-right: 0.5rem;">translate</span>
+                            Generate Dual-Code Mapping
+                        </button>
+
+                        <div style="margin-top: 2rem;">
+                            <h4 class="body-emphasis" style="margin-bottom: 1rem;">Try These Examples:</h4>
+                            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                                <button onclick="setExample('sandhigatvata')" class="example-btn">Sandhigatvata</button>
+                                <button onclick="setExample('madhumeha')" class="example-btn">Madhumeha</button>
+                                <button onclick="setExample('kasa')" class="example-btn">Kasa</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output Section -->
+                    <div style="
+                        padding: 2rem;
+                        background: linear-gradient(135deg, #f0f9ff, #ffffff);
+                        border-radius: 1.5rem;
+                        border: 2px solid #bae6fd;
+                    ">
+                        <h3 class="headline-medium" style="margin-bottom: 2rem; color: #0284c7;">
+                            System Output Specification
+                        </h3>
+                        
+                        <div id="output-area" style="
+                            text-align: center;
+                            padding: 3rem 2rem;
+                            color: var(--text-secondary);
+                        ">
+                            <div style="
+                                width: 100px;
+                                height: 100px;
+                                background: linear-gradient(135deg, #0284c7, #0369a1);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto 2rem;
+                                color: white;
+                                font-size: 2.5rem;
+                            ">
+                                <span class="material-symbols-outlined">psychology</span>
+                            </div>
+                            <h4 class="headline-medium" style="margin-bottom: 1rem;">Ready for Translation</h4>
+                            <p class="body-large">Enter a traditional medicine term above to see the dual-coding functionality in real-time.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapter 4: The Future -->
+    <section id="future" class="story-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Chapter 4</div>
+                <h2 class="display-medium section-title">
+                    Transforming <span class="serif-accent">Healthcare</span>
+                </h2>
+                <p class="body-large section-subtitle">
+                    Real-world applications across healthcare systems, research institutions, and policy frameworks.
+                </p>
+            </div>
+
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 2rem;
+                margin: 4rem 0;
+            ">
+                <div class="application-card">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <span class="material-symbols-outlined">local_hospital</span>
+                    </div>
+                    <h3 class="headline-medium">Healthcare Providers</h3>
+                    <p class="body-large">Seamless EHR integration enabling comprehensive patient care across traditional and modern treatment modalities.</p>
+                    <div class="metric">50% faster documentation</div>
+                </div>
+
+                <div class="application-card">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                        <span class="material-symbols-outlined">science</span>
+                    </div>
+                    <h3 class="headline-medium">Research Institutions</h3>
+                    <p class="body-large">Cross-system data analysis enabling evidence-based research across diverse medical traditions.</p>
+                    <div class="metric">100% data interoperability</div>
+                </div>
+
+                <div class="application-card">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                        <span class="material-symbols-outlined">account_balance</span>
+                    </div>
+                    <h3 class="headline-medium">Insurance Systems</h3>
+                    <p class="body-large">Automated claim processing with standardized coding across all medical systems and treatment types.</p>
+                    <div class="metric">40% faster processing</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="story-section alternate">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="display-medium section-title">
+                    Ready to Bridge the <span class="serif-accent">Divide?</span>
+                </h2>
+                <p class="body-large section-subtitle">
+                    Join the healthcare interoperability revolution and transform how medical systems communicate.
+                </p>
+                <div style="margin-top: 3rem;">
+                    <a href="#demo" class="cta-button primary" style="margin-right: 1rem;">
+                        <span class="material-symbols-outlined">rocket_launch</span>
+                        Start Building
+                    </a>
+                    <a href="/ui/pages/landing.html" class="cta-button">
+                        <span class="material-symbols-outlined">home</span>
+                        Return Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+                            padding: 1rem 2rem;
+                            border-radius: 0.75rem;
+                            text-decoration: none;
+                            font-weight: 600;
+                            transition: all 0.3s ease;
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            border: 2px solid var(--border-color);
+                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--primary-color');" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--border-color');">
+                            <span class="material-symbols-outlined">info</span>
+                            Learn the Problem
+                        </a>
+                    </div>
+                    <div style="
+                        display: flex;
+                        justify-content: center;
+                        gap: 3rem;
+                        flex-wrap: wrap;
+                        margin-top: 2rem;
+                        padding-top: 2rem;
+                        border-top: 1px solid var(--border-color);
+                    ">
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 900; color: var(--accent-color);">40%</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Healthcare Data Fragmented</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 900; color: var(--primary-color);">50%</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Faster Documentation</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 900; color: var(--warning-color);">95%</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Translation Accuracy</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Problem Definition Section -->
+            <section id="problem" class="section problem-section">
+                <div class="section-header">
+                    <span style="
+                        display: inline-block;
+                        background: var(--accent-color);
+                        color: white;
+                        padding: 0.5rem 1rem;
+                        border-radius: 2rem;
+                        font-size: 0.875rem;
+                        font-weight: 600;
+                        margin-bottom: 1rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    ">Step 1: The Gap</span>
+                    <h1 class="section-title">What Healthcare Challenge Are We Solving?</h1>
+                    <p class="section-subtitle">
+                        Traditional AYUSH medical systems and modern healthcare operate in isolated data silos, creating critical gaps in patient care, research, and healthcare delivery.
+                    </p>
+                </div>
+
+                <!-- Current State Visualization -->
+                <div style="
+                    background: var(--bg-secondary);
+                    border-radius: 1rem;
+                    padding: 2rem;
+                    margin: 2rem 0;
+                    border: 2px dashed var(--accent-color);
+                    text-align: center;
+                ">
+                    <h3 style="color: var(--accent-color); margin-bottom: 1rem; font-size: 1.5rem;">
+                        Current State: Disconnected Healthcare Systems
+                    </h3>
+                    <div style="
+                        display: flex;
+                        justify-content: space-around;
+                        align-items: center;
+                        flex-wrap: wrap;
+                        gap: 2rem;
+                        margin: 2rem 0;
+                    ">
+                        <div style="
+                            background: #fef2f2;
+                            padding: 1.5rem;
+                            border-radius: 1rem;
+                            border: 2px solid #fecaca;
+                            min-width: 200px;
+                        ">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏥</div>
+                            <div style="font-weight: 600; color: var(--text-primary);">AYUSH Systems</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Sandhigatvata<br>Madhumeha<br>Kasa</div>
+                        </div>
+                        <div style="
+                            color: var(--accent-color);
+                            font-size: 3rem;
+                            font-weight: 900;
+                        ">❌</div>
+                        <div style="
+                            background: #fef2f2;
+                            padding: 1.5rem;
+                            border-radius: 1rem;
+                            border: 2px solid #fecaca;
+                            min-width: 200px;
+                        ">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌍</div>
+                            <div style="font-weight: 600; color: var(--text-primary);">Global Standards</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">ICD-11<br>FHIR<br>SNOMED CT</div>
+                        </div>
+                    </div>
+                    <p style="color: var(--accent-color); font-weight: 600; font-size: 1.1rem;">
+                        No Translation Bridge = Fragmented Healthcare Data
+                    </p>
+                </div>
+
+                <div class="problem-grid">
+                    <div class="problem-card">
+                        <div class="problem-icon">
+                            <span class="material-symbols-outlined">language</span>
+                        </div>
+                        <h3>Terminology Fragmentation</h3>
+                        <p><strong>Challenge:</strong> AYUSH medical systems use distinct vocabularies (Sanskrit, Arabic, Unani terms) that do not map to international standards like ICD-11.</p>
+                        <div style="background: #fef2f2; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem; border-left: 3px solid var(--accent-color);">
+                            <strong style="color: var(--accent-color);">Impact:</strong> 40% of healthcare data remains fragmented and unusable for global health analytics.
+                        </div>
+                    </div>
+
+                    <div class="problem-card">
+                        <div class="problem-icon">
+                            <span class="material-symbols-outlined">sync_problem</span>
+                        </div>
+                        <h3>Interoperability Crisis</h3>
+                        <p><strong>Challenge:</strong> Healthcare providers cannot seamlessly share patient data across traditional and modern medical systems.</p>
+                        <div style="background: #fef2f2; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem; border-left: 3px solid var(--accent-color);">
+                            <strong style="color: var(--accent-color);">Impact:</strong> Limited cross-system data sharing affecting coordinated patient care.
+                        </div>
+                    </div>
+
+                    <div class="problem-card">
+                        <div class="problem-icon">
+                            <span class="material-symbols-outlined">account_balance</span>
+                        </div>
+                        <h3>Insurance Processing Delays</h3>
+                        <p><strong>Challenge:</strong> Insurance companies struggle to process claims for traditional medicine treatments without standardized diagnostic codes.</p>
+                        <div style="background: #fef2f2; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem; border-left: 3px solid var(--accent-color);">
+                            <strong style="color: var(--accent-color);">Impact:</strong> 60% longer claim processing times and frequent claim rejections.
+                        </div>
+                    </div>
+
+                    <div class="problem-card">
+                        <div class="problem-icon">
+                            <span class="material-symbols-outlined">science</span>
+                        </div>
+                        <h3>Research Data Inconsistency</h3>
+                        <p><strong>Challenge:</strong> Public health researchers cannot effectively analyze morbidity patterns across traditional and modern medicine systems.</p>
+                        <div style="background: #fef2f2; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem; border-left: 3px solid var(--accent-color);">
+                            <strong style="color: var(--accent-color);">Impact:</strong> Inconsistent data coding prevents evidence-based policy making.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Problem Summary -->
+                <div style="
+                    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+                    border-radius: 1rem;
+                    padding: 2rem;
+                    margin-top: 2rem;
+                    text-align: center;
+                    border: 1px solid #fecaca;
+                ">
+                    <h3 style="color: var(--accent-color); margin-bottom: 1rem;">Current State Impact</h3>
+                    <div style="
+                        display: flex;
+                        justify-content: space-around;
+                        flex-wrap: wrap;
+                        gap: 2rem;
+                        margin-top: 1.5rem;
+                    ">
+                        <div>
+                            <div style="font-size: 2.5rem; font-weight: 900; color: var(--accent-color);">40%</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary);">of global healthcare data is fragmented</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2.5rem; font-weight: 900; color: var(--accent-color);">60%</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary);">longer claim processing</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2.5rem; font-weight: 900; color: var(--accent-color);">Limited</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary);">cross-system research</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+                    <div class="problem-card">
+                        <div class="problem-icon">
+                            <span class="material-symbols-outlined">payments</span>
+                        </div>
+                        <h3>Insurance Complexity</h3>
+                        <p>Insurance companies struggle to process claims for traditional medicine treatments due to lack of standardized coding, leading to delays and denials.</p>
+                    </div>
+
+                    <div class="problem-card">
+                        <div class="problem-icon">
+                            <span class="material-symbols-outlined">analytics</span>
+                        </div>
+                        <h3>Research Limitations</h3>
+                        <p>Public health researchers cannot effectively analyze morbidity patterns across traditional and modern medicine systems due to inconsistent data coding.</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: #fef2f2; border-radius: 0.5rem;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 0.5rem;">Current State Impact</h4>
+                    <p><strong>40%</strong> of global healthcare data is fragmented • <strong>60%</strong> longer claim processing • <strong>Limited</strong> cross-system research</p>
+                </div>
+            </section>
+
+            <!-- Solution Introduction Section -->
+            <section id="solution" class="section solution-section">
+                <div class="section-header">
+                    <span style="
+                        display: inline-block;
+                        background: var(--success-color);
+                        color: white;
+                        padding: 0.5rem 1rem;
+                        border-radius: 2rem;
+                        font-size: 0.875rem;
+                        font-weight: 600;
+                        margin-bottom: 1rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    ">Step 2: Technical Solution</span>
+                    <h2 class="section-title">NAMASTE-FHIR Bridge Implementation Strategy</h2>
+                    <p class="section-subtitle">
+                        The NAMASTE-FHIR terminology bridge establishes seamless dual-coding capabilities between AYUSH traditional medicine terms and international ICD-11 standards, addressing all interoperability challenges in healthcare systems.
+                    </p>
+                </div>
+
+                <!-- Solution Visualization -->
+                <div style="
+                    background: var(--bg-secondary);
+                    border-radius: 1rem;
+                    padding: 2rem;
+                    margin: 2rem 0;
+                    border: 2px solid var(--success-color);
+                    text-align: center;
+                ">
+                    <h3 style="color: var(--success-color); margin-bottom: 1rem; font-size: 1.5rem;">
+                        NAMASTE-FHIR Solution: Connected Healthcare Ecosystem
+                    </h3>
+                    <div style="
+                        display: flex;
+                        justify-content: space-around;
+                        align-items: center;
+                        flex-wrap: wrap;
+                        gap: 1rem;
+                        margin: 2rem 0;
+                    ">
+                        <div style="
+                            background: #f0f9ff;
+                            padding: 1.5rem;
+                            border-radius: 1rem;
+                            border: 2px solid #93c5fd;
+                            min-width: 180px;
+                        ">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏥</div>
+                            <div style="font-weight: 600; color: var(--text-primary);">AYUSH Input</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Sandhigatvata</div>
+                        </div>
+                        <div style="
+                            background: var(--success-color);
+                            color: white;
+                            padding: 1rem;
+                            border-radius: 1rem;
+                            font-weight: 600;
+                            min-width: 140px;
+                        ">
+                            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚡</div>
+                            <div>NAMASTE-FHIR<br>Bridge</div>
+                        </div>
+                        <div style="
+                            background: #f0f9ff;
+                            padding: 1.5rem;
+                            border-radius: 1rem;
+                            border: 2px solid #93c5fd;
+                            min-width: 180px;
+                        ">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌍</div>
+                            <div style="font-weight: 600; color: var(--text-primary);">Dual Output</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">ICD-11: SP00<br>NAMASTE: AAE-16</div>
+                        </div>
+                    </div>
+                    <p style="color: var(--success-color); font-weight: 600; font-size: 1.1rem;">
+                        Instant Translation = Unified Healthcare Data
+                    </p>
+                </div>
+
+                <!-- How It Works Steps -->
+                <div style="margin: 3rem 0;">
+                    <h3 style="text-align: center; margin-bottom: 2rem; color: var(--text-primary); font-size: 1.5rem;">
+                        How It Works: 3 Simple Steps
+                    </h3>
+                    <div class="workflow-steps" style="
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        flex-wrap: wrap;
+                        gap: 1rem;
+                        margin: 2rem 0;
+                    ">
+                        <div style="
+                            background: var(--bg-secondary);
+                            padding: 1.5rem;
+                            border-radius: 1rem;
+                            text-align: center;
+                            min-width: 200px;
+                            border: 2px solid #e5e7eb;
+                            transition: all 0.3s ease;
+                        " onmouseover="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--primary-color'); this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.transform='translateY(0)';">
+                            <div style="
+                                background: var(--primary-color);
+                                color: white;
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto 1rem;
+                                font-weight: 700;
+                                font-size: 1.2rem;
+                            ">1</div>
+                            <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Input Traditional Term</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Enter AYUSH medical terminology (for example: "Sandhigatvata")</p>
+                        </div>
+                        
+                        <span style="color: var(--primary-color); font-size: 2rem; margin: 0 0.5rem;">➤</span>
+                        
+                        <div style="
+                            background: var(--bg-secondary);
+                            padding: 1.5rem;
+                            border-radius: 1rem;
+                            text-align: center;
+                            min-width: 200px;
+                            border: 2px solid #e5e7eb;
+                            transition: all 0.3s ease;
+                        " onmouseover="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--primary-color'); this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.transform='translateY(0)';">
+                            <div style="
+                                background: var(--primary-color);
+                                color: white;
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto 1rem;
+                                font-weight: 700;
+                                font-size: 1.2rem;
+                            ">2</div>
+                            <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">FHIR Processing</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">AI-powered semantic mapping using HL7 FHIR standards</p>
+                        </div>
+                        
+                        <span style="color: var(--primary-color); font-size: 2rem; margin: 0 0.5rem;">➤</span>
+                        
+                        <div style="
+                            background: var(--bg-secondary);
+                            padding: 1.5rem;
+                            border-radius: 1rem;
+                            text-align: center;
+                            min-width: 200px;
+                            border: 2px solid #e5e7eb;
+                            transition: all 0.3s ease;
+                        " onmouseover="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--primary-color'); this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.transform='translateY(0)';">
+                            <div style="
+                                background: var(--primary-color);
+                                color: white;
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto 1rem;
+                                font-weight: 700;
+                                font-size: 1.2rem;
+                            ">3</div>
+                            <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Dual-Code Output</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Get both NAMASTE code and ICD-11 mapping with confidence score</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Features -->
+                <h3 style="text-align: center; margin: 3rem 0 2rem; color: var(--text-primary); font-size: 1.5rem;">
+                    Key Solution Features
+                </h3>
+                <div class="solution-features" style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                    gap: 1.5rem;
+                    margin-top: 2rem;
+                ">
+                    <div class="feature-card" style="
+                        background: var(--bg-secondary);
+                        padding: 2rem;
+                        border-radius: 1rem;
+                        border: 2px solid #d1fae5;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 25px rgba(0, 0, 0, 0.15)'; this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--success-color');" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='#d1fae5';">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 3px;
+                            background: var(--success-color);
+                        "></div>
+                        <div style="
+                            background: linear-gradient(135deg, var(--success-color), #22c55e);
+                            color: white;
+                            width: 50px;
+                            height: 50px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-bottom: 1rem;
+                        ">
+                            <span class="material-symbols-outlined">code</span>
+                        </div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.2rem;">FHIR-Compliant Architecture</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Built on HL7 FHIR standards ensuring seamless integration with existing healthcare systems worldwide.</p>
+                        <div style="
+                            background: #f0fdf4;
+                            padding: 0.75rem;
+                            border-radius: 0.5rem;
+                            border-left: 3px solid var(--success-color);
+                        ">
+                            <strong style="color: var(--success-color);">Benefit:</strong> <span style="color: var(--text-secondary);">Plug-and-play integration with any FHIR-enabled system</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" style="
+                        background: var(--bg-secondary);
+                        padding: 2rem;
+                        border-radius: 1rem;
+                        border: 2px solid #d1fae5;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 25px rgba(0, 0, 0, 0.15)'; this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--success-color');" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='#d1fae5';">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 3px;
+                            background: var(--success-color);
+                        "></div>
+                        <div style="
+                            background: linear-gradient(135deg, var(--success-color), #22c55e);
+                            color: white;
+                            width: 50px;
+                            height: 50px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-bottom: 1rem;
+                        ">
+                            <span class="material-symbols-outlined">swap_horiz</span>
+                        </div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.2rem;">Bidirectional Translation</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Two-way mapping between AYUSH terms and ICD-11 codes, preserving clinical meaning and context.</p>
+                        <div style="
+                            background: #f0fdf4;
+                            padding: 0.75rem;
+                            border-radius: 0.5rem;
+                            border-left: 3px solid var(--success-color);
+                        ">
+                            <strong style="color: var(--success-color);">Benefit:</strong> <span style="color: var(--text-secondary);">Works for both traditional → modern and modern → traditional workflows</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" style="
+                        background: var(--bg-secondary);
+                        padding: 2rem;
+                        border-radius: 1rem;
+                        border: 2px solid #d1fae5;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 25px rgba(0, 0, 0, 0.15)'; this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--success-color');" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='#d1fae5';">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 3px;
+                            background: var(--success-color);
+                        "></div>
+                        <div style="
+                            background: linear-gradient(135deg, var(--success-color), #22c55e);
+                            color: white;
+                            width: 50px;
+                            height: 50px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-bottom: 1rem;
+                        ">
+                            <span class="material-symbols-outlined">speed</span>
+                        </div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.2rem;">Real-Time Processing</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Instant terminology lookup and translation with AI-powered autocomplete and confidence scoring.</p>
+                        <div style="
+                            background: #f0fdf4;
+                            padding: 0.75rem;
+                            border-radius: 0.5rem;
+                            border-left: 3px solid var(--success-color);
+                        ">
+                            <strong style="color: var(--success-color);">Benefit:</strong> <span style="color: var(--text-secondary);">Sub-second response times for clinical workflows</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" style="
+                        background: var(--bg-secondary);
+                        padding: 2rem;
+                        border-radius: 1rem;
+                        border: 2px solid #d1fae5;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 25px rgba(0, 0, 0, 0.15)'; this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--success-color');" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='#d1fae5';">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 3px;
+                            background: var(--success-color);
+                        "></div>
+                        <div style="
+                            background: linear-gradient(135deg, var(--success-color), #22c55e);
+                            color: white;
+                            width: 50px;
+                            height: 50px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-bottom: 1rem;
+                        ">
+                            <span class="material-symbols-outlined">security</span>
+                        </div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.2rem;">ABHA Integration</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Secure authentication through India's Ayushman Bharat Health Account system for patient privacy.</p>
+                        <div style="
+                            background: #f0fdf4;
+                            padding: 0.75rem;
+                            border-radius: 0.5rem;
+                            border-left: 3px solid var(--success-color);
+                        ">
+                            <strong style="color: var(--success-color);">Benefit:</strong> <span style="color: var(--text-secondary);">Government-compliant healthcare data handling</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" style="
+                        background: var(--bg-secondary);
+                        padding: 2rem;
+                        border-radius: 1rem;
+                        border: 2px solid #d1fae5;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 25px rgba(0, 0, 0, 0.15)'; this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--success-color');" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='#d1fae5';">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 3px;
+                            background: var(--success-color);
+                        "></div>
+                        <div style="
+                            background: linear-gradient(135deg, var(--success-color), #22c55e);
+                            color: white;
+                            width: 50px;
+                            height: 50px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-bottom: 1rem;
+                        ">
+                            <span class="material-symbols-outlined">analytics</span>
+                        </div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.2rem;">Analytics-Ready Output</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Generates structured data suitable for research, policy-making, and cross-system analytics.</p>
+                        <div style="
+                            background: #f0fdf4;
+                            padding: 0.75rem;
+                            border-radius: 0.5rem;
+                            border-left: 3px solid var(--success-color);
+                        ">
+                            <strong style="color: var(--success-color);">Benefit:</strong> <span style="color: var(--text-secondary);">Evidence-based healthcare insights from combined data</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" style="
+                        background: var(--bg-secondary);
+                        padding: 2rem;
+                        border-radius: 1rem;
+                        border: 2px solid #d1fae5;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 25px rgba(0, 0, 0, 0.15)'; this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--success-color');" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='#d1fae5';">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 3px;
+                            background: var(--success-color);
+                        "></div>
+                        <div style="
+                            background: linear-gradient(135deg, var(--success-color), #22c55e);
+                            color: white;
+                            width: 50px;
+                            height: 50px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-bottom: 1rem;
+                        ">
+                            <span class="material-symbols-outlined">cloud</span>
+                        </div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.2rem;">API-First Design</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">RESTful APIs enable seamless integration with EHRs, insurance systems, and research platforms.</p>
+                        <div style="
+                            background: #f0fdf4;
+                            padding: 0.75rem;
+                            border-radius: 0.5rem;
+                            border-left: 3px solid var(--success-color);
+                        ">
+                            <strong style="color: var(--success-color);">Benefit:</strong> <span style="color: var(--text-secondary);">Easy integration with any existing healthcare technology stack</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Demo Section -->
+            <section id="demo" class="section demo-section">
+                <div class="section-header">
+                    <span style="
+                        display: inline-block;
+                        background: var(--warning-color);
+                        color: #92400e;
+                        padding: 0.5rem 1rem;
+                        border-radius: 2rem;
+                        font-size: 0.875rem;
+                        font-weight: 600;
+                        margin-bottom: 1rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    ">Step 3: Live Demo</span>
+                    <h2 class="section-title">Interactive Demonstration: Real-Time Translation System</h2>
+                    <p class="section-subtitle">
+                        Experience the power of dual-coding in real-time. Enter any traditional AYUSH condition and watch it instantly translate to ICD-11 codes with confidence scoring.
+                    </p>
+                </div>
+
+                <!-- Demo Instructions -->
+                <div style="
+                    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+                    border-radius: 1rem;
+                    padding: 2rem;
+                    margin: 2rem 0;
+                    border: 2px solid #f59e0b;
+                    text-align: center;
+                ">
+                    <h3 style="color: #92400e; margin-bottom: 1rem; font-size: 1.3rem;">
+                        🔬 Interactive Translation System Demonstration
+                    </h3>
+                    <p style="color: #92400e; margin-bottom: 1.5rem;">
+                        This demonstration illustrates the complete input-output specification for system integration. Development teams can utilize these examples to implement the API endpoints effectively.
+                    </p>
+                    <div style="
+                        display: flex;
+                        justify-content: center;
+                        gap: 2rem;
+                        flex-wrap: wrap;
+                        font-size: 0.9rem;
+                    ">
+                        <div style="color: #92400e;">
+                            <strong>📥 Input:</strong> Traditional AYUSH terms
+                        </div>
+                        <div style="color: #92400e;">
+                            <strong>⚡ Processing:</strong> FHIR-compliant mapping
+                        </div>
+                        <div style="color: #92400e;">
+                            <strong>📤 Output:</strong> Dual codes + confidence score
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-container" style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 2rem;
+                    margin-top: 2rem;
+                    padding: 2rem;
+                    background: var(--bg-secondary);
+                    border-radius: 1rem;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                ">
+                    <div class="demo-input" style="
+                        background: #f8fafc;
+                        padding: 2rem;
+                        border-radius: 1rem;
+                        border: 2px solid #e2e8f0;
+                        position: relative;
+                    ">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 4px;
+                            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+                        "></div>
+                        <div style="
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            margin-bottom: 1.5rem;
+                            color: #1e40af;
+                            font-weight: 600;
+                            font-size: 1.1rem;
+                        ">
+                            <span class="material-symbols-outlined" style="font-size: 1.5rem;">input</span>
+                            INPUT: System Input Specification
+                        </div>
+
+                        <form id="demoForm" style="margin-bottom: 1.5rem;">
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="
+                                    display: block;
+                                    margin-bottom: 0.5rem;
+                                    font-weight: 600;
+                                    color: var(--text-primary);
+                                " for="searchTerm">Traditional Medicine Term</label>
+                                <input 
+                                    type="text" 
+                                    id="searchTerm" 
+                                    style="
+                                        width: 100%;
+                                        padding: 1rem;
+                                        border: 2px solid #e2e8f0;
+                                        border-radius: 0.75rem;
+                                        font-size: 1rem;
+                                        transition: all 0.3s ease;
+                                        background: white;
+                                    " 
+                                    placeholder="For example: Sandhigatvata, Madhumeha, Kasa..."
+                                    list="suggestions"
+                                    onfocus="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--primary-color'); this.style.boxShadow='0 0 0 3px rgba(56, 224, 123, 0.1)';"
+                                    onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none';"
+                                >
+                                <datalist id="suggestions">
+                                    <option value="Sandhigatvata">
+                                    <option value="Madhumeha">
+                                    <option value="Kasa">
+                                    <option value="Arsha">
+                                    <option value="Vatavyadhi">
+                                </datalist>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="
+                                    display: block;
+                                    margin-bottom: 0.5rem;
+                                    font-weight: 600;
+                                    color: var(--text-primary);
+                                " for="userType">User Context (affects output guidance)</label>
+                                <select id="userType" style="
+                                    width: 100%;
+                                    padding: 1rem;
+                                    border: 2px solid #e2e8f0;
+                                    border-radius: 0.75rem;
+                                    font-size: 1rem;
+                                    background: white;
+                                    transition: all 0.3s ease;
+                                " onfocus="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--primary-color');" onblur="this.style.borderColor='#e2e8f0';">
+                                    <option value="doctor">Healthcare Provider</option>
+                                    <option value="researcher">Researcher</option>
+                                    <option value="insurer">Insurance Professional</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" id="searchBtn" style="
+                                width: 100%;
+                                background: var(--primary-color);
+                                color: white;
+                                padding: 1rem 1.5rem;
+                                border: none;
+                                border-radius: 0.75rem;
+                                font-size: 1rem;
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                gap: 0.5rem;
+                            " onmouseover="this.style.background='#2d5016'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background=getComputedStyle(document.documentElement).getPropertyValue('--primary-color'); this.style.transform='translateY(0)';">
+                                <span class="material-symbols-outlined">search</span>
+                                Generate ICD-11 Mapping
+                            </button>
+                        </form>
+
+                        <div style="
+                            background: #eff6ff;
+                            padding: 1rem;
+                            border-radius: 0.75rem;
+                            border-left: 4px solid #3b82f6;
+                        ">
+                            <h5 style="margin-bottom: 0.5rem; color: #1e40af; font-size: 0.9rem;">📋 Example Terms for Testing:</h5>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                <span style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.5rem; font-size: 0.8rem; color: #3b82f6; cursor: pointer;" onclick="document.getElementById('searchTerm').value='Sandhigatvata';">Sandhigatvata</span>
+                                <span style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.5rem; font-size: 0.8rem; color: #3b82f6; cursor: pointer;" onclick="document.getElementById('searchTerm').value='Madhumeha';">Madhumeha</span>
+                                <span style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.5rem; font-size: 0.8rem; color: #3b82f6; cursor: pointer;" onclick="document.getElementById('searchTerm').value='Kasa';">Kasa</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="demo-output" style="
+                        background: #f0f9ff;
+                        padding: 2rem;
+                        border-radius: 1rem;
+                        border: 2px solid #0ea5e9;
+                        position: relative;
+                    ">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 4px;
+                            background: linear-gradient(90deg, #0ea5e9, #0284c7);
+                        "></div>
+                        <div style="
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            margin-bottom: 1.5rem;
+                            color: #0c4a6e;
+                            font-weight: 600;
+                            font-size: 1.1rem;
+                        ">
+                            <span class="material-symbols-outlined" style="font-size: 1.5rem;">output</span>
+                            OUTPUT: System Output Specification
+                        </div>
+
+                        <div id="results">
+                            <div style="
+                                text-align: center;
+                                color: var(--text-secondary);
+                                padding: 2rem;
+                                background: white;
+                                border-radius: 1rem;
+                                border: 2px dashed #0ea5e9;
+                                min-height: 300px;
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                                align-items: center;
+                            ">
+                                <div style="
+                                    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+                                    color: white;
+                                    width: 80px;
+                                    height: 80px;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin-bottom: 1rem;
+                                    animation: pulse 2s infinite;
+                                ">
+                                    <span class="material-symbols-outlined" style="font-size: 2.5rem;">search</span>
+                                </div>
+                                <h4 style="color: #0c4a6e; margin-bottom: 0.5rem;">Ready for Translation</h4>
+                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Enter a traditional medicine term above to observe the dual-coding functionality in real-time.</p>
+                                <div style="
+                                    background: #eff6ff;
+                                    padding: 1rem;
+                                    border-radius: 0.5rem;
+                                    border: 1px solid #bfdbfe;
+                                    margin-top: 1rem;
+                                    max-width: 300px;
+                                ">
+                                    <strong style="color: #0c4a6e; font-size: 0.9rem;">Expected JSON Output:</strong>
+                                    <pre style="
+                                        background: #1e293b;
+                                        color: #e2e8f0;
+                                        padding: 0.75rem;
+                                        border-radius: 0.5rem;
+                                        margin: 0.5rem 0 0;
+                                        font-size: 0.75rem;
+                                        overflow-x: auto;
+                                    ">{
+  "namaste_code": "AAE-16",
+  "icd11_codes": ["SP00", "FA01"],
+  "confidence": 95,
+  "category": "Musculoskeletal"
+}</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Real-World Applications Section -->
+            <section id="applications" class="section summary-section">
+                <div class="section-header">
+                    <span style="
+                        display: inline-block;
+                        background: linear-gradient(135deg, var(--primary-color), var(--success-color));
+                        color: white;
+                        padding: 0.5rem 1rem;
+                        border-radius: 2rem;
+                        font-size: 0.875rem;
+                        font-weight: 600;
+                        margin-bottom: 1rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    ">Step 4: Applications</span>
+                    <h2 class="section-title">Real-World Implementation Scenarios and Business Applications</h2>
+                    <p class="section-subtitle">
+                        See how different stakeholders can implement NAMASTE-FHIR Bridge to solve their specific challenges and transform their healthcare workflows.
+                    </p>
+                </div>
+
+                <!-- Success Metrics Overview -->
+                <div style="
+                    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+                    border-radius: 1rem;
+                    padding: 2rem;
+                    margin: 2rem 0;
+                    border: 2px solid var(--success-color);
+                    text-align: center;
+                ">
+                    <h3 style="color: var(--success-color); margin-bottom: 1.5rem; font-size: 1.5rem;">
+                        Proven Impact Across Healthcare Sectors
+                    </h3>
+                    <div style="
+                        display: flex;
+                        justify-content: space-around;
+                        flex-wrap: wrap;
+                        gap: 2rem;
+                    ">
+                        <div>
+                            <div style="font-size: 2.5rem; font-weight: 900; color: var(--success-color);">50%</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary);">Faster Documentation</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2.5rem; font-weight: 900; color: var(--success-color);">40%</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary);">Faster Claims Processing</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2.5rem; font-weight: 900; color: var(--success-color);">100%</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary);">Data Interoperability</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2.5rem; font-weight: 900; color: var(--success-color);">95%</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary);">Translation Accuracy</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="summary-grid" style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                    gap: 2rem;
+                    margin-top: 2rem;
+                ">
+                    <div style="
+                        background: var(--bg-secondary);
+                        padding: 2rem;
+                        border-radius: 1rem;
+                        border: 2px solid #e5e7eb;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 25px rgba(0, 0, 0, 0.15)'; this.style.borderColor='#3b82f6';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='#e5e7eb';">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 4px;
+                            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+                        "></div>
+                        <div style="
+                            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                            color: white;
+                            width: 60px;
+                            height: 60px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-bottom: 1.5rem;
+                        ">
+                            <span class="material-symbols-outlined" style="font-size: 1.8rem;">local_hospital</span>
+                        </div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.3rem;">Healthcare Providers</h4>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="
+                                background: #fef2f2;
+                                padding: 1rem;
+                                border-radius: 0.75rem;
+                                border-left: 4px solid #dc2626;
+                                margin-bottom: 1rem;
+                            ">
+                                <strong style="color: #dc2626;">Current Challenge:</strong>
+                                <p style="margin: 0.5rem 0 0; color: var(--text-secondary);">Cannot integrate traditional medicine practices with modern EHR systems, leading to incomplete patient records.</p>
+                            </div>
+                            
+                            <div style="
+                                background: #f0fdf4;
+                                padding: 1rem;
+                                border-radius: 0.75rem;
+                                border-left: 4px solid var(--success-color);
+                                margin-bottom: 1rem;
+                            ">
+                                <strong style="color: var(--success-color);">Our Solution:</strong>
+                                <p style="margin: 0.5rem 0 0; color: var(--text-secondary);">Real-time dual-coding enables comprehensive medical records capturing both traditional and modern perspectives.</p>
+                            </div>
+                            
+                            <div style="
+                                background: #eff6ff;
+                                padding: 1rem;
+                                border-radius: 0.75rem;
+                                border-left: 4px solid #3b82f6;
+                            ">
+                                <strong style="color: #3b82f6;">Business Impact:</strong>
+                                <ul style="margin: 0.5rem 0 0 1rem; color: var(--text-secondary);">
+                                    <li>50% faster clinical documentation</li>
+                                    <li>Improved care coordination</li>
+                                    <li>Enhanced patient safety</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div style="
+                            background: #f8fafc;
+                            padding: 1rem;
+                            border-radius: 0.5rem;
+                            border: 1px solid #e2e8f0;
+                        ">
+                            <strong style="color: var(--text-primary); font-size: 0.9rem;">Example Workflow:</strong>
+                            <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--text-secondary);">Doctor enters "Sandhigatvata" → System provides ICD-11: SP00 → EHR integrates both codes → Insurance processes claim automatically</p>
+                        </div>
+                    </div>
+
+                    <div style="
+                        background: var(--bg-secondary);
+                        padding: 2rem;
+                        border-radius: 1rem;
+                        border: 2px solid #e5e7eb;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 25px rgba(0, 0, 0, 0.15)'; this.style.borderColor='#10b981';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='#e5e7eb';">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 4px;
+                            background: linear-gradient(90deg, #10b981, #059669);
+                        "></div>
+                        <div style="
+                            background: linear-gradient(135deg, #10b981, #059669);
+                            color: white;
+                            width: 60px;
+                            height: 60px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-bottom: 1.5rem;
+                        ">
+                            <span class="material-symbols-outlined" style="font-size: 1.8rem;">science</span>
+                        </div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.3rem;">Research Institutions</h4>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="
+                                background: #fef2f2;
+                                padding: 1rem;
+                                border-radius: 0.75rem;
+                                border-left: 4px solid #dc2626;
+                                margin-bottom: 1rem;
+                            ">
+                                <strong style="color: #dc2626;">Current Challenge:</strong>
+                                <p style="margin: 0.5rem 0 0; color: var(--text-secondary);">Cannot analyze health trends across different medical systems due to inconsistent data coding.</p>
+                            </div>
+                            
+                            <div style="
+                                background: #f0fdf4;
+                                padding: 1rem;
+                                border-radius: 0.75rem;
+                                border-left: 4px solid var(--success-color);
+                                margin-bottom: 1rem;
+                            ">
+                                <strong style="color: var(--success-color);">Our Solution:</strong>
+                                <p style="margin: 0.5rem 0 0; color: var(--text-secondary);">Standardized dual-coding enables cross-system analysis and evidence-based traditional medicine research.</p>
+                            </div>
+                            
+                            <div style="
+                                background: #ecfdf5;
+                                padding: 1rem;
+                                border-radius: 0.75rem;
+                                border-left: 4px solid #10b981;
+                            ">
+                                <strong style="color: #10b981;">Research Impact:</strong>
+                                <ul style="margin: 0.5rem 0 0 1rem; color: var(--text-secondary);">
+                                    <li>Unified health analytics</li>
+                                    <li>Evidence-based policy decisions</li>
+                                    <li>Validated traditional treatments</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div style="
+                            background: #f8fafc;
+                            padding: 1rem;
+                            border-radius: 0.5rem;
+                            border: 1px solid #e2e8f0;
+                        ">
+                            <strong style="color: var(--text-primary); font-size: 0.9rem;">Example Workflow:</strong>
+                            <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--text-secondary);">Collect data from multiple AYUSH centers → Automatically map to ICD-11 → Perform cross-system analytics → Generate evidence-based insights</p>
+                        </div>
+                    </div>
+
+                    <div style="
+                        background: var(--bg-secondary);
+                        padding: 2rem;
+                        border-radius: 1rem;
+                        border: 2px solid #e5e7eb;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 25px rgba(0, 0, 0, 0.15)'; this.style.borderColor='#8b5cf6';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='#e5e7eb';">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 4px;
+                            background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+                        "></div>
+                        <div style="
+                            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+                            color: white;
+                            width: 60px;
+                            height: 60px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-bottom: 1.5rem;
+                        ">
+                            <span class="material-symbols-outlined" style="font-size: 1.8rem;">account_balance</span>
+                        </div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.3rem;">Insurance Companies</h4>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="
+                                background: #fef2f2;
+                                padding: 1rem;
+                                border-radius: 0.75rem;
+                                border-left: 4px solid #dc2626;
+                                margin-bottom: 1rem;
+                            ">
+                                <strong style="color: #dc2626;">Current Challenge:</strong>
+                                <p style="margin: 0.5rem 0 0; color: var(--text-secondary);">Cannot process claims for traditional medicine treatments without standardized diagnostic codes.</p>
+                            </div>
+                            
+                            <div style="
+                                background: #f0fdf4;
+                                padding: 1rem;
+                                border-radius: 0.75rem;
+                                border-left: 4px solid var(--success-color);
+                                margin-bottom: 1rem;
+                            ">
+                                <strong style="color: var(--success-color);">Our Solution:</strong>
+                                <p style="margin: 0.5rem 0 0; color: var(--text-secondary);">Automated claim validation using dual-coded diagnoses reduces manual review and processing time.</p>
+                            </div>
+                            
+                            <div style="
+                                background: #faf5ff;
+                                padding: 1rem;
+                                border-radius: 0.75rem;
+                                border-left: 4px solid #8b5cf6;
+                            ">
+                                <strong style="color: #8b5cf6;">Business Impact:</strong>
+                                <ul style="margin: 0.5rem 0 0 1rem; color: var(--text-secondary);">
+                                    <li>40% faster claim processing</li>
+                                    <li>Reduced fraud detection</li>
+                                    <li>Expanded coverage for traditional treatments</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div style="
+                            background: #f8fafc;
+                            padding: 1rem;
+                            border-radius: 0.5rem;
+                            border: 1px solid #e2e8f0;
+                        ">
+                            <strong style="color: var(--text-primary); font-size: 0.9rem;">Example Workflow:</strong>
+                            <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--text-secondary);">Receive claim with "Madhumeha" → Auto-map to ICD-11: 5A11 → Validate against policy → Process payment automatically</p>
+                        </div>
+                    </div>
+
+                    <div style="
+                        background: var(--bg-secondary);
+                        padding: 2rem;
+                        border-radius: 1rem;
+                        border: 2px solid #e5e7eb;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    " onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 25px rgba(0, 0, 0, 0.15)'; this.style.borderColor='#f59e0b';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='#e5e7eb';">
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 4px;
+                            background: linear-gradient(90deg, #f59e0b, #d97706);
+                        "></div>
+                        <div style="
+                            background: linear-gradient(135deg, #f59e0b, #d97706);
+                            color: white;
+                            width: 60px;
+                            height: 60px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-bottom: 1.5rem;
+                        ">
+                            <span class="material-symbols-outlined" style="font-size: 1.8rem;">policy</span>
+                        </div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.3rem;">Government Health Agencies</h4>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="
+                                background: #fef2f2;
+                                padding: 1rem;
+                                border-radius: 0.75rem;
+                                border-left: 4px solid #dc2626;
+                                margin-bottom: 1rem;
+                            ">
+                                <strong style="color: #dc2626;">Current Challenge:</strong>
+                                <p style="margin: 0.5rem 0 0; color: var(--text-secondary);">Cannot create unified health policies that integrate traditional and modern medicine systems.</p>
+                            </div>
+                            
+                            <div style="
+                                background: #f0fdf4;
+                                padding: 1rem;
+                                border-radius: 0.75rem;
+                                border-left: 4px solid var(--success-color);
+                                margin-bottom: 1rem;
+                            ">
+                                <strong style="color: var(--success-color);">Our Solution:</strong>
+                                <p style="margin: 0.5rem 0 0; color: var(--text-secondary);">Standardized reporting and analytics across all healthcare systems enables informed policy making.</p>
+                            </div>
+                            
+                            <div style="
+                                background: #fffbeb;
+                                padding: 1rem;
+                                border-radius: 0.75rem;
+                                border-left: 4px solid #f59e0b;
+                            ">
+                                <strong style="color: #f59e0b;">Policy Impact:</strong>
+                                <ul style="margin: 0.5rem 0 0 1rem; color: var(--text-secondary);">
+                                    <li>Evidence-based healthcare policies</li>
+                                    <li>Better resource allocation</li>
+                                    <li>Improved public health outcomes</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div style="
+                            background: #f8fafc;
+                            padding: 1rem;
+                            border-radius: 0.5rem;
+                            border: 1px solid #e2e8f0;
+                        ">
+                            <strong style="color: var(--text-primary); font-size: 0.9rem;">Example Workflow:</strong>
+                            <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--text-secondary);">Collect nationwide health data → Dual-code all diagnoses → Generate unified analytics → Create evidence-based policies</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Call-to-Action -->
+                <div style="
+                    text-align: center;
+                    margin-top: 3rem;
+                    padding: 3rem 2rem;
+                    background: linear-gradient(135deg, var(--bg-secondary), #f8fafc);
+                    border-radius: 1rem;
+                    border: 2px solid var(--primary-color);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        height: 4px;
+                        background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+                    "></div>
+                    
+                    <h3 style="
+                        margin-bottom: 1rem;
+                        color: var(--text-primary);
+                        font-size: 2rem;
+                        font-weight: 700;
+                        background: linear-gradient(135deg, var(--primary-color), var(--success-color));
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    ">Ready to Bridge the Healthcare Gap?</h3>
+                    
+                    <p style="
+                        margin-bottom: 2rem;
+                        color: var(--text-secondary);
+                        font-size: 1.1rem;
+                        max-width: 600px;
+                        margin-left: auto;
+                        margin-right: auto;
+                    ">
+                        Experience how NAMASTE-FHIR transforms traditional medicine data into globally interoperable healthcare insights.
+                    </p>
+                    
+                    <div style="
+                        display: flex;
+                        gap: 1rem;
+                        justify-content: center;
+                        flex-wrap: wrap;
+                        margin-bottom: 2rem;
+                    ">
+                        <a href="/ui/pages/doctor-sandbox.html" style="
+                            background: var(--primary-color);
+                            color: white;
+                            padding: 1rem 2rem;
+                            border-radius: 0.75rem;
+                            text-decoration: none;
+                            font-weight: 600;
+                            transition: all 0.3s ease;
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            min-width: 180px;
+                            justify-content: center;
+                        " onmouseover="this.style.background='#2d5016'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(56, 224, 123, 0.3)';" onmouseout="this.style.background=getComputedStyle(document.documentElement).getPropertyValue('--primary-color'); this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <span class="material-symbols-outlined">local_hospital</span>
+                            Try Doctor Demo
+                        </a>
+                        
+                        <a href="/ui/pages/researcher-sandbox.html" style="
+                            background: #3b82f6;
+                            color: white;
+                            padding: 1rem 2rem;
+                            border-radius: 0.75rem;
+                            text-decoration: none;
+                            font-weight: 600;
+                            transition: all 0.3s ease;
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            min-width: 180px;
+                            justify-content: center;
+                        " onmouseover="this.style.background='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(59, 130, 246, 0.3)';" onmouseout="this.style.background='#3b82f6'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <span class="material-symbols-outlined">science</span>
+                            Explore Research Tools
+                        </a>
+                        
+                        <a href="/ui/pages/insurance-sandbox.html" style="
+                            background: #8b5cf6;
+                            color: white;
+                            padding: 1rem 2rem;
+                            border-radius: 0.75rem;
+                            text-decoration: none;
+                            font-weight: 600;
+                            transition: all 0.3s ease;
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            min-width: 180px;
+                            justify-content: center;
+                        " onmouseover="this.style.background='#7c3aed'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(139, 92, 246, 0.3)';" onmouseout="this.style.background='#8b5cf6'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <span class="material-symbols-outlined">account_balance</span>
+                            Test Insurance Flow
+                        </a>
+                        
+                        <a href="/ui/pages/terminology-ingestion.html" style="
+                            background: #ff6b35;
+                            color: white;
+                            padding: 1rem 2rem;
+                            border-radius: 0.75rem;
+                            text-decoration: none;
+                            font-weight: 600;
+                            transition: all 0.3s ease;
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            min-width: 180px;
+                            justify-content: center;
+                        " onmouseover="this.style.background='#e85a2b'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(255, 107, 53, 0.3)';" onmouseout="this.style.background='#ff6b35'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <span class="material-symbols-outlined">upload_file</span>
+                            Terminology Ingestion
+                        </a>
+                    </div>
+                    
+                    <div style="
+                        padding-top: 2rem;
+                        border-top: 1px solid var(--border-color);
+                        font-size: 0.9rem;
+                        color: var(--text-secondary);
+                    ">
+                        <p><strong>Need backend integration support?</strong> Our team provides comprehensive API documentation and implementation guidance.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Mock data for demonstration
+        const mockData = {
+            'sandhigatvata': {
+                namaste_code: 'AAE-16',
+                namaste_name: 'Sandhigatvata',
+                description: 'Vitiated Vata in Sandhi (Joints) - Similar to Osteoarthritis',
+                icd11_tm2: 'SP00',
+                icd11_biomed: 'FA01',
+                confidence: 95,
+                category: 'Musculoskeletal'
+            },
+            'madhumeha': {
+                namaste_code: 'EF-2.4.4',
+                namaste_name: 'Madhumeha/Kshaudrameha',
+                description: 'Sweet urine disease - Diabetes mellitus in Ayurveda',
+                icd11_tm2: 'SJ00',
+                icd11_biomed: '5A11',
+                confidence: 98,
+                category: 'Endocrine'
+            },
+            'kasa': {
+                namaste_code: 'EA-3',
+                namaste_name: 'Kasa',
+                description: 'Cough - Respiratory disorder in Ayurveda',
+                icd11_tm2: 'SB00',
+                icd11_biomed: 'CA22',
+                confidence: 92,
+                category: 'Respiratory'
+            }
+        };
+
+        // Chapter navigation
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+                
+                // Update active chapter dot
+                document.querySelectorAll('.chapter-dot').forEach(dot => dot.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+        }
+
+        // Demo translation functionality
+        function translateTerm() {
+            const termInput = document.getElementById('medical-term');
+            const contextSelect = document.getElementById('user-context');
+            const outputArea = document.getElementById('output-area');
+            const term = termInput.value.toLowerCase().trim();
+            
+            if (!term) {
+                termInput.focus();
+                return;
+            }
+
+            // Show loading state
+            outputArea.innerHTML = `
+                <div class="loading" style="text-align: center; padding: 3rem 2rem;">
+                    <div style="
+                        width: 60px;
+                        height: 60px;
+                        border: 4px solid #e2e8f0;
+                        border-top: 4px solid var(--primary-color);
+                        border-radius: 50%;
+                        animation: spin 1s linear infinite;
+                        margin: 0 auto 1rem;
+                    "></div>
+                    <p class="body-emphasis">Processing translation...</p>
+                </div>
+            `;
+
+            // Simulate API call
+            setTimeout(() => {
+                const result = mockData[term];
+                const context = contextSelect.value;
+                
+                if (result) {
+                    outputArea.innerHTML = `
+                        <div style="text-align: left;">
+                            <div style="
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+                                margin-bottom: 1.5rem;
+                            ">
+                                <h4 class="headline-medium" style="color: var(--text-primary);">${result.namaste_name}</h4>
+                                <span style="
+                                    background: var(--success-color);
+                                    color: white;
+                                    padding: 0.5rem 1rem;
+                                    border-radius: 1rem;
+                                    font-weight: 600;
+                                    font-size: 0.875rem;
+                                ">${result.confidence}% match</span>
+                            </div>
+                            
+                            <p class="body-large" style="color: var(--text-secondary); margin-bottom: 2rem;">
+                                ${result.description}
+                            </p>
+                            
+                            <div style="
+                                display: grid;
+                                gap: 1rem;
+                                margin-bottom: 2rem;
+                            ">
+                                <div style="
+                                    display: flex;
+                                    justify-content: space-between;
+                                    padding: 0.75rem 0;
+                                    border-bottom: 1px solid #e2e8f0;
+                                ">
+                                    <span class="body-emphasis">NAMASTE Code:</span>
+                                    <code style="
+                                        background: var(--bg-secondary);
+                                        padding: 0.25rem 0.75rem;
+                                        border-radius: 0.5rem;
+                                        font-family: monospace;
+                                        color: var(--primary-color);
+                                    ">${result.namaste_code}</code>
+                                </div>
+                                <div style="
+                                    display: flex;
+                                    justify-content: space-between;
+                                    padding: 0.75rem 0;
+                                    border-bottom: 1px solid #e2e8f0;
+                                ">
+                                    <span class="body-emphasis">ICD-11 TM2:</span>
+                                    <code style="
+                                        background: var(--bg-secondary);
+                                        padding: 0.25rem 0.75rem;
+                                        border-radius: 0.5rem;
+                                        font-family: monospace;
+                                        color: #0284c7;
+                                    ">${result.icd11_tm2}</code>
+                                </div>
+                                <div style="
+                                    display: flex;
+                                    justify-content: space-between;
+                                    padding: 0.75rem 0;
+                                ">
+                                    <span class="body-emphasis">ICD-11 Bio:</span>
+                                    <code style="
+                                        background: var(--bg-secondary);
+                                        padding: 0.25rem 0.75rem;
+                                        border-radius: 0.5rem;
+                                        font-family: monospace;
+                                        color: #0284c7;
+                                    ">${result.icd11_biomed}</code>
+                                </div>
+                            </div>
+
+                            <div style="
+                                background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+                                padding: 1.5rem;
+                                border-radius: 1rem;
+                                border: 1px solid #bae6fd;
+                            ">
+                                <h5 class="body-emphasis" style="color: #0284c7; margin-bottom: 1rem;">
+                                    ${context === 'healthcare' ? 'For Healthcare Providers' : 
+                                      context === 'researcher' ? 'For Medical Researchers' : 
+                                      'For Insurance Professionals'}:
+                                </h5>
+                                <p class="body-large" style="color: #0369a1; margin: 0;">
+                                    ${context === 'healthcare' ? 
+                                        'Use these codes in your EHR system for comprehensive patient records and seamless care coordination across traditional and modern treatment modalities.' : 
+                                      context === 'researcher' ? 
+                                        'This standardized dual-coding enables cross-system analysis and evidence-based research on traditional medicine effectiveness and outcomes.' :
+                                        'These dual codes streamline claim processing, ensure accurate reimbursement, and enable automated validation of traditional medicine treatments.'}
+                                </p>
+                            </div>
+
+                            <details style="margin-top: 1.5rem;">
+                                <summary class="body-emphasis" style="cursor: pointer; color: var(--text-secondary);">
+                                    View JSON Output for Backend Integration
+                                </summary>
+                                <pre style="
+                                    background: #1a1a1a;
+                                    color: #f5f5f5;
+                                    padding: 1rem;
+                                    border-radius: 0.75rem;
+                                    margin-top: 1rem;
+                                    font-size: 0.875rem;
+                                    overflow-x: auto;
+                                ">{
+  "namaste_code": "${result.namaste_code}",
+  "namaste_name": "${result.namaste_name}",
+  "description": "${result.description}",
+  "icd11_codes": {
+    "tm2": "${result.icd11_tm2}",
+    "biomedical": "${result.icd11_biomed}"
+  },
+  "confidence_score": ${result.confidence},
+  "category": "${result.category}",
+  "user_context": "${context}",
+  "timestamp": "${new Date().toISOString()}"
+}</pre>
+                            </details>
+                        </div>
+                    `;
+                } else {
+                    outputArea.innerHTML = `
+                        <div style="text-align: center; padding: 3rem 2rem;">
+                            <div style="
+                                width: 80px;
+                                height: 80px;
+                                background: linear-gradient(135deg, #fee2e2, #fecaca);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto 1.5rem;
+                                color: var(--accent-color);
+                                font-size: 2rem;
+                            ">
+                                <span class="material-symbols-outlined">search_off</span>
+                            </div>
+                            <h4 class="headline-medium" style="margin-bottom: 1rem;">Term Not Found</h4>
+                            <p class="body-large" style="color: var(--text-secondary);">
+                                "${term}" is not yet in our database. Try one of the examples below or contact our team to add new terminology mappings.
+                            </p>
+                        </div>
+                    `;
+                }
+            }, 1200);
+        }
+
+        // Set example terms
+        function setExample(term) {
+            document.getElementById('medical-term').value = term;
+            document.getElementById('medical-term').focus();
+        }
+
+        // Scroll-based chapter navigation
+        window.addEventListener('scroll', () => {
+            const sections = ['hero', 'gap', 'solution', 'demo', 'future'];
+            const scrollPosition = window.scrollY + 200;
+            
+            sections.forEach((sectionId, index) => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    const sectionTop = section.offsetTop;
+                    const sectionBottom = sectionTop + section.offsetHeight;
+                    
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                        document.querySelectorAll('.chapter-dot').forEach(dot => dot.classList.remove('active'));
+                        document.querySelectorAll('.chapter-dot')[index]?.classList.add('active');
+                    }
+                }
+            });
+        });
+
+        // Smooth navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add spin animation for loading
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
