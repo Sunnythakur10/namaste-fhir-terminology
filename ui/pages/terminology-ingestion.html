@@ -7,155 +7,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #007aff;
-            --primary-dark: #0051d5;
-            --accent-color: #ff3b30;
-            --warning-color: #ff9500;
-            --success-color: #34c759;
-            --text-primary: #1d1d1f;
-            --text-secondary: #86868b;
-            --text-tertiary: #a1a1a6;
-            --bg-primary: #ffffff;
-            --bg-secondary: #f5f5f7;
-            --bg-tertiary: #fafafa;
-            --border-color: #d2d2d7;
-            --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
-            --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            line-height: 1.5;
-            font-size: 17px;
-            font-weight: 400;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* Header */
-        .header {
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 0;
-            margin-bottom: 2rem;
-        }
-
-        .header h1 {
-            font-family: 'SF Pro Display', sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-align: center;
-        }
-
-        .header p {
-            text-align: center;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-        }
-
-        /* Feature Requirements */
-        .feature-spec {
-            background: var(--bg-primary);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-light);
-        }
-
-        .feature-spec h2 {
-            font-family: 'SF Pro Display', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        .requirements-list {
-            display: grid;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .requirement-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .requirement-item .material-symbols-outlined {
-            color: var(--primary-color);
-            font-size: 24px;
-        }
-
-        /* Mode Selection */
-        .mode-selection {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .mode-card {
-            background: var(--bg-primary);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: var(--shadow-light);
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .mode-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
-            border-color: var(--primary-color);
-        }
-
-        .mode-card.active {
-            border-color: var(--primary-color);
-            background: linear-gradient(135deg, #f0f7ff 0%, #e6f3ff 100%);
-        }
-
-        .mode-card h3 {
-            font-family: 'SF Pro Display', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .mode-card .material-symbols-outlined {
-            font-size: 48px;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        /* CLI Interface */
-        .cli-interface {
-            background: var(--bg-primary);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-light);
-        }
+    <link rel="stylesheet" href="/static/assets/css/extracted-inline.css">
+    <link rel="stylesheet" href="/ui/assets/css/terminology-ingestion.css">
 
         .terminal {
             background: #1a1a1a;
@@ -400,7 +253,7 @@
         </div>
 
         <!-- CLI Interface -->
-        <div class="cli-interface" id="cliInterface" style="display: none;">
+    <div class="cli-interface is-hidden" id="cliInterface">
             <h2>Command-Line Interface</h2>
             <p>Use the NAMASTE Terminology CLI tool for automated processing and system integration:</p>
             
@@ -468,9 +321,9 @@ Examples:
             <p>Upload your NAMASTE CSV file to generate FHIR resources:</p>
 
             <div class="file-upload" id="fileUpload">
-                <span class="material-symbols-outlined" style="font-size: 48px; color: var(--text-secondary); margin-bottom: 1rem;">cloud_upload</span>
+                <span class="material-symbols-outlined large-upload-icon">cloud_upload</span>
                 <h3>Upload NAMASTE CSV File</h3>
-                <p style="margin: 0.5rem 0; color: var(--text-secondary);">Drag and drop your CSV file here or click to browse</p>
+                <p class="muted-caption">Drag and drop your CSV file here or click to browse</p>
                 <button class="upload-button" onclick="document.getElementById('fileInput').click()">
                     Choose File
                 </button>
@@ -784,20 +637,6 @@ Examples:
                     }
                 ]
             };
-                                    "equivalence": "equivalent",
-                                    "comment": "Traditional Medicine 2 (TM2) mapping"
-                                },
-                                {
-                                    "code": row.icd11_biomed_code,
-                                    "display": `ICD-11 Biomedicine: ${row.icd11_biomed_code}`,
-                                    "equivalence": "equivalent",
-                                    "comment": "Biomedicine mapping"
-                                }
-                            ]
-                        }))
-                    }
-                ]
-            };
         }
 
         function displayResults(data) {
@@ -853,8 +692,8 @@ Examples:
             });
 
             let mappingsList = `
-                <div class="requirement-item" style="border-left-color: var(--primary-color); margin-bottom: 1rem;">
-                    <span class="material-symbols-outlined" style="color: var(--primary-color)">api</span>
+                <div class="requirement-item requirement-item--default">
+                    <span class="material-symbols-outlined status-icon status-icon--primary">api</span>
                     <span><strong>WHO ICD-11 API Integration Status:</strong> ${apiIntegrationStatus.mode === 'live_api' ? 'Live API Connected' : 'Enhanced Fallback Mode'}</span>
                 </div>
             `;
@@ -867,13 +706,13 @@ Examples:
                 const sourceColor = mappingSource === 'WHO_ICD11_API' ? 'var(--success-color)' : mappingSource === 'ENHANCED_FALLBACK' ? 'var(--primary-color)' : 'var(--warning-color)';
                 
                 mappingsList += `
-                    <div class="requirement-item" style="border-left-color: ${hasMapping ? 'var(--success-color)' : 'var(--warning-color)'}">
-                        <span class="material-symbols-outlined" style="color: ${hasMapping ? 'var(--success-color)' : 'var(--warning-color)'}">${hasMapping ? 'check_circle' : 'warning'}</span>
+                    <div class="requirement-item ${hasMapping ? 'requirement-item--mapped' : 'requirement-item--default'}">
+                        <span class="material-symbols-outlined status-icon ${hasMapping ? 'status-icon--success' : 'status-icon--warning'}">${hasMapping ? 'check_circle' : 'warning'}</span>
                         <span><strong>${code}</strong> (${row.Disease})</span>
-                        <div style="margin-left: 2rem; font-size: 0.9rem; color: var(--text-secondary);">
+                        <div class="muted-caption">
                             <div>→ TM2: ${row.icd11_tm2_code} | Biomed: ${row.icd11_biomed_code}</div>
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
-                                <span class="material-symbols-outlined" style="color: ${sourceColor}; font-size: 16px;">${sourceIcon}</span>
+                            <div class="flex-row">
+                                <span class="material-symbols-outlined icon-small ${sourceColor === 'var(--success-color)' ? 'status-icon--success' : sourceColor === 'var(--primary-color)' ? 'status-icon--primary' : 'status-icon--warning'}">${sourceIcon}</span>
                                 <span>Source: ${mappingSource}</span>
                             </div>
                         </div>
@@ -901,9 +740,9 @@ Examples:
 
         function resetFileUpload() {
             fileUpload.innerHTML = `
-                <span class="material-symbols-outlined" style="font-size: 48px; color: var(--text-secondary); margin-bottom: 1rem;">cloud_upload</span>
+                <span class="material-symbols-outlined large-upload-icon">cloud_upload</span>
                 <h3>Upload NAMASTE CSV File</h3>
-                <p style="margin: 0.5rem 0; color: var(--text-secondary);">Drag and drop your CSV file here or click to browse</p>
+                <p class="muted-caption">Drag and drop your CSV file here or click to browse</p>
                 <button class="upload-button" onclick="document.getElementById('fileInput').click()">
                     Choose File
                 </button>

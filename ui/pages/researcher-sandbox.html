@@ -7,102 +7,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
+    <link rel="stylesheet" href="/static/assets/css/unified-design-system.css">
+    <link rel="stylesheet" href="/static/assets/css/main.css">
+    <link rel="stylesheet" href="/static/assets/css/extracted-inline.css">
     <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* Research-specific styles */
-        .research-header {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: var(--text-inverse);
-            padding: var(--space-xl) 0;
-        }
-
-        .analytics-dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-xl);
-            margin-bottom: var(--space-xl);
-        }
-
-        @media (max-width: 768px) {
-            .analytics-dashboard {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .chart-container {
-            background-color: var(--bg-primary);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            box-shadow: var(--shadow-sm);
-            height: 400px;
-        }
-
-        .research-filters {
-            background-color: var(--bg-primary);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            box-shadow: var(--shadow-sm);
-            margin-bottom: var(--space-xl);
-        }
-
-        .filter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--space-lg);
-        }
-
-        .data-table {
-            background-color: var(--bg-primary);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-sm);
-            overflow: hidden;
-        }
-
-        .table-header {
-            background-color: var(--bg-secondary);
-            padding: var(--space-lg);
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .table-content {
-            padding: var(--space-lg);
-        }
-
-        .metric-card {
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            text-align: center;
-        }
-
-        .metric-value {
-            font-family: var(--font-family-primary);
-            font-size: var(--text-3xl);
-            font-weight: 700;
-            color: var(--color-primary);
-            margin-bottom: var(--space-sm);
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            font-size: var(--text-sm);
-            margin-bottom: var(--space-md);
-        }
-
-        .breadcrumb a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-        }
-
-        .breadcrumb a:hover {
-            color: var(--text-inverse);
-        }
-    </style>
+    <link rel="stylesheet" href="/ui/assets/css/researcher-sandbox.css">
 </head>
 <body>
     <div class="layout-container">
@@ -120,17 +30,17 @@
         <!-- Research Header -->
         <section class="research-header">
             <div class="container">
-                <h1 class="display-medium" style="margin-bottom: var(--space-md);">Research Analytics Platform</h1>
-                <p class="body-large" style="opacity: 0.9;">Advanced analytics and data visualization tools for comprehensive traditional medicine research with standardized coding systems.</p>
+                <h1 class="display-medium headline-margin-lg">Research Analytics Platform</h1>
+                <p class="body-large text-muted-90">Advanced analytics and data visualization tools for comprehensive traditional medicine research with standardized coding systems.</p>
             </div>
         </section>
 
         <!-- Main Content -->
-        <main style="padding: var(--space-2xl) 0;">
+        <main class="analytics-padding">
             <div class="container">
                 <!-- Research Filters -->
                 <div class="research-filters">
-                    <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Research Parameters & Data Filters</h2>
+                        <h2 class="headline-large headline-margin-lg">Research Parameters & Data Filters</h2>
                     
                     <div class="filter-grid">
                         <div class="form-group">
@@ -177,7 +87,7 @@
                         </div>
                     </div>
                     
-                    <div style="margin-top: var(--space-lg);">
+                    <div class="margin-top-lg">
                         <button class="btn btn-primary" onclick="generateResearchData()">
                             <span class="material-symbols-outlined">analytics</span>
                             Generate Research Analytics
@@ -190,7 +100,7 @@
                 </div>
 
                 <!-- Key Metrics -->
-                <div class="grid grid-cols-4" style="margin-bottom: var(--space-xl);">
+                <div class="grid grid-cols-4 grid-gap-xl">
                     <div class="metric-card">
                         <div class="metric-value" id="total-records">--</div>
                         <div class="caption">Total Research Records</div>
@@ -212,12 +122,12 @@
                 <!-- Analytics Dashboard -->
                 <div class="analytics-dashboard">
                     <div class="chart-container">
-                        <h3 class="headline-medium" style="margin-bottom: var(--space-lg);">Traditional Medicine Distribution</h3>
+                        <h3 class="headline-medium headline-margin-lg">Traditional Medicine Distribution</h3>
                         <canvas id="distributionChart"></canvas>
                     </div>
                     
                     <div class="chart-container">
-                        <h3 class="headline-medium" style="margin-bottom: var(--space-lg);">Treatment Effectiveness Trends</h3>
+                        <h3 class="headline-medium headline-margin-lg">Treatment Effectiveness Trends</h3>
                         <canvas id="trendsChart"></canvas>
                     </div>
                 </div>
@@ -231,8 +141,8 @@
                     
                     <div class="table-content">
                         <div id="research-table">
-                            <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
-                                <span class="material-symbols-outlined" style="font-size: 4rem; margin-bottom: var(--space-lg); color: var(--color-primary);">table_view</span>
+                            <div class="text-center-padding">
+                                <span class="material-symbols-outlined icon-xxl color-text-secondary">table_view</span>
                                 <p class="body-large"><strong>Research Data Ready</strong></p>
                                 <p>Configure your research parameters above to generate comprehensive analytics and detailed datasets.</p>
                             </div>
@@ -371,16 +281,16 @@
             ];
 
             let tableHTML = `
-                <table style="width: 100%; border-collapse: collapse;">
+                <table class="table-full">
                     <thead>
-                        <tr style="background-color: var(--bg-secondary); border-bottom: 1px solid var(--border-light);">
-                            <th style="padding: var(--space-md); text-align: left;">Traditional Condition</th>
-                            <th style="padding: var(--space-md); text-align: left;">NAMASTE Code</th>
-                            <th style="padding: var(--space-md); text-align: left;">ICD-11 TM2</th>
-                            <th style="padding: var(--space-md); text-align: left;">ICD-11 Bio</th>
-                            <th style="padding: var(--space-md); text-align: left;">Patients</th>
-                            <th style="padding: var(--space-md); text-align: left;">Effectiveness</th>
-                            <th style="padding: var(--space-md); text-align: left;">Confidence</th>
+                        <tr class="table-row-header">
+                            <th class="th-padded">Traditional Condition</th>
+                            <th class="th-padded">NAMASTE Code</th>
+                            <th class="th-padded">ICD-11 TM2</th>
+                            <th class="th-padded">ICD-11 Bio</th>
+                            <th class="th-padded">Patients</th>
+                            <th class="th-padded">Effectiveness</th>
+                            <th class="th-padded">Confidence</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -388,14 +298,14 @@
 
             sampleData.forEach(row => {
                 tableHTML += `
-                    <tr style="border-bottom: 1px solid var(--border-light);">
-                        <td style="padding: var(--space-md); font-weight: 500;">${row.condition}</td>
-                        <td style="padding: var(--space-md); font-family: var(--font-family-mono);">${row.namasteCode}</td>
-                        <td style="padding: var(--space-md); font-family: var(--font-family-mono);">${row.icd11TM2}</td>
-                        <td style="padding: var(--space-md); font-family: var(--font-family-mono);">${row.icd11Bio}</td>
-                        <td style="padding: var(--space-md);">${row.patients}</td>
-                        <td style="padding: var(--space-md); color: var(--color-accent); font-weight: 500;">${row.effectiveness}</td>
-                        <td style="padding: var(--space-md); color: var(--color-primary); font-weight: 500;">${row.confidence}</td>
+                    <tr class="table-row-bordered">
+                        <td class="td-strong">${row.condition}</td>
+                        <td class="td-padded mono">${row.namasteCode}</td>
+                        <td class="td-padded mono">${row.icd11TM2}</td>
+                        <td class="td-padded mono">${row.icd11Bio}</td>
+                        <td class="td-padded">${row.patients}</td>
+                        <td class="td-padded td-accent">${row.effectiveness}</td>
+                        <td class="td-padded td-primary">${row.confidence}</td>
                     </tr>
                 `;
             });

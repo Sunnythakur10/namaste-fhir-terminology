@@ -1,0 +1,101 @@
+System,AYUSH Name,AYUSH Code,ICD-11 TM2 Code,ICD-11 TM2 Name
+Ayurveda,"atipral?pah (excessive speech, kevala-vﾄ》a)",AAB-1,SQ00,Speech disorder (mental/behavioral)
+Ayurveda,"anavasthita-cittatvam (emotional instability, kevala-vﾄ》a)",AAB-2,SQ05,Emotional instability / mood disorder
+Ayurveda,"a?gamarda? (body ache, kevala-vﾄ》a)",AAB-3,SP9Y,Generalized body pain
+Ayurveda,"a?ga-?u?kat? (body dryness, kevala-vﾄ》a)",AAB-4,SP9Y,Dryness disorder
+Ayurveda,"a?ga-vibhram?a? (limb dysfunction, kevala-vﾄ》a)",AAB-5,SP21,Loss of function of limb
+Ayurveda,"rasa-jt? h?ni? (loss of taste, kevala-vﾄ》a)",AAB-7,SM1P,Loss of taste
+Ayurveda,"a?abda-?rava?am (tinnitus, kevala-vﾄ》a)",AAB-8,MA80,Tinnitus
+Ayurveda,"asvapna? (insomnia, kevala-vﾄ》a)",AAB-9,7A80,Insomnia
+Ayurveda,"ak?i-??la? (eye pain, kevala-vﾄ》a)",AAB-12,9D90,Eye pain
+Ayurveda,"ardhita? (facial paralysis, kevala-vﾄ》a)",AAB-6,8B22,Facial palsy
+Ayurveda,?v?sa (dyspnoea/asthma),SHV-1,SL40,Bronchial asthma
+Ayurveda,kﾄ《a (cough),KAS-1,MD12,Cough disorder
+Ayurveda,prameha (diabetes mellitus),PRM-1,5A11,Type 2 diabetes mellitus
+Ayurveda,k?aya roga(tuberculosis),KSY-1,1B10,Pulmonary tuberculosis
+Ayurveda,jvara (fever),JVR-1,6A80,"Fever, unspecified"
+Ayurveda,kﾄ［ala (jaundice/hepatitis),KML-1,SD23,"Hepatitis, unspecified"
+Ayurveda,ar?as (haemorrhoids),ARS-1,SM30,Haemorrhoid disorder
+Ayurveda,ku??ha (leprosy/skin disease),KST-1,1B60,Leprosy
+Ayurveda,?vitra (vitiligo),SVT-1,ED20,Vitiligo
+Ayurveda,p???u roga (anaemia),PND-1,3A00,"Anaemia, unspecified"
+Ayurveda,udararoga (ascites/abdominal swelling),UDR-1,SD70,Ascites
+Ayurveda,atisﾄ〉a (diarrhoea),ATS-1,DA01,Diarrhoea disorder
+Ayurveda,graha?? (malabsorption/IBS),GRH-1,DA90,Malabsorption syndrome
+Ayurveda,aruci (anorexia/loss of appetite),ARC-1,DA50,Anorexia (not eating disorder type)
+Ayurveda,??la (colic pain),SUL-1,SD60,Abdominal colic disorder
+Ayurveda,unmada (psychosis/insanity),UMD-1,6A80.Z,"Psychotic disorder, unspecified"
+Ayurveda,apasmﾄ〉a (epilepsy),APS-1,8A60,Epilepsy
+Ayurveda,mada (intoxication),MDA-1,6C4Z,Substance intoxication
+Ayurveda,vi?a roga (poisoning),VIS-1,NE61,Poisoning
+Ayurveda,sth?lya (obesity),STH-1,5B81,Obesity
+Ayurveda,"k?aya	 (emaciation)",KSY-2,5B70,Severe weight loss / cachexia
+Ayurveda,netra roga (eye disorders),NET-1,9D9Y,Other eye disorders
+Ayurveda,"kar?a roga	 (ear disorders)",KRN-1,MA80,Ear disorders
+Ayurveda,m?trak?cchra(dysuria/urinary disorder),MTR-1,GC80,Painful urination
+Ayurveda,a?mar? (urinary calculus/stone),ASM-1,GB60,Urinary calculus
+Ayurveda,udara roga (abdominal disorders),UDR-2,DA9Y,Other specified digestive disorder
+Ayurveda,h?droga (cardiac disorder),HRD-1,BA00,"Heart disease, unspecified"
+Ayurveda,apatanaka (seizures/fits),APT-1,8A60,Epileptic seizures
+Ayurveda,"yak?t roga	(liver disorder)",YKR-1,SD20,"Liver disease, unspecified"
+Ayurveda,pliha roga (spleen disorder),PLH-1,SD30,"Spleen disorder, unspecified"
+Unani,Nazla (common cold/catarrh),UN-1,CA00,Acute upper respiratory infection
+Unani,Zukam (rhinitis/cold),UN-2,CA01,Acute rhinitis
+Unani,Sual (cough),UN-3,MD12,Cough disorder
+Unani,Humma (fever),UN-4,6A80,"Fever, unspecified"
+Unani,Dama (asthma),UN-5,CA40,Bronchial asthma
+Unani,Tanaffus ki tangi (dyspnoea),UN-6,MD30,Shortness of breath
+Unani,Qulanj (colic),UN-7,DA60,Intestinal colic
+Unani,Ishaal (diarrhoea),UN-8,DA01,Diarrhoea disorder
+Unani,Qai (vomiting),UN-9,DA50,Vomiting
+Unani,Yarqan (jaundice),UN-10,SD23,Jaundice/hepatitis
+Unani,Zo断-e-Meda (indigestion/dyspepsia),UN-11,DA90,Dyspepsia/malabsorption
+Unani,Bawaseer (haemorrhoids),UN-12,SM30,Haemorrhoid disorder
+Unani,Zeeabetus Shakri (diabetes mellitus),UN-13,5A11,Type 2 diabetes mellitus
+Unani,Shara (eczema/skin rash),UN-14,ED10,Eczema
+Unani,Bars (vitiligo),UN-15,ED20,Vitiligo
+Unani,Juzam (leprosy),UN-16,1B60,Leprosy
+Unani,Nisyan (amnesia/forgetfulness),UN-17,6D70,Memory disorder
+Unani,Sara (epilepsy),UN-18,8A60,Epilepsy
+Unani,Suda (headache),UN-19,MG30,Headache
+Unani,Waja-ul-Mafasil (arthritis/joint pain),UN-20,FA20,Arthritis
+Unani,Niqris (gout),UN-21,FA24,Gout
+Unani,Istisqa (ascites),UN-22,SD70,Ascites
+Unani,Faqr-ud-Dam (anaemia),UN-23,3A00,"Anaemia, unspecified"
+Unani,Sarsam (meningitis),UN-24,1F40,Meningitis
+Unani,Shuqquq-ul-Baul (dysuria),UN-25,GC80,Painful urination
+Unani,Hissah (urinary stone),UN-26,GB60,Urinary calculus
+Unani,Tashannuj (convulsions),UN-27,8A60,Seizures
+Unani,Khafqan (palpitation/heart disease),UN-28,BA00,"Heart disease, unspecified"
+Unani,Dau-ul-Kalb (heart failure),UN-29,BD10,Heart failure
+Unani,Dau-us-Sada (migraine),UN-30,8A80,Migraine
+Unani,Sarsam Dimagh (encephalitis/brain inflammation),UN-31,1F41,Encephalitis
+Unani,Sharah Dimagh (brain tumor),UN-32,2A20,Brain neoplasm
+Unani,Dau-ul-Am誕 (colitis/IBD),UN-33,DA40,Colitis
+Unani,Dau-ul-Basr (eye disease/vision loss),UN-34,9D90,Vision disorder
+Unani,Dau-us-Sama (hearing disorder),UN-35,MA80,Hearing loss
+Unani,Tashannuj Rehi (respiratory spasm),UN-36,MD30,Dyspnoea/spasm
+Unani,Dau-ul-Kabad (liver disorder),UN-37,SD20,Liver disease
+Unani,Dau-ul-Tihal (spleen disorder),UN-38,SD30,Spleen disorder
+Unani,Hummay Musalsala (malaria/relapsing fever),UN-39,1F40,Malaria
+Unani,Tanoon (tonsillitis),UN-40,CA20,Tonsillitis
+Siddha,Vali Noi (Vﾄ》a disorder),SD-A01,RA02.00,Vﾄ》a disorder (TM2)
+Siddha,Azhal Noi (Pitta disorder),SD-A02,RA02.10,Pitta disorder (TM2)
+Siddha,Iyyam Noi (Kapha disorder),SD-A03,RA02.20,Kapha disorder (TM2)
+Siddha,Mukkutram Noi (Trido?a  disorder),SD-A04,RA02.30,Trido盪｣a disorder (TM2)
+Siddha,Vali K?l V?yu (Rheumatism/Arthritis),SD-B10,SP20,Arthritis disorder
+Siddha,Azhal Kuttram (Fever of pitta origin),SD-C05,6A80,"Fever, unspecified"
+Siddha,Iyyam Eraippu Noi (Asthma / Dyspnoea),SD-D07,SL40,Bronchial asthma
+Siddha,Karappan (Eczema/dermatitis),SD-E11,ED23,Atopic dermatitis
+Siddha,Kuruthi Vettai Noi (Hypertension),SD-F08,BA00,"Hypertension, unspecified"
+Siddha,Neerizhivu Noi (Diabetes mellitus),SD-F09,5A11,Type 2 diabetes mellitus
+Siddha,Piththak Kﾄ［ala Noi (Jaundice),SD-G12,SD23,Hepatitis / Jaundice disorder
+Siddha,Gunmam Noi (Peptic ulcer/Gastritis),SD-G05,SC71.0,Epigastric discomfort due to liver-stomach disharmony
+Siddha,Kazhichchal Noi (Diarrhoea),SD-G08,SA51.0,Spleen deficiency with Dampness pattern
+Siddha,Moola Noi (Haemorrhoids),SD-G15,SA61.2,Damp-heat in Large Intestine pattern
+Siddha,Vaippu Noi (Tuberculosis),SD-H02,1B10,Pulmonary tuberculosis
+Siddha,Venkuttam (Leucoderma/Vitiligo),SD-J03,ED20,Vitiligo
+Siddha,"Ammai (Smallpox, historical)",SD-K01,1C10,Smallpox (archived ICD)
+Siddha,Suram (Fever),SD-L01,6A80,"Fever, unspecified"
+Siddha,Irumal Noi (Cough disorder),SD-M02,MD12,Cough disorder
+Siddha,Soothaga Soolai (Dysmenorrhea),SD-N01,SF21,Qi and Blood stagnation pattern

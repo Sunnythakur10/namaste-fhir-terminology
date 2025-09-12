@@ -1,0 +1,5 @@
+/* Small critical styles for index redirect page */
+body { font-family: 'Inter', 'Noto Sans', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f9fafb; color: #1f2937; }
+.redirect-message { text-align: center; padding: 2rem; }
+a { color: #38e07b; text-decoration: none; }
+a:hover { text-decoration: underline; }

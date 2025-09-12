@@ -1,0 +1,35 @@
+/* Styles extracted from landing.html */
+.process-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); margin: var(--space-3xl) 0; }
+@media (max-width: 768px) { .process-flow { grid-template-columns: 1fr; } }
+.process-step { text-align: center; padding: var(--space-xl); background-color: var(--bg-primary); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); transition: all var(--transition-normal); position: relative; }
+.process-step:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.process-step::after { content: '→'; position: absolute; right: -1rem; top: 50%; transform: translateY(-50%); font-size: 2rem; color: var(--color-primary); font-weight: bold; }
+.process-step:last-child::after { display: none; }
+@media (max-width: 768px) { .process-step::after { content: '↓'; right: auto; top: 100%; left: 50%; transform: translateX(-50%); } }
+.process-icon { display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; margin: 0 auto var(--space-lg); background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); border-radius: var(--radius-full); color: var(--text-inverse); font-size: 2rem; }
+.stakeholder-card { background-color: var(--bg-primary); border-radius: var(--radius-xl); padding: var(--space-xl); box-shadow: var(--shadow-sm); transition: all var(--transition-normal); position: relative; overflow: hidden; }
+.stakeholder-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--color-primary), var(--color-accent)); }
+.stakeholder-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.stakeholder-icon { display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; margin-bottom: var(--space-lg); background-color: var(--color-primary-light); border-radius: var(--radius-lg); color: var(--color-primary); font-size: 1.5rem; }
+.problem-section { background: linear-gradient(135deg, var(--bg-inverse), #2d2d2f); color: var(--text-inverse); }
+.problem-card { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: var(--space-xl); border-radius: var(--radius-xl); text-align: center; backdrop-filter: blur(10px); }
+.problem-icon { font-size: 3rem; margin-bottom: var(--space-lg); color: var(--color-error); }
+.output-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; border: 2px dashed var(--border-light); border-radius: var(--radius-lg); color: var(--text-secondary); text-align: center; }
+.output-placeholder .material-symbols-outlined { font-size: 3rem; margin-bottom: var(--space-lg); color: var(--color-primary); }
+.output-result { background-color: var(--color-primary-light); border: 1px solid var(--color-accent); border-radius: var(--radius-lg); padding: var(--space-lg); margin-top: var(--space-lg); }
+.result-item { margin-bottom: var(--space-sm); display: flex; justify-content: space-between; align-items: center; }
+.result-label { font-weight: 600; color: var(--text-primary); }
+.result-value { color: var(--text-secondary); font-family: var(--font-family-mono); }
+
+/* Small utility classes used by landing page to replace inline styles */
+.text-center { text-align: center; }
+.mb-3xl { margin-bottom: var(--space-3xl); }
+.mb-2xl { margin-bottom: var(--space-2xl); }
+.mb-md { margin-bottom: var(--space-md); }
+.w-full { width: 100%; }
+.centered-lead { text-align: center; max-width: 800px; margin: 0 auto var(--space-3xl); color: var(--text-secondary); }
+.site-footer { background-color: var(--bg-inverse); color: var(--text-inverse); padding: var(--space-2xl) 0; text-align: center; }
+.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-lg); }
+.footer-links { display: flex; gap: var(--space-lg); }
+.footer-links a { color: var(--text-inverse); text-decoration: none; font-size: var(--text-sm); }
+.muted { color: var(--text-secondary); }

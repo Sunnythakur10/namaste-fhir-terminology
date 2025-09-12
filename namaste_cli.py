@@ -63,34 +63,37 @@ class NAMASTETerminologyCLI:
             self.use_icd11_api = False
             self.icd11_client = None
     
+    def _get_api_mapping(self, code: str) -> Dict[str, Any]:
+        """Helper function to get mappings from the API."""
+        mapping_data = self.enhanced_mappings.get(code, {})
+        tm2_codes = mapping_data.get('tm2_codes', [])
+        biomed_codes = mapping_data.get('biomed_codes', [])
+        
+        return {
+            'tm2': tm2_codes[0]['code'] if tm2_codes else 'UNKNOWN',
+            'biomed': biomed_codes[0]['code'] if biomed_codes else 'UNKNOWN',
+            'name': mapping_data.get('name', ''),
+            'tm2_display': tm2_codes[0]['display'] if tm2_codes else '',
+            'biomed_display': biomed_codes[0]['display'] if biomed_codes else '',
+            'source': 'WHO_ICD11_API'
+        }
+
+    def _get_fallback_mapping(self, code: str) -> Dict[str, Any]:
+        """Helper function to get fallback mappings."""
+        fallback = self.fallback_mappings.get(code, {"tm2": "UNKNOWN", "biomed": "UNKNOWN", "name": ""})
+        return {
+            'tm2': fallback['tm2'],
+            'biomed': fallback['biomed'],
+            'name': fallback['name'],
+            'tm2_display': f"ICD-11 TM2: {fallback['tm2']}",
+            'biomed_display': f"ICD-11 Biomedicine: {fallback['biomed']}",
+            'source': 'FALLBACK'
+        }
+
     def get_icd_mappings_for_code(self, code: str) -> Dict[str, Any]:
         """Get ICD-11 mappings for a NAMASTE code"""
-        if self.use_icd11_api and self.enhanced_mappings and code in self.enhanced_mappings:
-            mapping_data = self.enhanced_mappings[code]
-            
-            # Convert enhanced mappings to compatible format
-            tm2_codes = mapping_data.get('tm2_codes', [])
-            biomed_codes = mapping_data.get('biomed_codes', [])
-            
-            return {
-                'tm2': tm2_codes[0]['code'] if tm2_codes else 'UNKNOWN',
-                'biomed': biomed_codes[0]['code'] if biomed_codes else 'UNKNOWN',
-                'name': mapping_data.get('name', ''),
-                'tm2_display': tm2_codes[0]['display'] if tm2_codes else '',
-                'biomed_display': biomed_codes[0]['display'] if biomed_codes else '',
-                'source': 'WHO_ICD11_API'
-            }
-        else:
-            # Use fallback mappings
-            fallback = self.fallback_mappings.get(code, {"tm2": "UNKNOWN", "biomed": "UNKNOWN", "name": ""})
-            return {
-                'tm2': fallback['tm2'],
-                'biomed': fallback['biomed'],
-                'name': fallback['name'],
-                'tm2_display': f"ICD-11 TM2: {fallback['tm2']}",
-                'biomed_display': f"ICD-11 Biomedicine: {fallback['biomed']}",
-                'source': 'FALLBACK'
-            }
+        use_api = self.use_icd11_api and self.enhanced_mappings and code in self.enhanced_mappings
+        return self._get_api_mapping(code) if use_api else self._get_fallback_mapping(code)
     
     def parse_csv(self, csv_file_path: str) -> bool:
         """Parse NAMASTE CSV export file"""
@@ -161,46 +164,39 @@ class NAMASTETerminologyCLI:
         print(f"✅ Generated FHIR CodeSystem with {len(unique_codes)} concepts")
         return codesystem
     
+    def _create_target(self, code, display, equivalence, comment):
+        """Helper function to create a target dictionary."""
+        return {
+            "code": code,
+            "display": display,
+            "equivalence": equivalence,
+            "comment": comment
+        }
+
     def generate_fhir_conceptmap(self) -> Dict[str, Any]:
         """Create FHIR ConceptMap linking NAMASTE → ICD-11 TM2 / Biomedicine codes"""
         if not self.namaste_data:
             raise ValueError("No NAMASTE data loaded. Please parse CSV first.")
-        
-        # Get unique codes to avoid duplicates
-        unique_codes = {}
-        for row in self.namaste_data:
-            code = row.get('Code', '')
-            if code and code not in unique_codes:
-                unique_codes[code] = row
-        
-        # Create target elements with enhanced mapping information
+
+        unique_codes = {row.get('Code', ''): row for row in self.namaste_data if row.get('Code', '')}
+
         target_elements = []
         for code, row in unique_codes.items():
             targets = []
             
-            # Add TM2 mapping
             tm2_code = row.get("icd11_tm2_code", "")
-            tm2_display = row.get("icd11_tm2_display", f"ICD-11 TM2: {tm2_code}")
             if tm2_code and tm2_code != "UNKNOWN":
-                targets.append({
-                    "code": tm2_code,
-                    "display": tm2_display,
-                    "equivalence": "equivalent",
-                    "comment": f"Traditional Medicine 2 (TM2) mapping - Source: {row.get('mapping_source', 'UNKNOWN')}"
-                })
-            
-            # Add Biomedicine mapping
+                tm2_display = row.get("icd11_tm2_display", f"ICD-11 TM2: {tm2_code}")
+                comment = f"Traditional Medicine 2 (TM2) mapping - Source: {row.get('mapping_source', 'UNKNOWN')}"
+                targets.append(self._create_target(tm2_code, tm2_display, "equivalent", comment))
+
             biomed_code = row.get("icd11_biomed_code", "")
-            biomed_display = row.get("icd11_biomed_display", f"ICD-11 Biomedicine: {biomed_code}")
             if biomed_code and biomed_code != "UNKNOWN":
-                targets.append({
-                    "code": biomed_code,
-                    "display": biomed_display,
-                    "equivalence": "equivalent",
-                    "comment": f"Biomedicine mapping - Source: {row.get('mapping_source', 'UNKNOWN')}"
-                })
-            
-            if targets:  # Only add if we have valid targets
+                biomed_display = row.get("icd11_biomed_display", f"ICD-11 Biomedicine: {biomed_code}")
+                comment = f"Biomedicine mapping - Source: {row.get('mapping_source', 'UNKNOWN')}"
+                targets.append(self._create_target(biomed_code, biomed_display, "equivalent", comment))
+
+            if targets:
                 target_elements.append({
                     "code": code,
                     "display": row.get("Disease", ""),
@@ -277,124 +273,68 @@ class NAMASTETerminologyCLI:
             print(f"\n📱 ICD-11 API Cache: {len(cache_summary['cached_files'])} files, {cache_summary['total_cache_size']} bytes")
 
 
-def main():
-    """Main CLI entry point"""
+def create_arg_parser():
+    """Creates and configures the argument parser."""
     parser = argparse.ArgumentParser(
         description="NAMASTE-FHIR Terminology CLI Tool with WHO ICD-11 API Integration",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples:
-  # Parse CSV and generate all FHIR resources with WHO ICD-11 API
-  python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --all --output-dir fhir-output/
+Example Usage:
+  - Generate all FHIR resources from a CSV file:
+    python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --output_dir fhir-output-enhanced --all
 
-  # Generate only CodeSystem
-  python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --codesystem --output codesystem.json
+  - Generate only the FHIR CodeSystem:
+    python namaste_cli.py -i dataset/namaste_dummy_dataset.csv -o fhir-output-enhanced -cs
 
-  # Generate only ConceptMap
-  python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --conceptmap --output conceptmap.json
+  - Generate only the FHIR ConceptMap with ICD-11 API disabled:
+    python namaste_cli.py -i dataset/namaste_dummy_dataset.csv -o fhir-output-enhanced -cm --no-api
 
-  # Display data summary with API mappings
-  python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --summary
-
-  # Use fallback mappings (disable API)
-  python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --all --no-api
-
-  # Test ICD-11 API integration
-  python namaste_cli.py --test-api
-        """
+  - Display a summary of the data without generating files:
+    python namaste_cli.py -i dataset/namaste_dummy_dataset.csv --summary
+"""
     )
-    
-    parser.add_argument('--input', '-i',
-                       help='Path to NAMASTE CSV file')
-    parser.add_argument('--output', '-o',
-                       help='Output file path (for single resource)')
-    parser.add_argument('--output-dir', '-d',
-                       help='Output directory (for multiple resources)')
-    parser.add_argument('--codesystem', action='store_true',
-                       help='Generate FHIR CodeSystem')
-    parser.add_argument('--conceptmap', action='store_true',
-                       help='Generate FHIR ConceptMap')
-    parser.add_argument('--all', action='store_true',
-                       help='Generate all FHIR resources')
-    parser.add_argument('--summary', action='store_true',
-                       help='Display data summary only')
-    parser.add_argument('--no-api', action='store_true',
-                       help='Disable WHO ICD-11 API integration (use fallback mappings)')
-    parser.add_argument('--test-api', action='store_true',
-                       help='Test WHO ICD-11 API integration')
-    parser.add_argument('--verbose', '-v', action='store_true',
-                       help='Verbose output')
-    
+    parser.add_argument("-i", "--input", required=True, help="Path to the NAMASTE CSV input file")
+    parser.add_argument("-o", "--output_dir", default="fhir-output", help="Directory to save FHIR resources")
+    parser.add_argument("-cs", "--codesystem", action="store_true", help="Generate FHIR CodeSystem")
+    parser.add_argument("-cm", "--conceptmap", action="store_true", help="Generate FHIR ConceptMap")
+    parser.add_argument("--all", action="store_true", help="Generate all supported FHIR resources")
+    parser.add_argument("--summary", action="store_true", help="Display summary of the data")
+    parser.add_argument("--no-api", action="store_true", help="Disable WHO ICD-11 API integration and use fallback mappings")
+    return parser
+
+def handle_summary(cli_tool):
+    """Handles the summary display."""
+    cli_tool.display_summary()
+
+def handle_file_generation(cli_tool, args):
+    """Handles the generation of FHIR resource files."""
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    if args.all or args.codesystem:
+        codesystem = cli_tool.generate_fhir_codesystem()
+        cli_tool.save_to_file(codesystem, str(output_dir / "namaste-codesystem.json"))
+
+    if args.all or args.conceptmap:
+        conceptmap = cli_tool.generate_fhir_conceptmap()
+        cli_tool.save_to_file(conceptmap, str(output_dir / "namaste-conceptmap.json"))
+
+def main():
+    """Main CLI entry point"""
+    parser = create_arg_parser()
     args = parser.parse_args()
-    
-    # Test API integration if requested
-    if args.test_api:
-        if ICD11_AVAILABLE:
-            from icd11_client import test_icd11_client
-            test_icd11_client()
-        else:
-            print("❌ ICD-11 API client not available. Install requirements: pip install -r requirements.txt")
-        return
-    
-    # Validate input requirement
-    if not args.input:
-        print("❌ Input file is required. Use --input or --test-api for API testing.")
+
+    if not (args.all or args.codesystem or args.conceptmap or args.summary):
+        parser.error("No action requested. Please specify --all, --codesystem, --conceptmap, or --summary.")
+
+    cli_tool = NAMASTETerminologyCLI(use_icd11_api=not args.no_api)
+
+    if not cli_tool.parse_csv(args.input):
         sys.exit(1)
-    
-    # Initialize CLI tool
-    use_api = not args.no_api
-    cli = NAMASTETerminologyCLI(use_icd11_api=use_api)
-    
-    # Parse input CSV
-    if not cli.parse_csv(args.input):
-        sys.exit(1)
-    
-    # Display summary if requested
+
     if args.summary:
-        cli.display_summary()
-        return
-    
-    # Determine what to generate
-    generate_codesystem = args.codesystem or args.all
-    generate_conceptmap = args.conceptmap or args.all
-    
-    if not (generate_codesystem or generate_conceptmap):
-        print("❌ No output specified. Use --codesystem, --conceptmap, or --all")
-        sys.exit(1)
-    
-    # Set up output paths
-    if args.output_dir:
-        output_dir = Path(args.output_dir)
-        output_dir.mkdir(parents=True, exist_ok=True)
-        codesystem_path = output_dir / "namaste-codesystem.json"
-        conceptmap_path = output_dir / "namaste-conceptmap.json"
-    elif args.output:
-        if generate_codesystem and generate_conceptmap:
-            print("❌ Cannot use single output file for multiple resources. Use --output-dir instead.")
-            sys.exit(1)
-        codesystem_path = args.output
-        conceptmap_path = args.output
+        handle_summary(cli_tool)
     else:
-        # Default output files
-        codesystem_path = "namaste-codesystem.json"
-        conceptmap_path = "namaste-conceptmap.json"
-    
-    # Generate and save FHIR resources
-    try:
-        if generate_codesystem:
-            codesystem = cli.generate_fhir_codesystem()
-            cli.save_to_file(codesystem, codesystem_path)
-        
-        if generate_conceptmap:
-            conceptmap = cli.generate_fhir_conceptmap()
-            cli.save_to_file(conceptmap, conceptmap_path)
-        
-        print("\n🎉 Terminology ingestion completed successfully!")
-        
-    except Exception as e:
-        print(f"❌ Error: {str(e)}")
-        sys.exit(1)
+        handle_file_generation(cli_tool, args)
 
-
-if __name__ == "__main__":
-    main()
+    print("\n✅ NAMASTE-FHIR CLI tool execution complete.")

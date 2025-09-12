@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHIR Encounter Bundle Uploader</title>
+    <link rel="stylesheet" href="/static/assets/css/unified-design-system.css">
+    <link rel="stylesheet" href="/static/assets/css/main.css">
+  <link rel="stylesheet" href="/ui/assets/css/encounter-uploader.css">
+</head>
+<body>
+  <div class="encounter-container">
+        <h1>FHIR Encounter Bundle Uploader</h1>
+        <p>Paste a FHIR Bundle containing an Encounter and/or Condition resources below and click "Upload" to send it to the server.</p>
+        
+        <div class="form-group">
+            <label for="bundle-input">FHIR Bundle JSON</label>
+            <textarea id="bundle-input" class="form-control" placeholder="Paste your FHIR Bundle here..."></textarea>
+        </div>
+        
+        <button id="upload-btn" class="btn btn-primary">Upload Bundle</button>
+
+    <div id="response-container" class="hidden">
+            <h3>Server Response</h3>
+            <pre id="response-output"></pre>
+        </div>
+    </div>
+
+    <script>
+        const bundleInput = document.getElementById('bundle-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        const responseContainer = document.getElementById('response-container');
+        const responseOutput = document.getElementById('response-output');
+
+        // Sample bundle for user convenience
+        const sampleBundle = {
+          "resourceType": "Bundle",
+          "type": "transaction",
+          "entry": [
+            {
+              "resource": {
+                "resourceType": "Encounter",
+                "status": "finished",
+                "class": { "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "AMB", "display": "ambulatory" },
+                "subject": { "reference": "Patient/example" }
+              }
+            },
+            {
+              "resource": {
+                "resourceType": "Condition",
+                "clinicalStatus": { "coding": [{ "code": "active" }] },
+                "code": {
+                  "coding": [
+                    { "system": "http://ayush.gov.in/namaste", "code": "AAE-16", "display": "Sandhigatvata" },
+                    { "system": "http://hl7.org/fhir/sid/icd-11", "code": "SP00", "display": "ICD-11 TM2: SP00" }
+                  ]
+                },
+                "subject": { "reference": "Patient/example" }
+              }
+            }
+          ]
+        };
+        bundleInput.value = JSON.stringify(sampleBundle, null, 2);
+
+
+        uploadBtn.addEventListener('click', async () => {
+            const bundleContent = bundleInput.value;
+            let bundleJson;
+
+            try {
+                bundleJson = JSON.parse(bundleContent);
+      } catch (error) {
+        responseOutput.textContent = `Invalid JSON: ${error.message}`;
+        responseContainer.classList.remove('hidden');
+        return;
+      }
+
+            try {
+                const response = await fetch('/upload-encounter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer mock-abha-token'
+                    },
+                    body: JSON.stringify(bundleJson)
+                });
+
+                const result = await response.json();
+                responseOutput.textContent = JSON.stringify(result, null, 2);
+                responseContainer.classList.remove('hidden');
+
+      } catch (error) {
+        responseOutput.textContent = `An error occurred: ${error.message}`;
+        responseContainer.classList.remove('hidden');
+      }
+        });
+    </script>
+</body>
+</html>

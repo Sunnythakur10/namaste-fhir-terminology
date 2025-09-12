@@ -7,136 +7,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
-    <style>
-        /* Insurance-specific styles */
-        .insurance-header {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: var(--text-inverse);
-            padding: var(--space-xl) 0;
-        }
-
-        .claims-workflow {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-xl);
-            margin-bottom: var(--space-xl);
-        }
-
-        @media (max-width: 768px) {
-            .claims-workflow {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .claim-form {
-            background-color: var(--bg-primary);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .claim-preview {
-            background-color: var(--bg-secondary);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-full);
-            font-size: var(--text-sm);
-            font-weight: 500;
-        }
-
-        .status-approved {
-            background-color: rgba(52, 199, 89, 0.1);
-            color: var(--color-accent);
-        }
-
-        .status-pending {
-            background-color: rgba(255, 149, 0, 0.1);
-            color: var(--color-warning);
-        }
-
-        .status-review {
-            background-color: rgba(0, 122, 255, 0.1);
-            color: var(--color-primary);
-        }
-
-        .claim-summary {
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            margin-top: var(--space-lg);
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--space-sm) 0;
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .summary-row:last-child {
-            border-bottom: none;
-            font-weight: 600;
-            background-color: var(--bg-secondary);
-            margin: var(--space-sm) calc(-1 * var(--space-lg));
-            padding: var(--space-md) var(--space-lg);
-            border-radius: var(--radius-md);
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            font-size: var(--text-sm);
-            margin-bottom: var(--space-md);
-        }
-
-        .breadcrumb a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-        }
-
-        .breadcrumb a:hover {
-            color: var(--text-inverse);
-        }
-
-        .compliance-check {
-            background-color: var(--color-primary-light);
-            border: 1px solid var(--color-primary);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            margin-top: var(--space-lg);
-        }
-
-        .check-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-sm);
-        }
-
-        .check-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .check-passed {
-            color: var(--color-accent);
-        }
-
-        .check-warning {
-            color: var(--color-warning);
-        }
-    </style>
+    <link rel="stylesheet" href="/static/assets/css/unified-design-system.css">
+    <link rel="stylesheet" href="/static/assets/css/main.css">
+    <link rel="stylesheet" href="/static/assets/css/extracted-inline.css">
 </head>
 <body>
     <div class="layout-container">
@@ -154,18 +27,18 @@
         <!-- Insurance Header -->
         <section class="insurance-header">
             <div class="container">
-                <h1 class="display-medium" style="margin-bottom: var(--space-md);">Insurance Claims Processing</h1>
-                <p class="body-large" style="opacity: 0.9;">Streamlined claims processing with standardized dual-coding for traditional medicine treatments and global insurance compatibility.</p>
+                <h1 class="display-medium headline-margin-lg">Insurance Claims Processing</h1>
+                <p class="body-large text-muted-90">Streamlined claims processing with standardized dual-coding for traditional medicine treatments and global insurance compatibility.</p>
             </div>
         </section>
 
         <!-- Main Content -->
-        <main style="padding: var(--space-2xl) 0;">
+        <main class="analytics-padding">
             <div class="container">
                 <!-- Claims Processing Workflow -->
                 <div class="claims-workflow">
                     <div class="claim-form">
-                        <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Traditional Medicine Claim Submission</h2>
+                        <h2 class="headline-large headline-margin-lg">Traditional Medicine Claim Submission</h2>
                         
                         <div class="form-group">
                             <label class="form-label">Patient Information</label>
@@ -217,11 +90,11 @@
                     </div>
                     
                     <div class="claim-preview">
-                        <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Claim Processing & Validation</h2>
+                        <h2 class="headline-large headline-margin-lg">Claim Processing & Validation</h2>
                         
                         <div id="claim-status">
-                            <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
-                                <span class="material-symbols-outlined" style="font-size: 4rem; margin-bottom: var(--space-lg); color: var(--color-warning);">receipt_long</span>
+                            <div class="text-center-padding">
+                                <span class="material-symbols-outlined icon-xxl icon-warning">receipt_long</span>
                                 <p class="body-large"><strong>Claim Processing Ready</strong></p>
                                 <p>Complete the claim form to generate standardized dual-coded documentation for insurance processing.</p>
                             </div>
@@ -230,40 +103,40 @@
                 </div>
 
                 <!-- Insurance Analytics Dashboard -->
-                <div class="workflow-card" style="background-color: var(--bg-primary); border-radius: var(--radius-xl); padding: var(--space-xl); box-shadow: var(--shadow-sm);">
-                    <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Insurance Processing Analytics</h2>
+                <div class="workflow-card">
+                    <h2 class="headline-large headline-margin-lg">Insurance Processing Analytics</h2>
                     
                     <div class="grid grid-cols-4">
-                        <div class="metric-card" style="background-color: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-lg); text-align: center;">
-                            <div class="metric-value" style="font-family: var(--font-family-primary); font-size: var(--text-3xl); font-weight: 700; color: var(--color-accent); margin-bottom: var(--space-sm);">2,847</div>
+                        <div class="metric-card metric-card--secondary">
+                            <div class="metric-value metric-value--accent">2,847</div>
                             <div class="caption">Claims Processed</div>
                         </div>
-                        <div class="metric-card" style="background-color: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-lg); text-align: center;">
-                            <div class="metric-value" style="font-family: var(--font-family-primary); font-size: var(--text-3xl); font-weight: 700; color: var(--color-primary); margin-bottom: var(--space-sm);">94.2%</div>
+                        <div class="metric-card metric-card--secondary">
+                            <div class="metric-value metric-value--primary">94.2%</div>
                             <div class="caption">Approval Rate</div>
                         </div>
-                        <div class="metric-card" style="background-color: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-lg); text-align: center;">
-                            <div class="metric-value" style="font-family: var(--font-family-primary); font-size: var(--text-3xl); font-weight: 700; color: var(--color-warning); margin-bottom: var(--space-sm);">₹12.4L</div>
+                        <div class="metric-card metric-card--secondary">
+                            <div class="metric-value metric-value--warning">₹12.4L</div>
                             <div class="caption">Average Processing</div>
                         </div>
-                        <div class="metric-card" style="background-color: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-lg); text-align: center;">
-                            <div class="metric-value" style="font-family: var(--font-family-primary); font-size: var(--text-3xl); font-weight: 700; color: var(--color-accent); margin-bottom: var(--space-sm);">2.1 days</div>
+                        <div class="metric-card metric-card--secondary">
+                            <div class="metric-value metric-value--accent">2.1 days</div>
                             <div class="caption">Avg Processing Time</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Recent Claims -->
-                <div class="workflow-card" style="background-color: var(--bg-primary); border-radius: var(--radius-xl); padding: var(--space-xl); box-shadow: var(--shadow-sm); margin-top: var(--space-xl);">
-                    <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Recent Claims Processing</h2>
+                <div class="recent-claims-card">
+                    <h2 class="headline-large headline-margin-lg">Recent Claims Processing</h2>
                     
-                    <div class="grid grid-cols-1" style="gap: var(--space-md);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-md); background-color: var(--bg-secondary); border-radius: var(--radius-md);">
+                    <div class="grid grid-cols-1 grid-gap-md-rows">
+                        <div class="recent-claim-row">
                             <div>
                                 <div class="body-emphasis">Claim #INS-2024-001</div>
                                 <div class="caption">Sandhigatavata Treatment - Dr. Sharma</div>
                             </div>
-                            <div style="text-align: right;">
+                            <div class="recent-claim-right">
                                 <div class="status-badge status-approved">
                                     <span class="material-symbols-outlined">check_circle</span>
                                     Approved
@@ -272,12 +145,12 @@
                             </div>
                         </div>
                         
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-md); background-color: var(--bg-secondary); border-radius: var(--radius-md);">
+                        <div class="recent-claim-row">
                             <div>
                                 <div class="body-emphasis">Claim #INS-2024-002</div>
                                 <div class="caption">Madhumeha Management - Dr. Patel</div>
                             </div>
-                            <div style="text-align: right;">
+                            <div class="recent-claim-right">
                                 <div class="status-badge status-pending">
                                     <span class="material-symbols-outlined">schedule</span>
                                     Processing
@@ -286,12 +159,12 @@
                             </div>
                         </div>
                         
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-md); background-color: var(--bg-secondary); border-radius: var(--radius-md);">
+                        <div class="recent-claim-row">
                             <div>
                                 <div class="body-emphasis">Claim #INS-2024-003</div>
                                 <div class="caption">Panchakarma Therapy - Dr. Kumar</div>
                             </div>
-                            <div style="text-align: right;">
+                            <div class="recent-claim-right">
                                 <div class="status-badge status-review">
                                     <span class="material-symbols-outlined">rate_review</span>
                                     Under Review
@@ -323,8 +196,8 @@
             
             // Show processing state
             statusDiv.innerHTML = `
-                <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
-                    <span class="material-symbols-outlined" style="font-size: 4rem; margin-bottom: var(--space-lg); color: var(--color-warning);">hourglass_empty</span>
+                <div class="text-center-padding">
+                    <span class="material-symbols-outlined icon-xxl icon-warning">hourglass_empty</span>
                     <p class="body-large"><strong>Processing Insurance Claim...</strong></p>
                     <p>Validating dual-coded documentation and insurance compliance...</p>
                 </div>
@@ -376,13 +249,13 @@
             const copay = amount - coverageAmount - deductible;
             
             return `
-                <div class="status-badge ${mapping.approval_likelihood > 90 ? 'status-approved' : mapping.approval_likelihood > 80 ? 'status-pending' : 'status-review'}" style="margin-bottom: var(--space-lg);">
+                <div class="status-badge ${mapping.approval_likelihood > 90 ? 'status-approved' : mapping.approval_likelihood > 80 ? 'status-pending' : 'status-review'} mb-md">
                     <span class="material-symbols-outlined">${mapping.approval_likelihood > 90 ? 'check_circle' : mapping.approval_likelihood > 80 ? 'schedule' : 'rate_review'}</span>
                     ${mapping.approval_likelihood > 90 ? 'Pre-Approved' : mapping.approval_likelihood > 80 ? 'Likely Approval' : 'Review Required'}
                 </div>
                 
                 <div class="claim-summary">
-                    <h4 class="headline-medium" style="margin-bottom: var(--space-lg);">Claim Summary & Dual-Coding</h4>
+                    <h4 class="headline-medium headline-margin-lg">Claim Summary & Dual-Coding</h4>
                     
                     <div class="summary-row">
                         <span>Patient ID:</span>
@@ -398,15 +271,15 @@
                     </div>
                     <div class="summary-row">
                         <span>NAMASTE Code:</span>
-                        <span style="font-family: var(--font-family-mono);">${mapping.namaste_code}</span>
+                        <span class="summary-mono">${mapping.namaste_code}</span>
                     </div>
                     <div class="summary-row">
                         <span>ICD-11 TM2:</span>
-                        <span style="font-family: var(--font-family-mono);">${mapping.icd11_tm2}</span>
+                        <span class="summary-mono">${mapping.icd11_tm2}</span>
                     </div>
                     <div class="summary-row">
                         <span>ICD-11 Biomedicine:</span>
-                        <span style="font-family: var(--font-family-mono);">${mapping.icd11_bio}</span>
+                        <span class="summary-mono">${mapping.icd11_bio}</span>
                     </div>
                     <div class="summary-row">
                         <span>Treatment:</span>
@@ -421,7 +294,7 @@
                 </div>
                 
                 <div class="compliance-check">
-                    <h5 class="body-emphasis" style="margin-bottom: var(--space-md);">Insurance Compliance Check</h5>
+                    <h5 class="body-emphasis mb-md">Insurance Compliance Check</h5>
                     
                     <div class="check-item">
                         <span class="material-symbols-outlined check-passed">check_circle</span>
@@ -441,7 +314,7 @@
                     </div>
                 </div>
                 
-                <div style="display: flex; gap: var(--space-md); margin-top: var(--space-lg);">
+                <div class="btn-group">
                     <button class="btn btn-primary btn-small">Submit Claim</button>
                     <button class="btn btn-secondary btn-small">Save Draft</button>
                     <button class="btn btn-ghost btn-small">Print Summary</button>

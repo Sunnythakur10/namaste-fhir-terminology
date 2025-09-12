@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHIR Problem List Generator</title>
+    <link rel="stylesheet" href="/static/assets/css/unified-design-system.css">
+    <link rel="stylesheet" href="/static/assets/css/main.css">
+    <link rel="stylesheet" href="/static/assets/css/extracted-inline.css">
+</head>
+<body>
+    <div class="container">
+        <h1>FHIR Problem List Entry Generator</h1>
+        <p>Search for a NAMASTE/ICD code to generate a FHIR Condition resource.</p>
+        
+        <div class="form-group">
+            <label for="search-query">Search Term</label>
+            <input type="text" id="search-query" class="form-control" placeholder="e.g., Sandhigatvata, AAE-16">
+        </div>
+
+        <div id="results-container">
+            <ul id="results-list"></ul>
+        </div>
+
+    <div id="selected-code" class="is-hidden">
+            <h3>Selected Code</h3>
+            <p id="selected-code-details"></p>
+            <div class="form-group">
+                <label for="patient-id">Patient ID</label>
+                <input type="text" id="patient-id" class="form-control" value="Patient/example">
+            </div>
+            <button id="generate-btn" class="btn btn-primary">Generate FHIR Condition</button>
+        </div>
+
+    <div id="output-container" class="is-hidden">
+            <h3>Generated FHIR Condition</h3>
+            <pre id="fhir-output"></pre>
+        </div>
+    </div>
+
+    <script>
+        const searchQuery = document.getElementById('search-query');
+        const resultsList = document.getElementById('results-list');
+        const selectedCodeDiv = document.getElementById('selected-code');
+        const selectedCodeDetails = document.getElementById('selected-code-details');
+        const generateBtn = document.getElementById('generate-btn');
+        const patientIdInput = document.getElementById('patient-id');
+        const outputContainer = document.getElementById('output-container');
+        const fhirOutput = document.getElementById('fhir-output');
+
+        let selectedCode = null;
+
+        searchQuery.addEventListener('input', async () => {
+            const query = searchQuery.value;
+            if (query.length < 2) {
+                resultsList.innerHTML = '';
+                return;
+            }
+
+            const response = await fetch('/search-namaste', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer mock-abha-token' },
+                body: JSON.stringify({ query: query, limit: 10 })
+            });
+
+            const results = await response.json();
+            displayResults(results);
+        });
+
+        function displayResults(results) {
+            resultsList.innerHTML = '';
+            results.forEach(result => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${result.display_name}</strong> (${result.namaste_code})<br><small>${result.definition}</small>`;
+                li.onclick = () => selectCode(result);
+                resultsList.appendChild(li);
+            });
+        }
+
+        function selectCode(result) {
+            selectedCode = result;
+            selectedCodeDetails.innerHTML = `<strong>${result.display_name}</strong><br>
+                                             NAMASTE: ${result.namaste_code}<br>
+                                             TM2: ${result.tm2_mapping}<br>
+                                             Biomedicine: ${result.biomedicine_mapping}`;
+            selectedCodeDiv.style.display = 'block';
+            resultsList.innerHTML = '';
+            searchQuery.value = result.display_name;
+        }
+
+        generateBtn.addEventListener('click', async () => {
+            if (!selectedCode) return;
+
+            const requestBody = {
+                namaste_code: selectedCode.namaste_code,
+                namaste_display: selectedCode.display_name,
+                icd11_tm2_code: selectedCode.tm2_mapping,
+                icd11_biomed_code: selectedCode.biomedicine_mapping,
+                patient_id: patientIdInput.value
+            };
+
+            const response = await fetch('/generate-condition', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer mock-abha-token' },
+                body: JSON.stringify(requestBody)
+            });
+
+            const fhirResource = await response.json();
+            fhirOutput.textContent = JSON.stringify(fhirResource, null, 2);
+            outputContainer.style.display = 'block';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+icd_code,icd_name,namaste_code,namaste_name,source
+5A11,Type 2 diabetes mellitus,EF-2.4.4,Madhumeha/Kshaudrameha,namaste_dummy_dataset.csv
+SP00,Sandhigatvata,AAE-16,Sandhigatvata,namaste_dummy_dataset.csv
+SP9Y,Generalized body pain,AAB-3,angamarda?,AYUSH.csv
+SP21,Loss of function of limb,AAB-5,angavibhrama?,AYUSH.csv
+SM1P,Loss of taste,AAB-7,rasajnata? h?ni?,AYUSH.csv
+MA80,Tinnitus,AAB-8,a?abda-?rava?,AYUSH.csv
+7A80,Insomnia,AAB-9,asvapna?,AYUSH.csv
+9D90,Eye pain,AAB-12,ak?i-??la?,AYUSH.csv
+8B22,Facial palsy,AAB-6,ardhita?,AYUSH.csv
+SL40,Bronchial asthma,SHV-1,asvasa,AYUSH.csv
+MD12,Cough disorder,KAS-1,kasa,AYUSH.csv
+SQ00,Speech disorder (mental/behavioral),AAB-1,atipral?pah (excessive speech, kevala-vata),AYUSH.csv
+5A11,Type 2 diabetes mellitus,UN-13,Zeeabetus Shakri,AYUSH.csv
+1B10,Pulmonary tuberculosis,KSY-1,k?aya roga,AYUSH.csv
+6A80,Fever,unspecified,JVR-1,jvara,AYUSH.csv
+SD23,Hepatitis,unspecified,KML-1,kamala,AYUSH.csv
+SM30,Haemorrhoid disorder,ARS-1,ar?as,AYUSH.csv
+1B60,Leprosy,KST-1,ku??ha,AYUSH.csv
+ED20,Vitiligo,SVT-1,vitra,AYUSH.csv
+3A00,Anaemia,PND-1,p???u roga,AYUSH.csv
+SD70,Ascites,UDR-1,udararoga,AYUSH.csv
+DA01,Diarrhoea,ATS-1,atisara,AYUSH.csv
+DA90,Malabsorption syndrome,GRH-1,graha??,AYUSH.csv
+DA50,Anorexia,ARC-1,aruci,AYUSH.csv
+SD60,Abdominal colic disorder,SUL-1,??la,AYUSH.csv
+8A60,Epilepsy,APS-1,apasmaara,AYUSH.csv
+6C4Z,Substance intoxication,MDA-1,mada,AYUSH.csv
+NE61,Poisoning,VIS-1,vi?a roga,AYUSH.csv
+5B81,Obesity,STH-1,sth?lya,AYUSH.csv
+5B70,Severe weight loss/cachexia,KSY-2,k?aya,AYUSH.csv
+9D9Y,Other eye disorders,NET-1,netra roga,AYUSH.csv
+MA80,Ear disorders,KRN-1,kar?a roga,AYUSH.csv
+GC80,Painful urination,MTR-1,m?trak?cchra,AYUSH.csv
+GB60,Urinary calculus,ASM-1,a?mar?,AYUSH.csv
+DA9Y,Other specified digestive disorder,UDR-2,udara roga,AYUSH.csv
+BA00,Heart disease unspecified,HRD-1,h?droga,AYUSH.csv
+BD10,Heart failure,UN-29,Dau-ul-Kalb,AYUSH.csv
+ED10,Eczema,UN-14,Shara,AYUSH.csv
+MG30,Headache,UN-19,Suda,AYUSH.csv
+FA20,Arthritis,UN-20,Waja-ul-Mafasil,AYUSH.csv
+FA24,Gout,UN-21,Niqris,AYUSH.csv
+1F40,Meningitis,UN-24,Sarsam,AYUSH.csv
+8A80,Migraine,UN-30,Dau-us-Sada,AYUSH.csv
+1F41,Encephalitis,UN-31,Sarsam Dimagh,AYUSH.csv
+2A20,Brain neoplasm,UN-32,Sharah Dimagh,AYUSH.csv
+DA40,Colitis,UN-33,Dau-ul-Am�a,AYUSH.csv
+CA20,Tonsillitis,UN-40,Tanoon,AYUSH.csv
+ED23,Atopic dermatitis,SD-E11,Karappan,AYUSH.csv
+BA00,Hypertension,SD-F08,Karuthi Vettai,AYUSH.csv
+SC71.0,Epigastric discomfort,GUNM-1,Gunmam Noi,AYUSH.csv
+SA51.0,Spleen deficiency with Dampness,SD-G08,Kazhichchal Noi,AYUSH.csv
+SA61.2,Damp-heat in Large Intestine,SD-G15,Moola Noi,AYUSH.csv
+SD20,Liver disease unspecified,YKR-1,yak?t roga,AYUSH.csv
+SD30,Spleen disorder,PLH-1,pliha roga,AYUSH.csv
+CA40,Bronchial asthma,SD-D07,Iyyam Eraippu Noi,AYUSH.csv
+1C10,Smallpox (archived),SD-K01,Ammai,AYUSH.csv
+SF21,Dysmenorrhea,SD-N01,Soothaga Soolai,AYUSH.csv
+RA02.00,Vata disorder (TM2),SD-A01,Vali Noi,AYUSH.csv
+RA02.10,Pitta disorder (TM2),SD-A02,Azhal Noi,AYUSH.csv
+RA02.20,Kapha disorder (TM2),SD-A03,Iyyam Noi,AYUSH.csv
+RA02.30,Tridosha disorder (TM2),SD-A04,Mukkutram Noi,AYUSH.csv
+SP20,Arthritis disorder,SD-B10,Vali K?l V?yu,AYUSH.csv
+```}```jsonplaintext*** End Of File...***```

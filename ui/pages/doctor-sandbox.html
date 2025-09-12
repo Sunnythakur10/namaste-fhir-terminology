@@ -7,113 +7,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
-    <style>
-        /* Sandbox-specific styles */
-        .workspace-header {
-            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-            color: var(--text-inverse);
-            padding: var(--space-xl) 0;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            font-size: var(--text-sm);
-            margin-bottom: var(--space-md);
-        }
-
-        .breadcrumb a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-        }
-
-        .breadcrumb a:hover {
-            color: var(--text-inverse);
-        }
-
-        .workspace-content {
-            padding: var(--space-2xl) 0;
-        }
-
-        .workflow-card {
-            background-color: var(--bg-primary);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            box-shadow: var(--shadow-sm);
-            margin-bottom: var(--space-xl);
-        }
-
-        .patient-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-xl);
-        }
-
-        @media (max-width: 768px) {
-            .patient-form {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .diagnosis-results {
-            background-color: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            margin-top: var(--space-lg);
-        }
-
-        .code-display {
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            font-family: var(--font-family-mono);
-            font-size: var(--text-sm);
-            margin-top: var(--space-md);
-        }
-
-        .confidence-meter {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            margin-top: var(--space-md);
-        }
-
-        .confidence-bar {
-            height: 8px;
-            background-color: var(--bg-tertiary);
-            border-radius: var(--radius-full);
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .confidence-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--color-accent), var(--color-primary));
-            border-radius: var(--radius-full);
-            transition: width var(--transition-normal);
-        }
-
-        .output-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 200px;
-            border: 2px dashed var(--border-light);
-            border-radius: var(--radius-lg);
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        .output-placeholder .material-symbols-outlined {
-            font-size: 3rem;
-            margin-bottom: var(--space-lg);
-            color: var(--color-primary);
-        }
-    </style>
+    <link rel="stylesheet" href="/static/assets/css/unified-design-system.css">
+    <link rel="stylesheet" href="/static/assets/css/main.css">
+    <link rel="stylesheet" href="/ui/assets/css/doctor-sandbox.css">
 </head>
 <body>
     <div class="layout-container">
@@ -131,8 +27,8 @@
         <!-- Workspace Header -->
         <section class="workspace-header">
             <div class="container">
-                <h1 class="display-medium" style="margin-bottom: var(--space-md);">Healthcare Provider Workspace</h1>
-                <p class="body-large" style="opacity: 0.9;">Advanced dual-coding system for seamless integration of traditional and modern medical practices in patient care documentation.</p>
+                <h1 class="display-medium mb-3">Healthcare Provider Workspace</h1>
+                <p class="body-large text-muted">Advanced dual-coding system for seamless integration of traditional and modern medical practices in patient care documentation.</p>
             </div>
         </section>
 
@@ -141,16 +37,23 @@
             <div class="container">
                 <!-- Patient Documentation Workflow -->
                 <div class="workflow-card">
-                    <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Patient Documentation & Dual-Coding Workflow</h2>
+                    <h2 class="headline-large mb-4">Patient Documentation & Dual-Coding Workflow</h2>
                     
                     <div class="patient-form">
                         <div>
-                            <h3 class="headline-medium" style="margin-bottom: var(--space-lg);">Traditional Medicine Assessment</h3>
+                            <h3 class="headline-medium mb-4">Traditional Medicine Assessment</h3>
                             
                             <div class="form-group">
                                 <label class="form-label">Patient Traditional Diagnosis</label>
-                                <input type="text" class="form-input" id="traditional-diagnosis" 
-                                       placeholder="Enter traditional medicine diagnosis (e.g., Sandhigatavata, Madhumeha)" />
+                                <div class="input-with-select">
+                                    <input type="text" class="form-input" id="traditional-diagnosis" 
+                                           placeholder="Enter traditional medicine diagnosis (e.g., Sandhigatavata, Madhumeha)" />
+                                    <select id="translate-direction" class="form-select small-select" title="Select translation direction">
+                                        <option value="auto">Auto-detect</option>
+                                        <option value="namaste">NAMASTE → ICD</option>
+                                        <option value="icd">ICD → NAMASTE</option>
+                                    </select>
+                                </div>
                             </div>
                             
                             <div class="form-group">
@@ -189,7 +92,7 @@
                         </div>
                         
                         <div>
-                            <h3 class="headline-medium" style="margin-bottom: var(--space-lg);">Standardized Medical Coding</h3>
+                            <h3 class="headline-medium mb-4">Standardized Medical Coding</h3>
                             
                             <div id="coding-results">
                                 <div class="output-placeholder">
@@ -204,23 +107,23 @@
 
                 <!-- Clinical Integration Tools -->
                 <div class="workflow-card">
-                    <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Clinical Integration Tools</h2>
+                    <h2 class="headline-large mb-4">Clinical Integration Tools</h2>
                     
                     <div class="grid grid-cols-3">
                         <div class="card">
                             <div class="card-header">
-                                <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
-                                    <span class="material-symbols-outlined" style="color: var(--color-primary);">assignment</span>
-                                    <h3 class="card-title">Treatment Plans</h3>
-                                </div>
+                                    <div class="mb-3 align-center-gap">
+                                        <span class="material-symbols-outlined text-primary">assignment</span>
+                                        <h3 class="card-title">Treatment Plans</h3>
+                                    </div>
                                 <p class="card-description">Generate comprehensive treatment plans with both traditional and modern medical protocols.</p>
                             </div>
                         </div>
                         
                         <div class="card">
-                            <div class="card-header">
-                                <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
-                                    <span class="material-symbols-outlined" style="color: var(--color-primary);">receipt_long</span>
+                                    <div class="card-header">
+                                    <div class="mb-3 align-center-gap">
+                                    <span class="material-symbols-outlined text-primary">receipt_long</span>
                                     <h3 class="card-title">Insurance Claims</h3>
                                 </div>
                                 <p class="card-description">Automated claim generation with standardized coding for traditional medicine treatments.</p>
@@ -228,9 +131,9 @@
                         </div>
                         
                         <div class="card">
-                            <div class="card-header">
-                                <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
-                                    <span class="material-symbols-outlined" style="color: var(--color-primary);">analytics</span>
+                                    <div class="card-header">
+                                    <div class="mb-3 align-center-gap">
+                                    <span class="material-symbols-outlined text-primary">analytics</span>
                                     <h3 class="card-title">Outcome Tracking</h3>
                                 </div>
                                 <p class="card-description">Monitor treatment effectiveness with standardized metrics and reporting systems.</p>
@@ -243,18 +146,43 @@
     </div>
 
     <script>
+        // Local fallback clinical mappings for offline/demo use
+        const clinicalMappings = {
+            'sandhigatavata': {
+                namaste_code: 'AAE-16',
+                icd11_tm2: 'SP00.1',
+                icd11_bio: 'FA01.2',
+                modern_equivalent: 'Osteoarthritis with constitutional factors',
+                confidence: 94
+            },
+            'madhumeha': {
+                namaste_code: 'EBM-23',
+                icd11_tm2: 'SP15.0',
+                icd11_bio: '5A11.0',
+                modern_equivalent: 'Type 2 Diabetes Mellitus',
+                confidence: 96
+            },
+            'kasa': {
+                namaste_code: 'RSP-08',
+                icd11_tm2: 'SP22.1',
+                icd11_bio: 'CA20.0',
+                modern_equivalent: 'Acute Bronchitis',
+                confidence: 89
+            }
+        };
+
         function generateDualCoding() {
             const diagnosis = document.getElementById('traditional-diagnosis').value.trim();
             const constitution = document.getElementById('constitution').value;
             const treatment = document.getElementById('treatment').value;
             const notes = document.getElementById('clinical-notes').value.trim();
             const resultsDiv = document.getElementById('coding-results');
-            
+
             if (!diagnosis) {
                 alert('Please enter a traditional diagnosis to generate dual-coding.');
                 return;
             }
-            
+
             // Show processing state
             resultsDiv.innerHTML = `
                 <div class="output-placeholder">
@@ -263,53 +191,62 @@
                     <p>Generating dual-coded documentation for "${diagnosis}"</p>
                 </div>
             `;
-            
-            setTimeout(() => {
-                const result = generateClinicalResult(diagnosis, constitution, treatment, notes);
-                resultsDiv.innerHTML = result;
-            }, 2000);
+
+            // Try server-side translation first (sandbox endpoint). Fall back to local mapping on error.
+            const url = `/api/translate?term=${encodeURIComponent(diagnosis)}&prefer=namaste`;
+
+            fetch(url)
+                .then(resp => {
+                    if (!resp.ok) throw new Error('API not available');
+                    return resp.json();
+                })
+                .then(data => {
+                    // Normalize server response into expected mapping shape
+                    const mapping = {
+                        namaste_code: data.namaste_code || data.namaste || data.code || 'GEN-01',
+                        icd11_tm2: data.icd_code || data.icd11_tm2 || data.icd || data.icd11 || 'SP99.9',
+                        icd11_bio: data.icd_code || data.icd11_bio || data.icd || 'ZZ00.0',
+                        modern_equivalent: data.icd_name || data.namaste_name || data.name || diagnosis,
+                        confidence: data.confidence || data.score || 85
+                    };
+
+                    // Render result
+                    resultsDiv.innerHTML = renderClinicalResult(mapping, diagnosis, constitution, treatment, notes);
+                    const fill = resultsDiv.querySelector('.confidence-fill');
+                    if (fill) {
+                        const confidence = fill.getAttribute('data-confidence') || '0';
+                        fill.style.setProperty('--confidence', confidence + '%');
+                    }
+                })
+                .catch(() => {
+                    // Offline/local fallback after a short delay for UX parity
+                    setTimeout(() => {
+                        const normalized = diagnosis.toLowerCase().replace(/[^a-z]/g, '');
+                        const mapping = clinicalMappings[normalized] || {
+                            namaste_code: 'GEN-01',
+                            icd11_tm2: 'SP99.9',
+                            icd11_bio: 'ZZ00.0',
+                            modern_equivalent: 'Traditional Medicine Condition - Requires Clinical Review',
+                            confidence: 75
+                        };
+
+                        resultsDiv.innerHTML = renderClinicalResult(mapping, diagnosis, constitution, treatment, notes);
+                        const fill = resultsDiv.querySelector('.confidence-fill');
+                        if (fill) {
+                            const confidence = fill.getAttribute('data-confidence') || '0';
+                            fill.style.setProperty('--confidence', confidence + '%');
+                        }
+                    }, 800);
+                });
         }
-        
-        function generateClinicalResult(diagnosis, constitution, treatment, notes) {
-            const clinicalMappings = {
-                'sandhigatavata': {
-                    namaste_code: 'AAE-16',
-                    icd11_tm2: 'SP00.1',
-                    icd11_bio: 'FA01.2',
-                    modern_equivalent: 'Osteoarthritis with constitutional factors',
-                    confidence: 94
-                },
-                'madhumeha': {
-                    namaste_code: 'EBM-23',
-                    icd11_tm2: 'SP15.0',
-                    icd11_bio: '5A11.0',
-                    modern_equivalent: 'Type 2 Diabetes Mellitus',
-                    confidence: 96
-                },
-                'kasa': {
-                    namaste_code: 'RSP-08',
-                    icd11_tm2: 'SP22.1',
-                    icd11_bio: 'CA20.0',
-                    modern_equivalent: 'Acute Bronchitis',
-                    confidence: 89
-                }
-            };
-            
-            const normalized = diagnosis.toLowerCase().replace(/[^a-z]/g, '');
-            const mapping = clinicalMappings[normalized] || {
-                namaste_code: 'GEN-01',
-                icd11_tm2: 'SP99.9',
-                icd11_bio: 'ZZ00.0',
-                modern_equivalent: 'Traditional Medicine Condition - Requires Clinical Review',
-                confidence: 75
-            };
-            
+
+        function renderClinicalResult(mapping, diagnosis, constitution, treatment, notes) {
             return `
                 <div class="diagnosis-results">
-                    <h4 class="headline-medium" style="margin-bottom: var(--space-lg);">Dual-Coded Patient Documentation</h4>
-                    
-                    <div style="margin-bottom: var(--space-lg);">
-                        <h5 class="body-emphasis" style="margin-bottom: var(--space-sm);">Traditional Medicine Classification</h5>
+                    <h4 class="headline-medium mb-lg">Dual-Coded Patient Documentation</h4>
+
+                    <div class="mb-lg">
+                        <h5 class="body-emphasis mb-sm">Traditional Medicine Classification</h5>
                         <div class="code-display">
                             <strong>NAMASTE Code:</strong> ${mapping.namaste_code}<br>
                             <strong>ICD-11 TM2:</strong> ${mapping.icd11_tm2}<br>
@@ -317,35 +254,35 @@
                             ${constitution ? `<br><strong>Constitution:</strong> ${constitution.charAt(0).toUpperCase() + constitution.slice(1)} predominant` : ''}
                         </div>
                     </div>
-                    
-                    <div style="margin-bottom: var(--space-lg);">
-                        <h5 class="body-emphasis" style="margin-bottom: var(--space-sm);">Modern Medical Classification</h5>
+
+                    <div class="mb-lg">
+                        <h5 class="body-emphasis mb-sm">Modern Medical Classification</h5>
                         <div class="code-display">
                             <strong>ICD-11 Biomedicine:</strong> ${mapping.icd11_bio}<br>
                             <strong>Modern Equivalent:</strong> ${mapping.modern_equivalent}
                             ${treatment ? `<br><strong>Treatment Category:</strong> ${treatment.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}` : ''}
                         </div>
                     </div>
-                    
-                    <div style="margin-bottom: var(--space-lg);">
-                        <h5 class="body-emphasis" style="margin-bottom: var(--space-sm);">Coding Confidence</h5>
+
+                    <div class="mb-lg">
+                        <h5 class="body-emphasis mb-sm">Coding Confidence</h5>
                         <div class="confidence-meter">
                             <span class="caption">Mapping Accuracy:</span>
                             <div class="confidence-bar">
-                                <div class="confidence-fill" style="width: ${mapping.confidence}%"></div>
+                                <div class="confidence-fill" data-confidence="${mapping.confidence}"></div>
                             </div>
                             <span class="body-emphasis">${mapping.confidence}%</span>
                         </div>
                     </div>
-                    
+
                     ${notes ? `
-                    <div style="margin-bottom: var(--space-lg);">
-                        <h5 class="body-emphasis" style="margin-bottom: var(--space-sm);">Clinical Notes</h5>
+                    <div class="mb-lg">
+                        <h5 class="body-emphasis mb-sm">Clinical Notes</h5>
                         <div class="code-display">${notes}</div>
                     </div>
                     ` : ''}
-                    
-                    <div style="display: flex; gap: var(--space-md); margin-top: var(--space-lg);">
+
+                    <div class="action-row">
                         <button class="btn btn-primary btn-small">Export to EMR</button>
                         <button class="btn btn-secondary btn-small">Generate Insurance Claim</button>
                         <button class="btn btn-ghost btn-small">Print Summary</button>

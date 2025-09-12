@@ -51,27 +51,23 @@ class ICD11APIClient:
             return False
         
         try:
-            with open(cache_path, 'r') as f:
-                cache_data = json.load(f)
-            
-            cached_time = datetime.fromisoformat(cache_data.get('cached_at', ''))
-            expiry_time = cached_time + timedelta(hours=self.cache_duration)
-            
+            file_mod_time = datetime.fromtimestamp(cache_path.stat().st_mtime)
+            expiry_time = file_mod_time + timedelta(hours=self.cache_duration)
             return datetime.now() < expiry_time
-        except (json.JSONDecodeError, ValueError, KeyError):
+        except (FileNotFoundError, ValueError):
             return False
-    
+
     def _save_to_cache(self, cache_key: str, data: Any):
         """Save data to cache with timestamp"""
         cache_path = self._get_cache_path(cache_key)
-        cache_data = {
-            'cached_at': datetime.now().isoformat(),
-            'data': data
-        }
-        
-        with open(cache_path, 'w') as f:
-            json.dump(cache_data, f, indent=2)
-    
+        try:
+            with open(cache_path, 'w') as f:
+                json.dump({'data': data}, f, indent=2)
+            # Set modification time to now
+            os.utime(cache_path, None)
+        except IOError as e:
+            print(f"Error saving to cache: {e}")
+
     def _load_from_cache(self, cache_key: str) -> Optional[Any]:
         """Load data from cache if valid"""
         cache_path = self._get_cache_path(cache_key)
@@ -81,8 +77,7 @@ class ICD11APIClient:
         
         try:
             with open(cache_path, 'r') as f:
-                cache_data = json.load(f)
-            return cache_data.get('data')
+                return json.load(f).get('data')
         except (json.JSONDecodeError, FileNotFoundError):
             return None
     
@@ -222,7 +217,6 @@ class ICD11APIClient:
         """Get enhanced NAMASTE mappings using real ICD-11 API data"""
         print("🔄 Generating enhanced NAMASTE mappings using WHO ICD-11 API...")
         
-        # Traditional hardcoded mappings as fallback
         fallback_mappings = {
             "AAE-16": {"name": "Sandhigatvata", "search_terms": ["arthritis", "joint disease", "osteoarthritis"]},
             "AA": {"name": "Vatavyadhi", "search_terms": ["neurological disorder", "vata", "nervous system"]},
@@ -241,34 +235,49 @@ class ICD11APIClient:
                 "search_performed": True
             }
             
-            # Search for each term and collect results
-            all_tm2_results = []
-            all_biomed_results = []
-            
+            all_results = []
             for search_term in info["search_terms"]:
-                # Search in both TM2 and general (biomedicine)
-                search_results = self.search_codes(search_term)
-                
-                if search_results:
-                    for result in search_results[:2]:  # Take top 2 results per search
-                        code_id = result.get('id', '').split('/')[-1] if result.get('id') else ''
-                        title = result.get('title', {}).get('@value', '') if result.get('title') else ''
-                        
-                        if code_id and title:
-                            if 'x02' in result.get('id', '').lower():  # TM2 codes
-                                all_tm2_results.append({"code": code_id, "display": title})
-                            else:  # Biomedicine codes
-                                all_biomed_results.append({"code": code_id, "display": title})
+                results = self.search_codes(search_term)
+                if results:
+                    all_results.extend(results)
             
-            # Remove duplicates and take best matches
-            enhanced_mappings[code]["tm2_codes"] = list({r['code']: r for r in all_tm2_results}.values())[:2]
-            enhanced_mappings[code]["biomed_codes"] = list({r['code']: r for r in all_biomed_results}.values())[:2]
+            # Process all results for the given code
+            tm2, biomed = self._process_search_results(all_results)
+            enhanced_mappings[code]["tm2_codes"] = tm2
+            enhanced_mappings[code]["biomed_codes"] = biomed
             
-            print(f"   • {code} ({info['name']}): Found {len(enhanced_mappings[code]['tm2_codes'])} TM2 + {len(enhanced_mappings[code]['biomed_codes'])} Biomedicine mappings")
-        
-        print("✅ Enhanced NAMASTE mappings generated successfully")
+            time.sleep(1)  # Rate limit
+
         return enhanced_mappings
-    
+
+    def _process_search_results(self, results: List[Dict]) -> (List[Dict], List[Dict]):
+        """Process search results to extract TM2 and Biomedicine codes."""
+        tm2_codes = []
+        biomed_codes = []
+        
+        for result in results:
+            title = result.get('title', '')
+            chapter = result.get('chapter', '')
+            the_id = result.get('theCode', result.get('id', '').split('/')[-1])
+            
+            is_tm2 = 'Traditional Medicine' in chapter
+            
+            code_info = {
+                "id": the_id,
+                "title": self._clean_title(title)
+            }
+            
+            if is_tm2:
+                tm2_codes.append(code_info)
+            else:
+                biomed_codes.append(code_info)
+                
+        return tm2_codes, biomed_codes
+
+    def _clean_title(self, title: str) -> str:
+        """Clean up the title string from HTML tags."""
+        return title.replace('<em class=\'found\'>', '').replace('</em>', '')
+
     def get_terminology_cache_summary(self) -> Dict[str, Any]:
         """Get summary of cached terminology data"""
         summary = {

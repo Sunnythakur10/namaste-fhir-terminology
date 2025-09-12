@@ -7,176 +7,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
-    <style>
-        /* Page-specific enhanced styles */
-        .process-flow {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-xl);
-            margin: var(--space-3xl) 0;
-        }
-
-        @media (max-width: 768px) {
-            .process-flow {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .process-step {
-            text-align: center;
-            padding: var(--space-xl);
-            background-color: var(--bg-primary);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition-normal);
-            position: relative;
-        }
-
-        .process-step:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .process-step::after {
-            content: '→';
-            position: absolute;
-            right: -1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 2rem;
-            color: var(--color-primary);
-            font-weight: bold;
-        }
-
-        .process-step:last-child::after {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .process-step::after {
-                content: '↓';
-                right: auto;
-                top: 100%;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-        }
-
-        .process-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 80px;
-            height: 80px;
-            margin: 0 auto var(--space-lg);
-            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-            border-radius: var(--radius-full);
-            color: var(--text-inverse);
-            font-size: 2rem;
-        }
-
-        .stakeholder-card {
-            background-color: var(--bg-primary);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition-normal);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stakeholder-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-        }
-
-        .stakeholder-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .stakeholder-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            margin-bottom: var(--space-lg);
-            background-color: var(--color-primary-light);
-            border-radius: var(--radius-lg);
-            color: var(--color-primary);
-            font-size: 1.5rem;
-        }
-
-        .problem-section {
-            background: linear-gradient(135deg, var(--bg-inverse), #2d2d2f);
-            color: var(--text-inverse);
-        }
-
-        .problem-card {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: var(--space-xl);
-            border-radius: var(--radius-xl);
-            text-align: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .problem-icon {
-            font-size: 3rem;
-            margin-bottom: var(--space-lg);
-            color: var(--color-error);
-        }
-
-        .output-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 200px;
-            border: 2px dashed var(--border-light);
-            border-radius: var(--radius-lg);
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        .output-placeholder .material-symbols-outlined {
-            font-size: 3rem;
-            margin-bottom: var(--space-lg);
-            color: var(--color-primary);
-        }
-
-        .output-result {
-            background-color: var(--color-primary-light);
-            border: 1px solid var(--color-accent);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            margin-top: var(--space-lg);
-        }
-
-        .result-item {
-            margin-bottom: var(--space-sm);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .result-label {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .result-value {
-            color: var(--text-secondary);
-            font-family: var(--font-family-mono);
-        }
-    </style>
+    <link rel="stylesheet" href="/static/assets/css/unified-design-system.css">
+    <link rel="stylesheet" href="/static/assets/css/main.css">
+    <link rel="stylesheet" href="/ui/assets/css/landing.css">
 </head>
 <body>
     <div class="page-wrapper">
@@ -184,8 +17,8 @@
         <header class="header">
             <div class="container">
                 <nav class="header-nav">
-                    <a href="/" class="logo">
-                        <span class="material-symbols-outlined" style="color: var(--color-primary);">healing</span>
+                        <a href="/" class="logo">
+                        <span class="material-symbols-outlined text-primary">healing</span>
                         <span>NAMASTE-FHIR Bridge</span>
                     </a>
                     <div class="nav-links">
@@ -208,7 +41,7 @@
                         <h1 class="hero-title">Bridging Traditional Medicine with Global Standards</h1>
                         <p class="hero-description">Transform AYUSH terminology into ICD-11 compatible codes for seamless global healthcare interoperability and standardized patient care.</p>
                         <div class="hero-actions">
-                            <a href="#demo" class="btn btn-primary btn-large">Experience the Technology</a>
+                            <a href="/ui/pages/conversion-demo.html" class="btn btn-primary btn-large">Experience the Technology</a>
                             <a href="/ui/pages/use-case-presentation.html" class="btn btn-secondary btn-large">View Detailed Presentation</a>
                         </div>
                     </div>
@@ -218,27 +51,27 @@
             <!-- Problem Section -->
             <section class="section problem-section" id="problem">
                 <div class="container">
-                    <h2 class="display-medium" style="text-align: center; margin-bottom: var(--space-3xl);">What Healthcare Challenge Are We Solving?</h2>
+                    <h2 class="display-medium text-center mb-3xl">What Healthcare Challenge Are We Solving?</h2>
                     <div class="grid grid-cols-3">
                         <div class="problem-card">
                             <div class="problem-icon">
                                 <span class="material-symbols-outlined">error</span>
                             </div>
-                            <h3 class="headline-medium" style="margin-bottom: var(--space-md);">Disconnected Systems</h3>
+                            <h3 class="headline-medium mb-md">Disconnected Systems</h3>
                             <p class="body-large">Traditional AYUSH medicine vocabularies remain isolated from global healthcare standards, creating barriers to interoperability.</p>
                         </div>
                         <div class="problem-card">
                             <div class="problem-icon">
                                 <span class="material-symbols-outlined">report_problem</span>
                             </div>
-                            <h3 class="headline-medium" style="margin-bottom: var(--space-md);">Data Fragmentation</h3>
+                            <h3 class="headline-medium mb-md">Data Fragmentation</h3>
                             <p class="body-large">Healthcare providers struggle with inconsistent coding systems, leading to incomplete patient records and inefficient care coordination.</p>
                         </div>
                         <div class="problem-card">
                             <div class="problem-icon">
                                 <span class="material-symbols-outlined">block</span>
                             </div>
-                            <h3 class="headline-medium" style="margin-bottom: var(--space-md);">Limited Integration</h3>
+                            <h3 class="headline-medium mb-md">Limited Integration</h3>
                             <p class="body-large">Insurance claims processing and research initiatives face significant challenges due to lack of standardized traditional medicine coding.</p>
                         </div>
                     </div>
@@ -248,29 +81,29 @@
             <!-- Solution Section -->
             <section class="section" id="solution">
                 <div class="container">
-                    <h2 class="display-medium" style="text-align: center; margin-bottom: var(--space-lg);">NAMASTE-FHIR Bridge Implementation Strategy</h2>
-                    <p class="body-large" style="text-align: center; max-width: 800px; margin: 0 auto var(--space-3xl); color: var(--text-secondary);">Our intelligent translation engine seamlessly connects traditional AYUSH terminology with international ICD-11 standards, enabling comprehensive healthcare interoperability.</p>
+                    <h2 class="display-medium text-center mb-2xl">NAMASTE-FHIR Bridge Implementation Strategy</h2>
+                    <p class="body-large centered-lead">Our intelligent translation engine seamlessly connects traditional AYUSH terminology with international ICD-11 standards, enabling comprehensive healthcare interoperability.</p>
                     
                     <div class="process-flow">
                         <div class="process-step">
                             <div class="process-icon">
                                 <span class="material-symbols-outlined">input</span>
                             </div>
-                            <h3 class="headline-medium" style="margin-bottom: var(--space-md);">Intelligent Input Processing</h3>
+                            <h3 class="headline-medium mb-md">Intelligent Input Processing</h3>
                             <p class="body-large">Advanced natural language processing analyzes traditional AYUSH terminology and medical concepts for accurate interpretation.</p>
                         </div>
                         <div class="process-step">
                             <div class="process-icon">
                                 <span class="material-symbols-outlined">psychology</span>
                             </div>
-                            <h3 class="headline-medium" style="margin-bottom: var(--space-md);">Semantic Mapping Engine</h3>
+                            <h3 class="headline-medium mb-md">Semantic Mapping Engine</h3>
                             <p class="body-large">Machine learning algorithms map traditional concepts to appropriate ICD-11 Traditional Medicine and Biomedicine classifications.</p>
                         </div>
                         <div class="process-step">
                             <div class="process-icon">
                                 <span class="material-symbols-outlined">verified</span>
                             </div>
-                            <h3 class="headline-medium" style="margin-bottom: var(--space-md);">Dual-Coding Output</h3>
+                            <h3 class="headline-medium mb-md">Dual-Coding Output</h3>
                             <p class="body-large">Generate FHIR-compliant resources with both traditional AYUSH codes and corresponding ICD-11 classifications for global compatibility.</p>
                         </div>
                     </div>
@@ -280,8 +113,8 @@
             <!-- Interactive Demo Section -->
             <section class="interactive-demo section" id="demo">
                 <div class="container">
-                    <h2 class="display-medium" style="text-align: center; margin-bottom: var(--space-lg);">Interactive Demonstration: Real-Time Translation System</h2>
-                    <p class="body-large" style="text-align: center; max-width: 800px; margin: 0 auto var(--space-2xl); color: var(--text-secondary);">Experience our dual-coding functionality in real-time. Input traditional medicine terms and receive standardized ICD-11 mappings instantly.</p>
+                    <h2 class="display-medium text-center mb-2xl">Interactive Demonstration: Real-Time Translation System</h2>
+                    <p class="body-large centered-lead m-auto-2xl">Experience our dual-coding functionality in real-time. Input traditional medicine terms and receive standardized ICD-11 mappings instantly.</p>
                     
                     <div class="demo-split">
                         <div class="input-panel">
@@ -301,7 +134,7 @@
                                     <option value="insurance">Insurance Specialist</option>
                                 </select>
                             </div>
-                            <button class="btn btn-primary" style="width: 100%;" onclick="translateTerm()">
+                            <button class="btn btn-primary w-full" onclick="translateTerm()">
                                 <span class="material-symbols-outlined">search</span>
                                 Generate ICD-11 Mapping
                             </button>
@@ -327,32 +160,32 @@
             <!-- Applications Section -->
             <section class="section" id="applications">
                 <div class="container">
-                    <h2 class="display-medium" style="text-align: center; margin-bottom: var(--space-lg);">Real-World Implementation Scenarios</h2>
-                    <p class="body-large" style="text-align: center; max-width: 800px; margin: 0 auto var(--space-2xl); color: var(--text-secondary);">Explore how different healthcare stakeholders benefit from standardized dual-coding systems in their daily workflows.</p>
+                    <h2 class="display-medium text-center mb-lg">Real-World Implementation Scenarios</h2>
+                    <p class="body-large text-center max-w-800 m-auto-2xl text-secondary">Explore how different healthcare stakeholders benefit from standardized dual-coding systems in their daily workflows.</p>
                     <div class="grid grid-cols-3">
                         <div class="stakeholder-card">
                             <div class="stakeholder-icon">
                                 <span class="material-symbols-outlined">stethoscope</span>
                             </div>
-                            <h3 class="headline-medium" style="margin-bottom: var(--space-md);">Healthcare Providers</h3>
-                            <p class="body-large" style="margin-bottom: var(--space-lg);">Enhance patient care documentation with standardized coding that supports both traditional and modern medical practices.</p>
-                            <a href="/ui/pages/doctor-sandbox.html" class="btn btn-primary">Explore Provider Tools</a>
+                            <h3 class="headline-medium mb-md">Healthcare Providers</h3>
+                            <p class="body-large mb-lg">Enhance patient care documentation with standardized coding that supports both traditional and modern medical practices.</p>
+                            <a href="/ui/pages/conversion-demo.html" class="btn btn-primary">Explore Provider Tools</a>
                         </div>
                         <div class="stakeholder-card">
                             <div class="stakeholder-icon">
                                 <span class="material-symbols-outlined">science</span>
                             </div>
-                            <h3 class="headline-medium" style="margin-bottom: var(--space-md);">Research Organizations</h3>
-                            <p class="body-large" style="margin-bottom: var(--space-lg);">Conduct comprehensive analysis across traditional and modern medical datasets with unified coding standards.</p>
-                            <a href="/ui/pages/researcher-sandbox.html" class="btn btn-primary">Access Research Platform</a>
+                            <h3 class="headline-medium mb-md">Research Organizations</h3>
+                            <p class="body-large mb-lg">Conduct comprehensive analysis across traditional and modern medical datasets with unified coding standards.</p>
+                            <a href="/ui/pages/conversion-demo.html" class="btn btn-primary">Access Research Platform</a>
                         </div>
                         <div class="stakeholder-card">
                             <div class="stakeholder-icon">
                                 <span class="material-symbols-outlined">payments</span>
                             </div>
-                            <h3 class="headline-medium" style="margin-bottom: var(--space-md);">Insurance Systems</h3>
-                            <p class="body-large" style="margin-bottom: var(--space-lg);">Streamline claims processing and reporting with globally recognized coding standards for traditional medicine treatments.</p>
-                            <a href="/ui/pages/insurance-sandbox.html" class="btn btn-primary">View Insurance Solutions</a>
+                            <h3 class="headline-medium mb-md">Insurance Systems</h3>
+                            <p class="body-large mb-lg">Streamline claims processing and reporting with globally recognized coding standards for traditional medicine treatments.</p>
+                            <a href="/ui/pages/conversion-demo.html" class="btn btn-primary">View Insurance Solutions</a>
                         </div>
                     </div>
                 </div>
@@ -360,18 +193,18 @@
         </main>
 
         <!-- Footer -->
-        <footer style="background-color: var(--bg-inverse); color: var(--text-inverse); padding: var(--space-2xl) 0; text-align: center;">
+        <footer class="site-footer">
             <div class="container">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-lg);">
+                <div class="footer-inner">
                     <div>
-                        <p style="font-size: var(--text-sm); margin-bottom: var(--space-sm);">© 2025 Terminology Bridge. All rights reserved.</p>
-                        <p style="font-size: var(--text-sm); opacity: 0.8;">Attribution to Ministry of Ayush</p>
+                        <p class="muted fs-sm mb-sm">© 2025 Terminology Bridge. All rights reserved.</p>
+                        <p class="muted fs-sm opacity-80">Attribution to Ministry of Ayush</p>
                     </div>
-                    <div style="display: flex; gap: var(--space-lg);">
-                        <a href="/ui/pages/api-docs.html" style="color: var(--text-inverse); text-decoration: none; font-size: var(--text-sm);">API Documentation</a>
-                        <a href="/ui/pages/terminology-ingestion.html" style="color: var(--text-inverse); text-decoration: none; font-size: var(--text-sm);">Terminology Tools</a>
-                        <a href="https://github.com/Sunnythakur10/namaste-fhir-terminology" style="color: var(--text-inverse); text-decoration: none; font-size: var(--text-sm);">GitHub Repository</a>
-                        <a href="https://www.ayush.gov.in/" style="color: var(--text-inverse); text-decoration: none; font-size: var(--text-sm);">Ministry of AYUSH</a>
+                    <div class="footer-links">
+                        <a href="/ui/pages/api-docs.html">API Documentation</a>
+                        <a href="/ui/pages/terminology-ingestion.html">Terminology Tools</a>
+                        <a href="https://github.com/Sunnythakur10/namaste-fhir-terminology">GitHub Repository</a>
+                        <a href="https://www.ayush.gov.in/">Ministry of AYUSH</a>
                     </div>
                 </div>
             </div>
@@ -480,11 +313,11 @@
                         <span class="result-value">${mapping.clinical_notes}</span>
                     </div>
                 </div>
-                <div style="margin-top: var(--space-lg); padding: var(--space-lg); background-color: var(--color-primary-light); border-radius: var(--radius-md); border-left: 4px solid var(--color-primary);">
-                    <p style="font-size: var(--text-sm); color: var(--color-primary); margin: 0; font-weight: 600;">
+                <div class="info-panel-primary">
+                    <p class="fs-sm text-primary m-0 fw-600">
                         Expected JSON Output:
                     </p>
-                    <pre style="font-size: var(--text-xs); margin-top: var(--space-sm); color: var(--text-primary); overflow-x: auto; font-family: var(--font-family-mono);">{
+                    <pre class="fs-xs mt-sm text-primary overflow-x-auto font-mono">{
   "namaste_code": "${mapping.namaste_code}",
   "icd11_codes": ["${mapping.icd11_tm2}", "${mapping.icd11_bio}"],
   "confidence": ${mapping.confidence},

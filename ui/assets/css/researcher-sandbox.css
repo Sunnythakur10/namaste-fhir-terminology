@@ -1,0 +1,91 @@
+/* Styles extracted from researcher-sandbox.html */
+.research-header {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: var(--text-inverse);
+    padding: var(--space-xl) 0;
+}
+
+.analytics-dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    margin-bottom: var(--space-xl);
+}
+
+@media (max-width: 768px) {
+    .analytics-dashboard {
+        grid-template-columns: 1fr;
+    }
+}
+
+.chart-container {
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-sm);
+    height: 400px;
+}
+
+.research-filters {
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-xl);
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+}
+
+.data-table {
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.table-header {
+    background-color: var(--bg-secondary);
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.table-content {
+    padding: var(--space-lg);
+}
+
+.metric-card {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    text-align: center;
+}
+
+.metric-value {
+    font-family: var(--font-family-primary);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-md);
+}
+
+.breadcrumb a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    color: var(--text-inverse);
+}
