@@ -3,1056 +3,356 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Sandbox | NAMASTE-FHIR Terminology</title>
+    <title>Healthcare Provider Workspace | NAMASTE-FHIR Terminology</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
     <style>
-        :root {
-            --primary-color: #4CAF50;
-            --primary-light: #E8F5E9;
-            --text-primary: #111714;
-            --text-secondary: #648772;
-        }
-
-        body {
-            font-family: Inter, "Noto Sans", sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9fafb;
-            color: #1f2937;
-            line-height: 1.5;
-            min-height: 100vh;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        .layout-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Header */
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.75rem 2.5rem;
-            background-color: white;
-            border-bottom: 1px solid #e5e7eb;
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            white-space: nowrap;
+        /* Sandbox-specific styles */
+        .workspace-header {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: var(--text-inverse);
+            padding: var(--space-xl) 0;
         }
 
         .breadcrumb {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            font-size: 0.875rem;
-            color: #6b7280;
+            gap: var(--space-sm);
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-md);
         }
 
         .breadcrumb a {
-            color: #6b7280;
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
         }
 
         .breadcrumb a:hover {
-            color: #1f2937;
+            color: var(--text-inverse);
         }
 
-        .breadcrumb-current {
-            font-weight: 500;
-            color: #1f2937;
+        .workspace-content {
+            padding: var(--space-2xl) 0;
         }
 
-        .logout-btn {
+        .workflow-card {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-xl);
+        }
+
+        .patient-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+        }
+
+        @media (max-width: 768px) {
+            .patient-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .diagnosis-results {
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .code-display {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            font-family: var(--font-family-mono);
+            font-size: var(--text-sm);
+            margin-top: var(--space-md);
+        }
+
+        .confidence-meter {
             display: flex;
             align-items: center;
-            justify-content: center;
-            height: 2.5rem;
-            padding: 0 1rem;
-            background-color: #f3f4f6;
-            border: none;
-            border-radius: 0.375rem;
-            color: #4b5563;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
         }
 
-        .logout-btn:hover {
-            background-color: #e5e7eb;
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings:
-                'FILL' 0,
-                'wght' 400,
-                'GRAD' 0,
-                'opsz' 24;
-        }
-
-        .icon-left {
-            margin-right: 0.5rem;
-        }
-
-        /* Main content */
-        main {
+        .confidence-bar {
+            height: 8px;
+            background-color: var(--bg-tertiary);
+            border-radius: var(--radius-full);
             flex: 1;
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: repeat(12, minmax(0, 1fr));
-            gap: 2rem;
-            position: relative;
-        }
-
-        .left-column {
-            grid-column: span 12;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .right-column {
-            grid-column: span 12;
-        }
-
-        @media (min-width: 1024px) {
-            .left-column {
-                grid-column: span 7;
-            }
-
-            .right-column {
-                grid-column: span 5;
-            }
-        }
-
-        .card {
-            background-color: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #111827;
-            margin-top: 0;
-            margin-bottom: 1rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 500;
-            color: #4b5563;
-            margin-bottom: 0.5rem;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-        }
-
-        .search-input {
-            width: 100%;
-            height: 3rem;
-            padding-left: 2.5rem;
-            padding-right: 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            font-size: 1rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
-        }
-
-        .chip-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .chip {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.25rem 0.75rem;
-            background-color: #dbeafe;
-            color: #1e40af;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .chip-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #3b82f6;
-            display: flex;
-            align-items: center;
-            padding: 0;
-        }
-
-        .chip-close:hover {
-            color: #1e40af;
-        }
-
-        .add-chip {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.75rem;
-            background-color: transparent;
-            color: #6b7280;
-            border: 1px dashed #9ca3af;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .add-chip:hover {
-            background-color: #f3f4f6;
-            border-style: solid;
-        }
-
-        .sticky-card {
-            position: sticky;
-            top: 5.5rem;
-        }
-
-        .card-divider {
-            border-top: 1px solid #e5e7eb;
-            margin: 1.5rem 0;
-        }
-
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #111827;
-            margin-top: 0;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .result-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .result-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #6b7280;
-        }
-
-        .result-value {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.25rem;
-        }
-
-        .info-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #6b7280;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .badge-green {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-
-        .confidence-display {
-            margin-bottom: 0.5rem;
-        }
-
-        .confidence-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 0.5rem;
-        }
-
-        .confidence-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 0.5rem;
-            background-color: #e5e7eb;
-            border-radius: 9999px;
             overflow: hidden;
         }
 
-        .progress-value {
+        .confidence-fill {
             height: 100%;
-            background-color: var(--primary-color);
-            border-radius: 9999px;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-primary));
+            border-radius: var(--radius-full);
+            transition: width var(--transition-normal);
         }
 
-        .card-actions {
+        .output-placeholder {
             display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .btn {
-            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 2.5rem;
-            padding: 0 1rem;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
+            height: 200px;
+            border: 2px dashed var(--border-light);
+            border-radius: var(--radius-lg);
+            color: var(--text-secondary);
+            text-align: center;
         }
 
-        .btn-default {
-            background-color: white;
-            color: #4b5563;
-        }
-
-        .btn-default:hover {
-            background-color: #f3f4f6;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-
-        /* Problem List Drawer */
-        .problem-drawer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 30;
-            background-color: white;
-            border-top: 1px solid #e5e7eb;
-            border-top-left-radius: 0.5rem;
-            border-top-right-radius: 0.5rem;
-            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
-        }
-
-        .drawer-content {
-            padding: 1.5rem;
-        }
-
-        .drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .drawer-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #111827;
-            margin: 0;
-        }
-
-        .table-container {
-            overflow-x: auto;
-            max-height: 15rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        thead {
-            background-color: #f9fafb;
-            border-bottom: 1px solid #e5e7eb;
-            position: sticky;
-            top: 0;
-        }
-
-        th {
-            padding: 0.75rem 1rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #6b7280;
-        }
-
-        td {
-            padding: 0.75rem 1rem;
-            font-size: 0.875rem;
-            border-bottom: 1px solid #e5e7eb;
-            white-space: nowrap;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        .delete-btn {
-            padding: 0.5rem;
-            background: none;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .delete-btn:hover {
-            color: #ef4444;
-        }
-
-        .autocomplete-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            max-height: 12rem;
-            overflow-y: auto;
-            background-color: white;
-            border: 1px solid #d1d5db;
-            border-top: none;
-            border-radius: 0 0 0.375rem 0.375rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            z-index: 10;
-        }
-
-        .autocomplete-item {
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .autocomplete-item:last-child {
-            border-bottom: none;
-        }
-
-        .autocomplete-item:hover {
-            background-color: #f9fafb;
-        }
-
-        .term-name {
-            font-weight: 500;
-            color: #111827;
-            margin-bottom: 0.25rem;
-        }
-
-        .term-codes {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .code-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.125rem 0.375rem;
-            border-radius: 0.25rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .namaste-badge {
-            background-color: #dbeafe;
-            color: #1e40af;
-        }
-
-        .icd-badge {
-            background-color: #e0e7ff;
-            color: #4338ca;
-        }
-
-        /* Loading states */
-        .shimmer {
-            background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 0.25rem;
-        }
-
-        @keyframes shimmer {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
-        }
-
-        .hidden {
-            display: none;
+        .output-placeholder .material-symbols-outlined {
+            font-size: 3rem;
+            margin-bottom: var(--space-lg);
+            color: var(--color-primary);
         }
     </style>
 </head>
 <body>
     <div class="layout-container">
-        <header>
-            <div class="breadcrumb">
-                <a href="/ui/pages/landing.html">Home</a>
-                <span class="material-symbols-outlined">chevron_right</span>
-                <span class="breadcrumb-current">Doctor Sandbox</span>
-            </div>
-            <button class="logout-btn">
-                <span class="material-symbols-outlined icon-left">logout</span>
-                <span>Logout</span>
-            </button>
-        </header>
-
-        <main>
-            <div class="left-column">
-                <div class="card">
-                    <h2 class="card-title">Data Entry</h2>
-                    <div class="form-group">
-                        <label class="form-label">AYUSH Diagnosis</label>
-                        <div class="input-wrapper">
-                            <span class="material-symbols-outlined input-icon">search</span>
-                            <input 
-                                id="diagnosis-search" 
-                                class="search-input" 
-                                placeholder="Start typing - e.g. Amlapitta, Jwara..." 
-                                autocomplete="off"
-                            >
-                            <div id="search-results" class="autocomplete-results hidden"></div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Optional Symptoms</label>
-                        <div class="chip-container">
-                            <div class="chip">
-                                <span>Fever</span>
-                                <button class="chip-close">
-                                    <span class="material-symbols-outlined">close</span>
-                                </button>
-                            </div>
-                            <div class="chip">
-                                <span>Body Ache</span>
-                                <button class="chip-close">
-                                    <span class="material-symbols-outlined">close</span>
-                                </button>
-                            </div>
-                            <button class="add-chip">
-                                <span class="material-symbols-outlined">add</span>
-                                <span>Add Symptom</span>
-                            </button>
-                        </div>
-                    </div>
-                    <button id="dual-code-btn" class="btn btn-primary">
-                        <span class="material-symbols-outlined icon-left">auto_fix</span>
-                        Dual-code
-                    </button>
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/ui/pages/landing.html" class="nav-link">Home</a>
+                    <span>→</span>
+                    <span class="body-emphasis">Healthcare Provider Workspace</span>
                 </div>
             </div>
+        </header>
 
-            <div class="right-column">
-                <div id="result-card" class="card sticky-card hidden">
-                    <h3 class="section-title">Dual-Coded Result</h3>
-                    <div class="result-grid">
-                        <div class="result-label">NAMASTE Code</div>
-                        <div id="namaste-code" class="result-value">AYUSH-TRM-786 (Jwara)</div>
-                    </div>
-                    <div class="result-grid">
-                        <div class="result-label">ICD-11 Code</div>
-                        <div id="icd-code" class="result-value">MG2A (Fever)</div>
-                    </div>
+        <!-- Workspace Header -->
+        <section class="workspace-header">
+            <div class="container">
+                <h1 class="display-medium" style="margin-bottom: var(--space-md);">Healthcare Provider Workspace</h1>
+                <p class="body-large" style="opacity: 0.9;">Advanced dual-coding system for seamless integration of traditional and modern medical practices in patient care documentation.</p>
+            </div>
+        </section>
 
-                    <div class="card-divider"></div>
-
-                    <div class="info-row">
-                        <span class="info-label">Relationship</span>
-                        <span id="relationship-badge" class="badge badge-green">Equivalent To</span>
-                    </div>
-
-                    <div class="confidence-display">
-                        <div class="confidence-header">
-                            <span class="info-label">Confidence</span>
-                            <span id="confidence-value" class="confidence-value">92%</span>
+        <!-- Main Content -->
+        <main class="workspace-content">
+            <div class="container">
+                <!-- Patient Documentation Workflow -->
+                <div class="workflow-card">
+                    <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Patient Documentation & Dual-Coding Workflow</h2>
+                    
+                    <div class="patient-form">
+                        <div>
+                            <h3 class="headline-medium" style="margin-bottom: var(--space-lg);">Traditional Medicine Assessment</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Patient Traditional Diagnosis</label>
+                                <input type="text" class="form-input" id="traditional-diagnosis" 
+                                       placeholder="Enter traditional medicine diagnosis (e.g., Sandhigatavata, Madhumeha)" />
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Constitutional Assessment</label>
+                                <select class="form-select" id="constitution">
+                                    <option value="">Select Prakriti Assessment</option>
+                                    <option value="vata">Vata Predominant</option>
+                                    <option value="pitta">Pitta Predominant</option>
+                                    <option value="kapha">Kapha Predominant</option>
+                                    <option value="mixed">Mixed Constitution</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Treatment Modality</label>
+                                <select class="form-select" id="treatment">
+                                    <option value="">Select Primary Treatment</option>
+                                    <option value="panchakarma">Panchakarma</option>
+                                    <option value="herbal">Herbal Medicine</option>
+                                    <option value="yoga">Yoga Therapy</option>
+                                    <option value="diet">Dietary Intervention</option>
+                                    <option value="combined">Combined Approach</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Clinical Notes</label>
+                                <textarea class="form-textarea" id="clinical-notes" rows="4" 
+                                         placeholder="Additional clinical observations and treatment notes..."></textarea>
+                            </div>
+                            
+                            <button class="btn btn-primary" onclick="generateDualCoding()">
+                                <span class="material-symbols-outlined">transform</span>
+                                Generate Dual-Coded Documentation
+                            </button>
                         </div>
-                        <div class="progress-bar">
-                            <div id="confidence-bar" class="progress-value" style="width: 92%"></div>
+                        
+                        <div>
+                            <h3 class="headline-medium" style="margin-bottom: var(--space-lg);">Standardized Medical Coding</h3>
+                            
+                            <div id="coding-results">
+                                <div class="output-placeholder">
+                                    <span class="material-symbols-outlined">medical_information</span>
+                                    <p><strong>Dual-Coding Ready</strong></p>
+                                    <p>Complete the traditional assessment to generate standardized ICD-11 compatible codes for your patient documentation.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="info-row">
-                        <span class="info-label">Mapping Source</span>
-                        <span id="mapping-source" class="result-value">NLP Engine v2.1</span>
-                    </div>
-
-                    <div class="card-actions">
-                        <button id="copy-codes-btn" class="btn btn-default">
-                            <span class="material-symbols-outlined icon-left">content_copy</span>
-                            Copy Codes
-                        </button>
-                        <button id="add-problem-btn" class="btn btn-primary">
-                            <span class="material-symbols-outlined icon-left">playlist_add</span>
-                            Add to Problem List
-                        </button>
+                <!-- Clinical Integration Tools -->
+                <div class="workflow-card">
+                    <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Clinical Integration Tools</h2>
+                    
+                    <div class="grid grid-cols-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                                    <span class="material-symbols-outlined" style="color: var(--color-primary);">assignment</span>
+                                    <h3 class="card-title">Treatment Plans</h3>
+                                </div>
+                                <p class="card-description">Generate comprehensive treatment plans with both traditional and modern medical protocols.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                                    <span class="material-symbols-outlined" style="color: var(--color-primary);">receipt_long</span>
+                                    <h3 class="card-title">Insurance Claims</h3>
+                                </div>
+                                <p class="card-description">Automated claim generation with standardized coding for traditional medicine treatments.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                                    <span class="material-symbols-outlined" style="color: var(--color-primary);">analytics</span>
+                                    <h3 class="card-title">Outcome Tracking</h3>
+                                </div>
+                                <p class="card-description">Monitor treatment effectiveness with standardized metrics and reporting systems.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
-
-        <div class="problem-drawer">
-            <div class="drawer-content">
-                <div class="drawer-header">
-                    <h2 class="drawer-title">Problem List</h2>
-                    <button id="generate-fhir-btn" class="btn btn-primary">
-                        <span class="material-symbols-outlined icon-left">integration_instructions</span>
-                        Generate FHIR Bundle
-                    </button>
-                </div>
-
-                <div class="table-container">
-                    <table id="problems-table">
-                        <thead>
-                            <tr>
-                                <th>AYUSH Term</th>
-                                <th>ICD-11 Code</th>
-                                <th>Date Added</th>
-                                <th class="text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="problems-list">
-                            <!-- Problem list items will be generated here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elements
-            const diagnosisInput = document.getElementById('diagnosis-search');
-            const searchResults = document.getElementById('search-results');
-            const resultCard = document.getElementById('result-card');
-            const namasteCodeEl = document.getElementById('namaste-code');
-            const icdCodeEl = document.getElementById('icd-code');
-            const relationshipBadge = document.getElementById('relationship-badge');
-            const confidenceValue = document.getElementById('confidence-value');
-            const confidenceBar = document.getElementById('confidence-bar');
-            const mappingSource = document.getElementById('mapping-source');
-            const dualCodeBtn = document.getElementById('dual-code-btn');
-            const copyCodesBtn = document.getElementById('copy-codes-btn');
-            const addProblemBtn = document.getElementById('add-problem-btn');
-            const generateFhirBtn = document.getElementById('generate-fhir-btn');
-            const problemsList = document.getElementById('problems-list');
+        function generateDualCoding() {
+            const diagnosis = document.getElementById('traditional-diagnosis').value.trim();
+            const constitution = document.getElementById('constitution').value;
+            const treatment = document.getElementById('treatment').value;
+            const notes = document.getElementById('clinical-notes').value.trim();
+            const resultsDiv = document.getElementById('coding-results');
             
-            // Sample data
-            const sampleTerms = [
-                { 
-                    term: 'Jwara', 
-                    namasteCode: 'AYUSH-TRM-786', 
-                    icdCode: 'MG2A',
-                    relationship: 'equivalent',
-                    confidence: 92,
-                    mappingSource: 'NLP Engine v2.1'
+            if (!diagnosis) {
+                alert('Please enter a traditional diagnosis to generate dual-coding.');
+                return;
+            }
+            
+            // Show processing state
+            resultsDiv.innerHTML = `
+                <div class="output-placeholder">
+                    <span class="material-symbols-outlined">hourglass_empty</span>
+                    <p><strong>Processing Clinical Data...</strong></p>
+                    <p>Generating dual-coded documentation for "${diagnosis}"</p>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                const result = generateClinicalResult(diagnosis, constitution, treatment, notes);
+                resultsDiv.innerHTML = result;
+            }, 2000);
+        }
+        
+        function generateClinicalResult(diagnosis, constitution, treatment, notes) {
+            const clinicalMappings = {
+                'sandhigatavata': {
+                    namaste_code: 'AAE-16',
+                    icd11_tm2: 'SP00.1',
+                    icd11_bio: 'FA01.2',
+                    modern_equivalent: 'Osteoarthritis with constitutional factors',
+                    confidence: 94
                 },
-                { 
-                    term: 'Amlapitta', 
-                    namasteCode: 'AYUSH-TRM-142', 
-                    icdCode: 'DA90',
-                    relationship: 'equivalent',
-                    confidence: 87,
-                    mappingSource: 'Manual Mapping v1.5'
+                'madhumeha': {
+                    namaste_code: 'EBM-23',
+                    icd11_tm2: 'SP15.0',
+                    icd11_bio: '5A11.0',
+                    modern_equivalent: 'Type 2 Diabetes Mellitus',
+                    confidence: 96
                 },
-                { 
-                    term: 'Kasa', 
-                    namasteCode: 'AYUSH-TRM-123', 
-                    icdCode: 'MD81',
-                    relationship: 'broader',
-                    confidence: 78,
-                    mappingSource: 'NLP Engine v2.1'
-                },
-                { 
-                    term: 'Shirashoola', 
-                    namasteCode: 'AYUSH-TRM-456', 
-                    icdCode: 'MG30',
-                    relationship: 'equivalent',
-                    confidence: 95,
-                    mappingSource: 'Manual Mapping v1.5'
-                },
-                { 
-                    term: 'Vata-Kaphaja Jwara', 
-                    namasteCode: 'AYUSH-TRM-789', 
-                    icdCode: 'MG2A.1',
-                    relationship: 'narrower',
-                    confidence: 83,
-                    mappingSource: 'NLP Engine v2.1'
+                'kasa': {
+                    namaste_code: 'RSP-08',
+                    icd11_tm2: 'SP22.1',
+                    icd11_bio: 'CA20.0',
+                    modern_equivalent: 'Acute Bronchitis',
+                    confidence: 89
                 }
-            ];
+            };
             
-            let selectedTerm = null;
-            let problemList = [
-                {
-                    term: 'Jwara',
-                    namasteCode: 'AYUSH-TRM-786',
-                    icdCode: 'MG2A',
-                    date: '2025-09-09'
-                },
-                {
-                    term: 'Kasa',
-                    namasteCode: 'AYUSH-TRM-123',
-                    icdCode: 'MD81',
-                    date: '2025-09-09'
-                },
-                {
-                    term: 'Shirashoola',
-                    namasteCode: 'AYUSH-TRM-456',
-                    icdCode: 'MG30',
-                    date: '2025-09-08'
-                }
-            ];
+            const normalized = diagnosis.toLowerCase().replace(/[^a-z]/g, '');
+            const mapping = clinicalMappings[normalized] || {
+                namaste_code: 'GEN-01',
+                icd11_tm2: 'SP99.9',
+                icd11_bio: 'ZZ00.0',
+                modern_equivalent: 'Traditional Medicine Condition - Requires Clinical Review',
+                confidence: 75
+            };
             
-            // Initialize problem list
-            renderProblemList();
-            
-            // Search input event
-            let debounceTimer;
-            diagnosisInput.addEventListener('input', function() {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(function() {
-                    const searchTerm = diagnosisInput.value.trim().toLowerCase();
-                    if (searchTerm.length >= 2) {
-                        showSearchResults(searchTerm);
-                    } else {
-                        searchResults.classList.add('hidden');
-                    }
-                }, 250);
-            });
-            
-            // Hide search results when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!diagnosisInput.contains(e.target) && !searchResults.contains(e.target)) {
-                    searchResults.classList.add('hidden');
-                }
-            });
-            
-            // Dual-code button click
-            dualCodeBtn.addEventListener('click', function() {
-                if (diagnosisInput.value.trim() === '') {
-                    alert('Please enter a diagnosis first');
-                    return;
-                }
-                
-                // For demo, just use the first term
-                selectedTerm = sampleTerms[0];
-                updateResultCard(selectedTerm);
-                resultCard.classList.remove('hidden');
-            });
-            
-            // Copy codes button
-            copyCodesBtn.addEventListener('click', function() {
-                if (!selectedTerm) return;
-                
-                const textToCopy = `NAMASTE: ${selectedTerm.namasteCode} (${selectedTerm.term})\nICD-11: ${selectedTerm.icdCode}`;
-                navigator.clipboard.writeText(textToCopy)
-                    .then(() => {
-                        // Show a brief "Copied!" message
-                        const originalText = copyCodesBtn.textContent;
-                        copyCodesBtn.innerHTML = '<span class="material-symbols-outlined icon-left">check</span>Copied!';
-                        setTimeout(() => {
-                            copyCodesBtn.innerHTML = '<span class="material-symbols-outlined icon-left">content_copy</span>Copy Codes';
-                        }, 2000);
-                    })
-                    .catch(err => {
-                        console.error('Failed to copy: ', err);
-                    });
-            });
-            
-            // Add to problem list button
-            addProblemBtn.addEventListener('click', function() {
-                if (!selectedTerm) return;
-                
-                // Check if already in list
-                const exists = problemList.some(p => 
-                    p.namasteCode === selectedTerm.namasteCode || 
-                    p.icdCode === selectedTerm.icdCode
-                );
-                
-                if (!exists) {
-                    problemList.unshift({
-                        term: selectedTerm.term,
-                        namasteCode: selectedTerm.namasteCode,
-                        icdCode: selectedTerm.icdCode,
-                        date: new Date().toISOString().split('T')[0]
-                    });
+            return `
+                <div class="diagnosis-results">
+                    <h4 class="headline-medium" style="margin-bottom: var(--space-lg);">Dual-Coded Patient Documentation</h4>
                     
-                    renderProblemList();
+                    <div style="margin-bottom: var(--space-lg);">
+                        <h5 class="body-emphasis" style="margin-bottom: var(--space-sm);">Traditional Medicine Classification</h5>
+                        <div class="code-display">
+                            <strong>NAMASTE Code:</strong> ${mapping.namaste_code}<br>
+                            <strong>ICD-11 TM2:</strong> ${mapping.icd11_tm2}<br>
+                            <strong>Diagnosis:</strong> ${diagnosis}
+                            ${constitution ? `<br><strong>Constitution:</strong> ${constitution.charAt(0).toUpperCase() + constitution.slice(1)} predominant` : ''}
+                        </div>
+                    </div>
                     
-                    // Show confirmation
-                    const originalText = addProblemBtn.textContent;
-                    addProblemBtn.innerHTML = '<span class="material-symbols-outlined icon-left">check</span>Added!';
-                    setTimeout(() => {
-                        addProblemBtn.innerHTML = '<span class="material-symbols-outlined icon-left">playlist_add</span>Add to Problem List';
-                    }, 2000);
-                } else {
-                    alert('This diagnosis is already in the problem list');
-                }
-            });
-            
-            // Generate FHIR Bundle button
-            generateFhirBtn.addEventListener('click', function() {
-                if (problemList.length === 0) {
-                    alert('Problem list is empty. Please add at least one diagnosis.');
-                    return;
-                }
-                
-                const fhirBundle = {
-                    resourceType: 'Bundle',
-                    type: 'collection',
-                    entry: problemList.map(problem => ({
-                        resource: {
-                            resourceType: 'Condition',
-                            code: {
-                                coding: [
-                                    {
-                                        system: 'http://ayush.gov.in/namaste',
-                                        code: problem.namasteCode,
-                                        display: problem.term
-                                    },
-                                    {
-                                        system: 'http://id.who.int/icd11/mms',
-                                        code: problem.icdCode,
-                                        display: problem.term
-                                    }
-                                ],
-                                text: problem.term
-                            },
-                            subject: {
-                                reference: 'Patient/example'
-                            },
-                            recordedDate: problem.date
-                        }
-                    }))
-                };
-                
-                // For demo, just show the bundle in console
-                console.log('FHIR Bundle:', fhirBundle);
-                
-                // Show in an alert for demo purposes
-                alert('FHIR Bundle generated! Check the console for details.');
-                
-                // In a real app, you would send this to the server
-                // fetch('/api/fhir-upload', {
-                //   method: 'POST',
-                //   headers: {
-                //     'Content-Type': 'application/json',
-                //     'Authorization': 'Bearer mock-abha-token'
-                //   },
-                //   body: JSON.stringify(fhirBundle)
-                // });
-            });
-            
-            // Helper functions
-            function showSearchResults(query) {
-                // Filter sample terms based on query
-                const filteredTerms = sampleTerms.filter(term => 
-                    term.term.toLowerCase().includes(query)
-                );
-                
-                if (filteredTerms.length === 0) {
-                    searchResults.innerHTML = '<div class="autocomplete-item">No results found</div>';
-                } else {
-                    searchResults.innerHTML = '';
-                    filteredTerms.forEach(term => {
-                        const item = document.createElement('div');
-                        item.className = 'autocomplete-item';
-                        
-                        item.innerHTML = `
-                            <div class="term-name">${term.term}</div>
-                            <div class="term-codes">
-                                <span class="code-badge namaste-badge">${term.namasteCode}</span>
-                                <span class="code-badge icd-badge">${term.icdCode}</span>
+                    <div style="margin-bottom: var(--space-lg);">
+                        <h5 class="body-emphasis" style="margin-bottom: var(--space-sm);">Modern Medical Classification</h5>
+                        <div class="code-display">
+                            <strong>ICD-11 Biomedicine:</strong> ${mapping.icd11_bio}<br>
+                            <strong>Modern Equivalent:</strong> ${mapping.modern_equivalent}
+                            ${treatment ? `<br><strong>Treatment Category:</strong> ${treatment.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}` : ''}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: var(--space-lg);">
+                        <h5 class="body-emphasis" style="margin-bottom: var(--space-sm);">Coding Confidence</h5>
+                        <div class="confidence-meter">
+                            <span class="caption">Mapping Accuracy:</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" style="width: ${mapping.confidence}%"></div>
                             </div>
-                        `;
-                        
-                        item.addEventListener('click', () => {
-                            diagnosisInput.value = term.term;
-                            searchResults.classList.add('hidden');
-                            selectedTerm = term;
-                            updateResultCard(term);
-                            resultCard.classList.remove('hidden');
-                        });
-                        
-                        searchResults.appendChild(item);
-                    });
-                }
-                
-                searchResults.classList.remove('hidden');
-            }
-            
-            function updateResultCard(term) {
-                namasteCodeEl.textContent = `${term.namasteCode} (${term.term})`;
-                icdCodeEl.textContent = `${term.icdCode} (${term.term})`;
-                
-                // Set relationship badge
-                let relationshipText, badgeClass;
-                switch (term.relationship) {
-                    case 'equivalent':
-                        relationshipText = 'Equivalent To';
-                        badgeClass = 'badge-green';
-                        break;
-                    case 'broader':
-                        relationshipText = 'Broader Than';
-                        badgeClass = 'badge-green';
-                        break;
-                    case 'narrower':
-                        relationshipText = 'Narrower Than';
-                        badgeClass = 'badge-green';
-                        break;
-                    default:
-                        relationshipText = 'Related To';
-                        badgeClass = 'badge-green';
-                }
-                
-                relationshipBadge.textContent = relationshipText;
-                relationshipBadge.className = `badge ${badgeClass}`;
-                
-                // Set confidence
-                confidenceValue.textContent = `${term.confidence}%`;
-                confidenceBar.style.width = `${term.confidence}%`;
-                
-                // Set mapping source
-                mappingSource.textContent = term.mappingSource;
-            }
-            
-            function renderProblemList() {
-                problemsList.innerHTML = '';
-                
-                if (problemList.length === 0) {
-                    const emptyRow = document.createElement('tr');
-                    emptyRow.innerHTML = `
-                        <td colspan="4" class="text-center" style="text-align: center; color: #6b7280;">
-                            No problems added yet
-                        </td>
-                    `;
-                    problemsList.appendChild(emptyRow);
-                    return;
-                }
-                
-                problemList.forEach((problem, index) => {
-                    const row = document.createElement('tr');
+                            <span class="body-emphasis">${mapping.confidence}%</span>
+                        </div>
+                    </div>
                     
-                    row.innerHTML = `
-                        <td class="whitespace-nowrap font-medium text-gray-800">
-                            ${problem.namasteCode} (${problem.term})
-                        </td>
-                        <td class="whitespace-nowrap text-gray-600">
-                            ${problem.icdCode} (${problem.term})
-                        </td>
-                        <td class="whitespace-nowrap text-gray-600">
-                            ${problem.date}
-                        </td>
-                        <td class="whitespace-nowrap text-gray-600 text-right">
-                            <button class="delete-btn" data-index="${index}">
-                                <span class="material-symbols-outlined">delete</span>
-                            </button>
-                        </td>
-                    `;
+                    ${notes ? `
+                    <div style="margin-bottom: var(--space-lg);">
+                        <h5 class="body-emphasis" style="margin-bottom: var(--space-sm);">Clinical Notes</h5>
+                        <div class="code-display">${notes}</div>
+                    </div>
+                    ` : ''}
                     
-                    problemsList.appendChild(row);
-                });
-                
-                // Add delete handlers
-                document.querySelectorAll('.delete-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const index = parseInt(this.getAttribute('data-index'));
-                        problemList.splice(index, 1);
-                        renderProblemList();
-                    });
-                });
-            }
-            
-            // Chip functionality for symptoms
-            document.querySelectorAll('.chip-close').forEach(button => {
-                button.addEventListener('click', function() {
-                    this.closest('.chip').remove();
-                });
-            });
-            
-            document.querySelector('.add-chip').addEventListener('click', function() {
-                const symptom = prompt('Enter symptom:');
-                if (symptom && symptom.trim() !== '') {
-                    const chip = document.createElement('div');
-                    chip.className = 'chip';
-                    chip.innerHTML = `
-                        <span>${symptom}</span>
-                        <button class="chip-close">
-                            <span class="material-symbols-outlined">close</span>
-                        </button>
-                    `;
-                    
-                    const closeBtn = chip.querySelector('.chip-close');
-                    closeBtn.addEventListener('click', function() {
-                        chip.remove();
-                    });
-                    
-                    this.parentNode.insertBefore(chip, this);
-                }
-            });
-        });
+                    <div style="display: flex; gap: var(--space-md); margin-top: var(--space-lg);">
+                        <button class="btn btn-primary btn-small">Export to EMR</button>
+                        <button class="btn btn-secondary btn-small">Generate Insurance Claim</button>
+                        <button class="btn btn-ghost btn-small">Print Summary</button>
+                    </div>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>

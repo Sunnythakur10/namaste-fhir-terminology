@@ -3,522 +3,414 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Researcher Sandbox | NAMASTE-FHIR Terminology</title>
+    <title>Research Analytics Platform | NAMASTE-FHIR Terminology</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="/ui/assets/css/main.css">
+    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
     <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- AG Grid for data tables -->
-    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-grid.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css">
     <style>
-        /* Additional styles specific to researcher page */
-        .filter-ribbon {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            padding: 16px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+        /* Research-specific styles */
+        .research-header {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: var(--text-inverse);
+            padding: var(--space-xl) 0;
         }
-        
-        .filter-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            min-width: 200px;
+
+        .analytics-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-xl);
         }
-        
+
+        @media (max-width: 768px) {
+            .analytics-dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .chart-container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            height: 400px;
         }
-        
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
+
+        .research-filters {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-xl);
         }
-        
-        .toggle-group {
-            display: flex;
-            background-color: #f3f4f6;
-            border-radius: 6px;
-            padding: 4px;
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-lg);
         }
-        
-        .toggle-option {
-            cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        .toggle-option.active {
-            background-color: white;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            color: var(--primary-text-color);
-        }
-        
-        .data-table-container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+        .data-table {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
         }
-        
-        .export-strip {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            padding: 12px 16px;
-            border-bottom: 1px solid #e5e7eb;
+
+        .table-header {
+            background-color: var(--bg-secondary);
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--border-light);
         }
-        
-        .export-button {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 6px;
-            background-color: #f3f4f6;
-            color: #374151;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            border: none;
+
+        .table-content {
+            padding: var(--space-lg);
         }
-        
-        .export-button:hover {
-            background-color: #e5e7eb;
+
+        .metric-card {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
         }
-        
-        .system-badge {
-            display: inline-flex;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            font-size: 12px;
-            font-weight: 500;
+
+        .metric-value {
+            font-family: var(--font-family-primary);
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--space-sm);
         }
-        
-        .system-badge.namaste {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-        
-        .system-badge.icd {
-            background-color: #dbeafe;
-            color: #1e40af;
-        }
-        
-        .system-badge.both {
-            background-color: #f3f4f6;
-            color: #1f2937;
-        }
-        
-        .trend-up {
-            color: #10b981;
+
+        .breadcrumb {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: var(--space-sm);
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-md);
         }
-        
-        .trend-down {
-            color: #ef4444;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
         }
-        
-        /* Chart styling */
-        #prevalence-chart {
-            width: 100%;
-            height: 300px;
-        }
-        
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-        
-        .loading-overlay.active {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        .breadcrumb a:hover {
+            color: var(--text-inverse);
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <nav class="navbar">
-                <div class="logo">NAMASTE-FHIR</div>
-                <ul class="nav-menu">
-                    <li><a href="/ui/pages/landing.html">Home</a></li>
-                    <li><a href="/ui/pages/doctor-sandbox.html">Doctor Sandbox</a></li>
-                    <li><a href="/ui/pages/researcher-sandbox.html" class="active">Researcher Sandbox</a></li>
-                    <li><a href="/ui/pages/insurance-sandbox.html">Insurance</a></li>
-                    <li><a href="/ui/pages/api-docs.html">API Docs</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <main>
-        <div class="container">
-            <section class="page-header">
-                <h1>Researcher Sandbox</h1>
-                <p>Query prevalence data and export results in various formats</p>
-            </section>
-
-            <section class="filter-ribbon">
-                <div class="filter-item">
-                    <span class="material-symbols-outlined">date_range</span>
-                    <input type="text" id="date-range" placeholder="Date Range (Last 12 months)" class="form-input">
+    <div class="layout-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/ui/pages/landing.html" class="nav-link">Home</a>
+                    <span>→</span>
+                    <span class="body-emphasis">Research Analytics Platform</span>
                 </div>
-                <div class="filter-item">
-                    <span class="material-symbols-outlined">database</span>
-                    <select id="system-toggle" class="form-select">
-                        <option value="namaste">NAMASTE</option>
-                        <option value="icd11">ICD-11</option>
-                        <option value="both" selected>Both</option>
-                    </select>
-                </div>
-                <div class="filter-item">
-                    <span class="material-symbols-outlined">search</span>
-                    <input type="text" id="term-search" placeholder="Search terms or codes..." class="form-input">
-                </div>
-            </section>
+            </div>
+        </header>
 
-            <section class="chart-container">
-                <div class="chart-header">
-                    <div>
-                        <h2>Top 20 Codes</h2>
-                        <p class="text-muted">Last 12 Months</p>
+        <!-- Research Header -->
+        <section class="research-header">
+            <div class="container">
+                <h1 class="display-medium" style="margin-bottom: var(--space-md);">Research Analytics Platform</h1>
+                <p class="body-large" style="opacity: 0.9;">Advanced analytics and data visualization tools for comprehensive traditional medicine research with standardized coding systems.</p>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main style="padding: var(--space-2xl) 0;">
+            <div class="container">
+                <!-- Research Filters -->
+                <div class="research-filters">
+                    <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Research Parameters & Data Filters</h2>
+                    
+                    <div class="filter-grid">
+                        <div class="form-group">
+                            <label class="form-label">Study Period</label>
+                            <select class="form-select" id="study-period">
+                                <option value="last-year">Last 12 Months</option>
+                                <option value="last-2-years">Last 2 Years</option>
+                                <option value="last-5-years">Last 5 Years</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Traditional Medicine Category</label>
+                            <select class="form-select" id="medicine-category">
+                                <option value="">All Categories</option>
+                                <option value="respiratory">Respiratory Conditions</option>
+                                <option value="musculoskeletal">Musculoskeletal Disorders</option>
+                                <option value="endocrine">Endocrine Conditions</option>
+                                <option value="digestive">Digestive Disorders</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Treatment Modality</label>
+                            <select class="form-select" id="treatment-type">
+                                <option value="">All Treatments</option>
+                                <option value="herbal">Herbal Medicine</option>
+                                <option value="panchakarma">Panchakarma</option>
+                                <option value="yoga">Yoga Therapy</option>
+                                <option value="combined">Combined Therapy</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Geographic Region</label>
+                            <select class="form-select" id="region">
+                                <option value="">All Regions</option>
+                                <option value="north">Northern India</option>
+                                <option value="south">Southern India</option>
+                                <option value="east">Eastern India</option>
+                                <option value="west">Western India</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="toggle-group">
-                        <label class="toggle-option active" id="percent-toggle">
-                            <input type="radio" name="chart-view" value="percent" checked hidden>
-                            %
-                        </label>
-                        <label class="toggle-option" id="count-toggle">
-                            <input type="radio" name="chart-view" value="count" hidden>
-                            Count
-                        </label>
+                    
+                    <div style="margin-top: var(--space-lg);">
+                        <button class="btn btn-primary" onclick="generateResearchData()">
+                            <span class="material-symbols-outlined">analytics</span>
+                            Generate Research Analytics
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportData()">
+                            <span class="material-symbols-outlined">download</span>
+                            Export Dataset
+                        </button>
                     </div>
                 </div>
-                <canvas id="prevalence-chart"></canvas>
-            </section>
 
-            <section class="data-table-container">
-                <div class="export-strip">
-                    <button class="export-button" id="export-csv">
-                        <span class="material-symbols-outlined">download</span>
-                        CSV
-                    </button>
-                    <button class="export-button" id="export-fhir">
-                        <span class="material-symbols-outlined">download</span>
-                        FHIR JSON (ValueSet)
-                    </button>
-                    <button class="export-button" id="export-png">
-                        <span class="material-symbols-outlined">download</span>
-                        PNG Chart
-                    </button>
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-4" style="margin-bottom: var(--space-xl);">
+                    <div class="metric-card">
+                        <div class="metric-value" id="total-records">--</div>
+                        <div class="caption">Total Research Records</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="mapping-accuracy">--</div>
+                        <div class="caption">Average Mapping Accuracy</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="treatment-outcomes">--</div>
+                        <div class="caption">Positive Treatment Outcomes</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="research-coverage">--</div>
+                        <div class="caption">ICD-11 Coverage</div>
+                    </div>
                 </div>
-                <div id="prevalence-grid" class="ag-theme-alpine" style="height: 400px; width: 100%;"></div>
-            </section>
-        </div>
-    </main>
 
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="spinner"></div>
+                <!-- Analytics Dashboard -->
+                <div class="analytics-dashboard">
+                    <div class="chart-container">
+                        <h3 class="headline-medium" style="margin-bottom: var(--space-lg);">Traditional Medicine Distribution</h3>
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3 class="headline-medium" style="margin-bottom: var(--space-lg);">Treatment Effectiveness Trends</h3>
+                        <canvas id="trendsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Research Data Table -->
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="headline-medium">Detailed Research Dataset</h3>
+                        <p class="caption">Comprehensive dual-coded research data with traditional and modern medical classifications</p>
+                    </div>
+                    
+                    <div class="table-content">
+                        <div id="research-table">
+                            <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
+                                <span class="material-symbols-outlined" style="font-size: 4rem; margin-bottom: var(--space-lg); color: var(--color-primary);">table_view</span>
+                                <p class="body-large"><strong>Research Data Ready</strong></p>
+                                <p>Configure your research parameters above to generate comprehensive analytics and detailed datasets.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <script src="/ui/assets/js/main.js"></script>
     <script>
-        // Initialize date picker (placeholder - would use a real date picker library in production)
-        document.getElementById('date-range').addEventListener('click', function() {
-            alert('Date picker would open here. In a real implementation, this would use a library like Flatpickr or DateRangePicker.');
-        });
+        let distributionChart, trendsChart;
 
-        // Toggle between percentage and count views
-        document.getElementById('percent-toggle').addEventListener('click', function() {
-            document.getElementById('percent-toggle').classList.add('active');
-            document.getElementById('count-toggle').classList.remove('active');
-            updateChart('percent');
-        });
+        function generateResearchData() {
+            // Update metrics with simulated data
+            document.getElementById('total-records').textContent = '12,847';
+            document.getElementById('mapping-accuracy').textContent = '94.2%';
+            document.getElementById('treatment-outcomes').textContent = '78.5%';
+            document.getElementById('research-coverage').textContent = '89.1%';
 
-        document.getElementById('count-toggle').addEventListener('click', function() {
-            document.getElementById('count-toggle').classList.add('active');
-            document.getElementById('percent-toggle').classList.remove('active');
-            updateChart('count');
-        });
+            // Generate charts
+            generateDistributionChart();
+            generateTrendsChart();
+            generateResearchTable();
+        }
 
-        // Sample data for demonstration
-        const prevalenceData = {
-            labels: [
-                'Vata Dosha Imbalance', 'Pitta Dosha Imbalance', 'Kapha Dosha Imbalance',
-                'Ama Accumulation', 'Agni Impairment', 'Prana Disruption',
-                'Ojas Depletion', 'Tejas Imbalance', 'Soma Disruption',
-                'Srotas Blockage', 'Dhatu Imbalance', 'Malas Disruption',
-                'Gunas Imbalance', 'Prakriti Deviation', 'Vikriti State',
-                'Sattva Deficiency', 'Rajas Excess', 'Tamas Excess',
-                'Panchakarma Indication', 'Rasayana Need'
-            ],
-            percentages: [
-                23, 19, 17, 15, 14, 12, 11, 10, 9, 8, 7, 6, 5, 4, 4, 3, 3, 2, 2, 1
-            ],
-            counts: [
-                463, 384, 341, 302, 287, 245, 221, 198, 182, 167, 143, 129, 98, 85, 76, 65, 52, 45, 39, 28
-            ],
-            trends: [
-                'up', 'down', 'up', 'down', 'up', 'up', 'down', 'down', 'up', 'up',
-                'down', 'up', 'down', 'up', 'down', 'up', 'down', 'up', 'down', 'up'
-            ]
-        };
-
-        // Initialize chart
-        let prevalenceChart;
-        function initChart() {
-            const ctx = document.getElementById('prevalence-chart').getContext('2d');
-            prevalenceChart = new Chart(ctx, {
-                type: 'bar',
+        function generateDistributionChart() {
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            
+            if (distributionChart) {
+                distributionChart.destroy();
+            }
+            
+            distributionChart = new Chart(ctx, {
+                type: 'doughnut',
                 data: {
-                    labels: prevalenceData.labels,
+                    labels: ['Respiratory', 'Musculoskeletal', 'Endocrine', 'Digestive', 'Other'],
                     datasets: [{
-                        label: 'Prevalence (%)',
-                        data: prevalenceData.percentages,
-                        backgroundColor: '#38e07b',
-                        borderColor: '#38e07b',
-                        borderWidth: 1
+                        data: [2847, 3521, 2156, 2890, 1433],
+                        backgroundColor: [
+                            '#007aff',
+                            '#34c759',
+                            '#ff9500',
+                            '#ff3b30',
+                            '#a1a1a6'
+                        ]
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateTrendsChart() {
+            const ctx = document.getElementById('trendsChart').getContext('2d');
+            
+            if (trendsChart) {
+                trendsChart.destroy();
+            }
+            
+            trendsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Treatment Effectiveness (%)',
+                        data: [72, 75, 78, 82, 79, 85],
+                        borderColor: '#007aff',
+                        backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                        fill: true
+                    }, {
+                        label: 'Mapping Accuracy (%)',
+                        data: [88, 90, 92, 94, 93, 95],
+                        borderColor: '#34c759',
+                        backgroundColor: 'rgba(52, 199, 89, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
                     scales: {
                         y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Percentage (%)'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                maxRotation: 45,
-                                minRotation: 45
-                            }
+                            beginAtZero: false,
+                            min: 60,
+                            max: 100
                         }
                     }
                 }
             });
         }
 
-        // Update chart based on view type
-        function updateChart(viewType) {
-            if (!prevalenceChart) return;
+        function generateResearchTable() {
+            const tableDiv = document.getElementById('research-table');
             
-            if (viewType === 'percent') {
-                prevalenceChart.data.datasets[0].data = prevalenceData.percentages;
-                prevalenceChart.data.datasets[0].label = 'Prevalence (%)';
-                prevalenceChart.options.scales.y.title.text = 'Percentage (%)';
-            } else {
-                prevalenceChart.data.datasets[0].data = prevalenceData.counts;
-                prevalenceChart.data.datasets[0].label = 'Case Count';
-                prevalenceChart.options.scales.y.title.text = 'Number of Cases';
-            }
-            prevalenceChart.update();
-        }
-
-        // Initialize AG Grid
-        function initGrid() {
-            // Create row data
-            const rowData = prevalenceData.labels.map((label, index) => {
-                // Generate random codes based on system
-                const systemTypes = ['namaste', 'icd11', 'both'];
-                const systemType = systemTypes[Math.floor(Math.random() * 3)];
-                let code;
-                
-                if (systemType === 'namaste') {
-                    code = 'N' + (Math.floor(Math.random() * 9000) + 1000);
-                } else if (systemType === 'icd11') {
-                    code = 'MG2' + (Math.floor(Math.random() * 90) + 10);
-                } else {
-                    code = 'DB' + (Math.floor(Math.random() * 900) + 100);
-                }
-                
-                return {
-                    term: label,
-                    code: code,
-                    system: systemType,
-                    cases: prevalenceData.counts[index],
-                    percentage: prevalenceData.percentages[index] + '%',
-                    trend: prevalenceData.trends[index]
-                };
-            });
-
-            // Define column definitions
-            const columnDefs = [
-                { field: 'term', headerName: 'Term', sortable: true, filter: true },
-                { field: 'code', headerName: 'Code', sortable: true, filter: true },
-                { 
-                    field: 'system', 
-                    headerName: 'System', 
-                    sortable: true, 
-                    filter: true,
-                    cellRenderer: params => {
-                        const system = params.value;
-                        let badgeClass = '';
-                        let displayText = '';
-                        
-                        if (system === 'namaste') {
-                            badgeClass = 'system-badge namaste';
-                            displayText = 'NAMASTE';
-                        } else if (system === 'icd11') {
-                            badgeClass = 'system-badge icd';
-                            displayText = 'ICD-11';
-                        } else {
-                            badgeClass = 'system-badge both';
-                            displayText = 'Both';
-                        }
-                        
-                        return `<span class="${badgeClass}">${displayText}</span>`;
-                    }
+            const sampleData = [
+                {
+                    condition: 'Sandhigatavata',
+                    namasteCode: 'AAE-16',
+                    icd11TM2: 'SP00.1',
+                    icd11Bio: 'FA01.2',
+                    patients: 234,
+                    effectiveness: '82%',
+                    confidence: '94%'
                 },
-                { field: 'cases', headerName: 'Cases', sortable: true, filter: 'agNumberColumnFilter' },
-                { field: 'percentage', headerName: '%', sortable: true },
-                { 
-                    field: 'trend', 
-                    headerName: 'Trend', 
-                    sortable: true,
-                    cellRenderer: params => {
-                        const trend = params.value;
-                        if (trend === 'up') {
-                            return '<span class="trend-up"><span class="material-symbols-outlined">arrow_upward</span> Up</span>';
-                        } else {
-                            return '<span class="trend-down"><span class="material-symbols-outlined">arrow_downward</span> Down</span>';
-                        }
-                    }
+                {
+                    condition: 'Madhumeha',
+                    namasteCode: 'EBM-23',
+                    icd11TM2: 'SP15.0',
+                    icd11Bio: '5A11.0',
+                    patients: 198,
+                    effectiveness: '76%',
+                    confidence: '96%'
+                },
+                {
+                    condition: 'Kasa',
+                    namasteCode: 'RSP-08',
+                    icd11TM2: 'SP22.1',
+                    icd11Bio: 'CA20.0',
+                    patients: 156,
+                    effectiveness: '89%',
+                    confidence: '89%'
                 }
             ];
 
-            // Create new grid instance
-            new agGrid.Grid(document.getElementById('prevalence-grid'), {
-                columnDefs: columnDefs,
-                rowData: rowData,
-                pagination: true,
-                paginationPageSize: 10,
-                domLayout: 'autoHeight',
-                defaultColDef: {
-                    flex: 1,
-                    minWidth: 100,
-                    resizable: true
-                }
+            let tableHTML = `
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: var(--bg-secondary); border-bottom: 1px solid var(--border-light);">
+                            <th style="padding: var(--space-md); text-align: left;">Traditional Condition</th>
+                            <th style="padding: var(--space-md); text-align: left;">NAMASTE Code</th>
+                            <th style="padding: var(--space-md); text-align: left;">ICD-11 TM2</th>
+                            <th style="padding: var(--space-md); text-align: left;">ICD-11 Bio</th>
+                            <th style="padding: var(--space-md); text-align: left;">Patients</th>
+                            <th style="padding: var(--space-md); text-align: left;">Effectiveness</th>
+                            <th style="padding: var(--space-md); text-align: left;">Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            sampleData.forEach(row => {
+                tableHTML += `
+                    <tr style="border-bottom: 1px solid var(--border-light);">
+                        <td style="padding: var(--space-md); font-weight: 500;">${row.condition}</td>
+                        <td style="padding: var(--space-md); font-family: var(--font-family-mono);">${row.namasteCode}</td>
+                        <td style="padding: var(--space-md); font-family: var(--font-family-mono);">${row.icd11TM2}</td>
+                        <td style="padding: var(--space-md); font-family: var(--font-family-mono);">${row.icd11Bio}</td>
+                        <td style="padding: var(--space-md);">${row.patients}</td>
+                        <td style="padding: var(--space-md); color: var(--color-accent); font-weight: 500;">${row.effectiveness}</td>
+                        <td style="padding: var(--space-md); color: var(--color-primary); font-weight: 500;">${row.confidence}</td>
+                    </tr>
+                `;
             });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+
+            tableDiv.innerHTML = tableHTML;
         }
 
-        // Show loading overlay
-        function showLoading() {
-            document.getElementById('loading-overlay').classList.add('active');
+        function exportData() {
+            alert('Research dataset export functionality would integrate with your preferred data analysis tools (CSV, Excel, R, Python).');
         }
-
-        // Hide loading overlay
-        function hideLoading() {
-            document.getElementById('loading-overlay').classList.remove('active');
-        }
-
-        // Handle export buttons
-        document.getElementById('export-csv').addEventListener('click', function() {
-            showLoading();
-            // Simulate API call delay
-            setTimeout(() => {
-                hideLoading();
-                alert('CSV export would be downloaded here. In a real implementation, this would trigger a server-side export.');
-            }, 1000);
-        });
-
-        document.getElementById('export-fhir').addEventListener('click', function() {
-            showLoading();
-            // Simulate API call delay
-            setTimeout(() => {
-                hideLoading();
-                alert('FHIR ValueSet JSON would be downloaded here. This would be a standard FHIR resource.');
-            }, 1000);
-        });
-
-        document.getElementById('export-png').addEventListener('click', function() {
-            if (!prevalenceChart) return;
-            const url = prevalenceChart.toBase64Image();
-            const link = document.createElement('a');
-            link.download = 'prevalence-chart.png';
-            link.href = url;
-            link.click();
-        });
-
-        // Handle search functionality
-        document.getElementById('term-search').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            // In a real implementation, this would filter data or make a new API call
-            alert(`Search functionality would filter data for: ${searchTerm}`);
-        });
-
-        // Handle system toggle
-        document.getElementById('system-toggle').addEventListener('change', function(e) {
-            const system = e.target.value;
-            showLoading();
-            // Simulate API call delay
-            setTimeout(() => {
-                hideLoading();
-                alert(`Data would be filtered for system: ${system}`);
-            }, 1000);
-        });
-
-        // Initialize everything on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            initChart();
-            initGrid();
-
-            // Simulate initial data loading
-            showLoading();
-            setTimeout(hideLoading, 1000);
-        });
     </script>
 </body>
 </html>
