@@ -1,52 +1,90 @@
-# NAMASTE-FHIR Terminology Ingestion & Representation
+# NAMASTE-FHIR Terminology Ingestion & Representation with WHO ICD-11 API Integration
 
-This feature implements comprehensive terminology ingestion and representation capabilities with both CLI and UI modes, allowing users to parse NAMASTE CSV exports and generate FHIR CodeSystem and ConceptMap resources.
+This feature implements comprehensive terminology ingestion and representation capabilities with both CLI and UI modes, now enhanced with real-time WHO ICD-11 API integration. Users can parse NAMASTE CSV exports and generate enhanced FHIR CodeSystem and ConceptMap resources with live ICD-11 mappings.
+
+## 🚀 Latest Enhancement: WHO ICD-11 API Integration
+
+The terminology ingestion system now includes complete WHO ICD-11 API integration that:
+- **Fetches real-time data** from WHO ICD-11 API
+- **Caches terminology codes** for improved performance
+- **Provides enhanced mappings** with live ICD-11 TM2 and Biomedicine codes
+- **Maintains fallback compatibility** for offline operation
 
 ## Feature Overview
 
-The Terminology Ingestion & Representation feature provides:
+The enhanced Terminology Ingestion & Representation feature provides:
 
 1. **Parse NAMASTE CSV Export**: Automatic parsing of NAMASTE (National AYUSH Morbidity and Standardized Terminologies Electronic) CSV files
-2. **Generate FHIR CodeSystem**: Creates standards-compliant FHIR CodeSystem resources from traditional medicine terminology
-3. **Create FHIR ConceptMap**: Links NAMASTE codes to ICD-11 TM2 (Traditional Medicine 2) and Biomedicine codes
+2. **WHO ICD-11 API Integration**: Real-time fetching and caching of ICD-11 TM2 + Biomedicine codes
+3. **Generate Enhanced FHIR CodeSystem**: Creates standards-compliant FHIR CodeSystem resources with API-enhanced metadata
+4. **Create Enhanced FHIR ConceptMap**: Links NAMASTE codes to live ICD-11 TM2 and Biomedicine codes with mapping provenance
+
+## 🔧 Setup and Configuration
+
+### Prerequisites
+```bash
+# Install required dependencies
+pip install -r requirements.txt
+```
+
+### Environment Configuration
+```bash
+# Copy environment template
+cp .env.example .env
+
+# Edit .env with your WHO ICD-11 API credentials
+ICD_CLIENT_ID=your_client_id_here
+ICD_CLIENT_SECRET=your_client_secret_here
+```
+
+### Test API Integration
+```bash
+# Test WHO ICD-11 API connectivity
+python namaste_cli.py --test-api
+```
 
 ## Implementation Modes
 
-### CLI Mode (Command-Line Interface)
+### CLI Mode (Enhanced Command-Line Interface)
 
-The CLI tool (`namaste_cli.py`) provides full functionality for system integration and automation:
+The enhanced CLI tool (`namaste_cli.py`) now provides WHO ICD-11 API integration with full functionality for system integration and automation:
 
-#### Installation
+#### Enhanced Usage Examples
+
+**Test WHO ICD-11 API integration:**
 ```bash
-# The CLI tool is ready to use - no additional installation required
-python namaste_cli.py --help
+python namaste_cli.py --test-api
 ```
 
-#### Usage Examples
-
-**Display data summary:**
+**Display enhanced data summary with API mappings:**
 ```bash
 python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --summary
 ```
 
-**Generate all FHIR resources:**
+**Generate all FHIR resources with live WHO ICD-11 API:**
 ```bash
 python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --all --output-dir fhir-output/
 ```
 
-**Generate only CodeSystem:**
+**Use enhanced fallback mappings (disable API):**
 ```bash
-python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --codesystem --output codesystem.json
+python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --all --no-api --output-dir fhir-output/
 ```
 
-**Generate only ConceptMap:**
+**Generate enhanced ConceptMap with API integration:**
 ```bash
-python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --conceptmap --output conceptmap.json
+python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --conceptmap --output enhanced-conceptmap.json
 ```
 
-#### CLI Output Example
+#### Enhanced CLI Output Example
 ```
-✅ Successfully parsed 50 records from dataset/namaste_dummy_dataset.csv
+🌐 Initializing WHO ICD-11 API integration...
+🔄 Generating enhanced NAMASTE mappings using WHO ICD-11 API...
+🔍 Searching ICD-11 for 'arthritis'...
+🔐 Authenticating with WHO ICD-11 API...
+✅ Successfully authenticated with WHO ICD-11 API
+✅ Enhanced NAMASTE mappings generated successfully
+✅ Successfully parsed 50 records from dataset/namaste_dummy_dataset.csv using WHO ICD-11 API
 
 📊 NAMASTE Data Summary:
    • Total records: 50

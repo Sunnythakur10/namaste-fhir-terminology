@@ -7,6 +7,7 @@ Features:
 - Parse NAMASTE CSV export
 - Generate FHIR CodeSystem
 - Create FHIR ConceptMap linking NAMASTE → ICD-11 TM2 / Biomedicine codes
+- WHO ICD-11 API Integration for real-time terminology mapping
 """
 
 import argparse
@@ -17,19 +18,79 @@ from pathlib import Path
 from typing import Dict, List, Any
 from datetime import datetime
 
+try:
+    from icd11_client import ICD11APIClient
+    ICD11_AVAILABLE = True
+except ImportError:
+    ICD11_AVAILABLE = False
+    print("⚠️  ICD-11 API client not available. Using fallback mappings.")
+
 
 class NAMASTETerminologyCLI:
     """CLI tool for NAMASTE terminology ingestion and FHIR resource generation"""
     
-    def __init__(self):
+    def __init__(self, use_icd11_api: bool = True):
         self.namaste_data = []
-        self.icd_mappings = {
+        self.use_icd11_api = use_icd11_api and ICD11_AVAILABLE
+        self.icd11_client = None
+        self.enhanced_mappings = None
+        
+        # Fallback mappings for when API is not available
+        self.fallback_mappings = {
             "AAE-16": {"tm2": "SP00", "biomed": "FA01", "name": "Sandhigatvata"},
             "AA": {"tm2": "SP10", "biomed": "FA20", "name": "Vatavyadhi"},
             "EE-3": {"tm2": "SL01", "biomed": "ME83", "name": "Arsha"},
             "EF-2.4.4": {"tm2": "SJ00", "biomed": "5A11", "name": "Madhumeha/Kshaudrameha"},
             "EA-3": {"tm2": "SB00", "biomed": "CA22", "name": "Kasa"}
         }
+        
+        if self.use_icd11_api:
+            self._initialize_icd11_client()
+    
+    def _initialize_icd11_client(self):
+        """Initialize ICD-11 API client and fetch enhanced mappings"""
+        try:
+            print("🌐 Initializing WHO ICD-11 API integration...")
+            self.icd11_client = ICD11APIClient()
+            
+            # Get enhanced mappings from real ICD-11 API
+            self.enhanced_mappings = self.icd11_client.get_enhanced_namaste_mappings()
+            print("✅ ICD-11 API integration initialized successfully")
+            
+        except Exception as e:
+            print(f"⚠️  Failed to initialize ICD-11 API client: {str(e)}")
+            print("   Using fallback mappings instead.")
+            self.use_icd11_api = False
+            self.icd11_client = None
+    
+    def get_icd_mappings_for_code(self, code: str) -> Dict[str, Any]:
+        """Get ICD-11 mappings for a NAMASTE code"""
+        if self.use_icd11_api and self.enhanced_mappings and code in self.enhanced_mappings:
+            mapping_data = self.enhanced_mappings[code]
+            
+            # Convert enhanced mappings to compatible format
+            tm2_codes = mapping_data.get('tm2_codes', [])
+            biomed_codes = mapping_data.get('biomed_codes', [])
+            
+            return {
+                'tm2': tm2_codes[0]['code'] if tm2_codes else 'UNKNOWN',
+                'biomed': biomed_codes[0]['code'] if biomed_codes else 'UNKNOWN',
+                'name': mapping_data.get('name', ''),
+                'tm2_display': tm2_codes[0]['display'] if tm2_codes else '',
+                'biomed_display': biomed_codes[0]['display'] if biomed_codes else '',
+                'source': 'WHO_ICD11_API'
+            }
+        else:
+            # Use fallback mappings
+            fallback = self.fallback_mappings.get(code, {"tm2": "UNKNOWN", "biomed": "UNKNOWN", "name": ""})
+            return {
+                'tm2': fallback['tm2'],
+                'biomed': fallback['biomed'],
+                'name': fallback['name'],
+                'tm2_display': f"ICD-11 TM2: {fallback['tm2']}",
+                'biomed_display': f"ICD-11 Biomedicine: {fallback['biomed']}",
+                'source': 'FALLBACK'
+            }
     
     def parse_csv(self, csv_file_path: str) -> bool:
         """Parse NAMASTE CSV export file"""
@@ -39,15 +100,19 @@ class NAMASTETerminologyCLI:
                 self.namaste_data = []
                 
                 for row in csv_reader:
-                    # Add ICD-11 mappings based on Code
+                    # Add ICD-11 mappings based on Code using enhanced API or fallback
                     code = row.get('Code', '')
-                    mapping = self.icd_mappings.get(code, {"tm2": "UNKNOWN", "biomed": "UNKNOWN"})
+                    mapping = self.get_icd_mappings_for_code(code)
                     
                     row['icd11_tm2_code'] = mapping['tm2']
                     row['icd11_biomed_code'] = mapping['biomed']
+                    row['icd11_tm2_display'] = mapping.get('tm2_display', '')
+                    row['icd11_biomed_display'] = mapping.get('biomed_display', '')
+                    row['mapping_source'] = mapping.get('source', 'UNKNOWN')
                     self.namaste_data.append(row)
                 
-                print(f"✅ Successfully parsed {len(self.namaste_data)} records from {csv_file_path}")
+                api_source = "WHO ICD-11 API" if self.use_icd11_api else "fallback mappings"
+                print(f"✅ Successfully parsed {len(self.namaste_data)} records from {csv_file_path} using {api_source}")
                 return True
                 
         except FileNotFoundError:
@@ -108,50 +173,65 @@ class NAMASTETerminologyCLI:
             if code and code not in unique_codes:
                 unique_codes[code] = row
         
+        # Create target elements with enhanced mapping information
+        target_elements = []
+        for code, row in unique_codes.items():
+            targets = []
+            
+            # Add TM2 mapping
+            tm2_code = row.get("icd11_tm2_code", "")
+            tm2_display = row.get("icd11_tm2_display", f"ICD-11 TM2: {tm2_code}")
+            if tm2_code and tm2_code != "UNKNOWN":
+                targets.append({
+                    "code": tm2_code,
+                    "display": tm2_display,
+                    "equivalence": "equivalent",
+                    "comment": f"Traditional Medicine 2 (TM2) mapping - Source: {row.get('mapping_source', 'UNKNOWN')}"
+                })
+            
+            # Add Biomedicine mapping
+            biomed_code = row.get("icd11_biomed_code", "")
+            biomed_display = row.get("icd11_biomed_display", f"ICD-11 Biomedicine: {biomed_code}")
+            if biomed_code and biomed_code != "UNKNOWN":
+                targets.append({
+                    "code": biomed_code,
+                    "display": biomed_display,
+                    "equivalence": "equivalent",
+                    "comment": f"Biomedicine mapping - Source: {row.get('mapping_source', 'UNKNOWN')}"
+                })
+            
+            if targets:  # Only add if we have valid targets
+                target_elements.append({
+                    "code": code,
+                    "display": row.get("Disease", ""),
+                    "target": targets
+                })
+        
         conceptmap = {
             "resourceType": "ConceptMap",
             "id": "namaste-to-icd11",
             "url": "http://example.com/namaste-to-icd11",
-            "version": "1.0.0",
-            "name": "NamasteToICD11",
-            "title": "NAMASTE to ICD-11 Concept Map",
+            "version": "2.0.0",
+            "name": "NamasteToICD11Enhanced",
+            "title": "NAMASTE to ICD-11 Enhanced Concept Map",
             "status": "active",
             "experimental": False,
             "date": datetime.now().isoformat(),
             "publisher": "Ministry of AYUSH, Government of India",
-            "description": "Mapping from NAMASTE traditional medicine terminology to ICD-11 Traditional Medicine 2 (TM2) and Biomedicine codes",
+            "description": "Enhanced mapping from NAMASTE traditional medicine terminology to ICD-11 Traditional Medicine 2 (TM2) and Biomedicine codes using WHO ICD-11 API integration",
             "sourceUri": "http://ayush.gov.in/namaste",
             "targetUri": "http://hl7.org/fhir/sid/icd-11",
             "group": [
                 {
                     "source": "http://ayush.gov.in/namaste",
                     "target": "http://hl7.org/fhir/sid/icd-11",
-                    "element": [
-                        {
-                            "code": code,
-                            "display": row.get("Disease", ""),
-                            "target": [
-                                {
-                                    "code": row.get("icd11_tm2_code", ""),
-                                    "display": f"ICD-11 TM2: {row.get('icd11_tm2_code', '')}",
-                                    "equivalence": "equivalent",
-                                    "comment": "Traditional Medicine 2 (TM2) mapping"
-                                },
-                                {
-                                    "code": row.get("icd11_biomed_code", ""),
-                                    "display": f"ICD-11 Biomedicine: {row.get('icd11_biomed_code', '')}",
-                                    "equivalence": "equivalent", 
-                                    "comment": "Biomedicine mapping"
-                                }
-                            ]
-                        }
-                        for code, row in unique_codes.items()
-                    ]
+                    "element": target_elements
                 }
             ]
         }
         
-        print(f"✅ Generated FHIR ConceptMap with {len(unique_codes)} concept mappings")
+        mapping_source = "WHO ICD-11 API" if self.use_icd11_api else "fallback mappings"
+        print(f"✅ Generated enhanced FHIR ConceptMap with {len(unique_codes)} concept mappings using {mapping_source}")
         return conceptmap
     
     def save_to_file(self, data: Dict[str, Any], output_path: str) -> bool:
@@ -179,23 +259,32 @@ class NAMASTETerminologyCLI:
         print(f"   • Unique codes: {len(unique_codes)}")
         print(f"   • Unique diseases: {len(unique_diseases)}")
         
+        mapping_source = "WHO ICD-11 API" if self.use_icd11_api else "fallback mappings"
+        print(f"   • Mapping source: {mapping_source}")
+        
         print("\n🔗 Available Code Mappings:")
         for code in sorted(unique_codes):
-            if code in self.icd_mappings:
-                mapping = self.icd_mappings[code]
-                print(f"   • {code} → TM2: {mapping['tm2']}, Biomed: {mapping['biomed']}")
-            else:
-                print(f"   • {code} → No mapping available")
+            mapping = self.get_icd_mappings_for_code(code)
+            tm2_code = mapping.get('tm2', 'UNKNOWN')
+            biomed_code = mapping.get('biomed', 'UNKNOWN')
+            source = mapping.get('source', 'UNKNOWN')
+            
+            print(f"   • {code} → TM2: {tm2_code}, Biomed: {biomed_code} ({source})")
+        
+        # Show ICD-11 API status
+        if self.use_icd11_api and self.icd11_client:
+            cache_summary = self.icd11_client.get_terminology_cache_summary()
+            print(f"\n📱 ICD-11 API Cache: {len(cache_summary['cached_files'])} files, {cache_summary['total_cache_size']} bytes")
 
 
 def main():
     """Main CLI entry point"""
     parser = argparse.ArgumentParser(
-        description="NAMASTE-FHIR Terminology CLI Tool",
+        description="NAMASTE-FHIR Terminology CLI Tool with WHO ICD-11 API Integration",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Parse CSV and generate all FHIR resources
+  # Parse CSV and generate all FHIR resources with WHO ICD-11 API
   python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --all --output-dir fhir-output/
 
   # Generate only CodeSystem
@@ -204,12 +293,18 @@ Examples:
   # Generate only ConceptMap
   python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --conceptmap --output conceptmap.json
 
-  # Display data summary
+  # Display data summary with API mappings
   python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --summary
+
+  # Use fallback mappings (disable API)
+  python namaste_cli.py --input dataset/namaste_dummy_dataset.csv --all --no-api
+
+  # Test ICD-11 API integration
+  python namaste_cli.py --test-api
         """
     )
     
-    parser.add_argument('--input', '-i', required=True,
+    parser.add_argument('--input', '-i',
                        help='Path to NAMASTE CSV file')
     parser.add_argument('--output', '-o',
                        help='Output file path (for single resource)')
@@ -223,13 +318,32 @@ Examples:
                        help='Generate all FHIR resources')
     parser.add_argument('--summary', action='store_true',
                        help='Display data summary only')
+    parser.add_argument('--no-api', action='store_true',
+                       help='Disable WHO ICD-11 API integration (use fallback mappings)')
+    parser.add_argument('--test-api', action='store_true',
+                       help='Test WHO ICD-11 API integration')
     parser.add_argument('--verbose', '-v', action='store_true',
                        help='Verbose output')
     
     args = parser.parse_args()
     
+    # Test API integration if requested
+    if args.test_api:
+        if ICD11_AVAILABLE:
+            from icd11_client import test_icd11_client
+            test_icd11_client()
+        else:
+            print("❌ ICD-11 API client not available. Install requirements: pip install -r requirements.txt")
+        return
+    
+    # Validate input requirement
+    if not args.input:
+        print("❌ Input file is required. Use --input or --test-api for API testing.")
+        sys.exit(1)
+    
     # Initialize CLI tool
-    cli = NAMASTETerminologyCLI()
+    use_api = not args.no_api
+    cli = NAMASTETerminologyCLI(use_icd11_api=use_api)
     
     # Parse input CSV
     if not cli.parse_csv(args.input):
