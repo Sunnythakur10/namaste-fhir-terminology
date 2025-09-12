@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Body
+from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Body, Query
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -7,7 +7,9 @@ import requests
 import logging
 import json
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional
+from fuzzywuzzy import fuzz, process
+import re
 
 # Setup logging for audit trails (EHR compliance)
 logging.basicConfig(filename='audit.log', level=logging.INFO, 
@@ -116,10 +118,256 @@ async def ingest_namaste(file: UploadFile = File(...), token: str = Depends(veri
         logging.error(f"Ingest failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"ICD sync failed: {str(e)}")
 
-# Auto-complete value-set lookup (updated to search on Disease and Short_Definition)
+# Enhanced Search & Auto-Complete Models
+class SearchRequest(BaseModel):
+    query: str
+    limit: Optional[int] = 10
+    include_fuzzy: Optional[bool] = True
+    threshold: Optional[int] = 60  # Minimum fuzzy match score (0-100)
+
+class AutoCompleteResponse(BaseModel):
+    namaste_code: str
+    display_name: str
+    definition: str
+    tm2_mapping: str
+    biomedicine_mapping: str
+    confidence_score: int  # Fuzzy match confidence (0-100)
+
+# Legacy model for backward compatibility
 class SearchQuery(BaseModel):
     term: str
 
+# Enhanced search functionality
+def fuzzy_search_terms(query: str, limit: int = 10, threshold: int = 60) -> List[Dict]:
+    """
+    Perform fuzzy search on NAMASTE terminology with auto-complete functionality
+    Supports partial matching, synonyms, and traditional medicine terms
+    """
+    if df_namaste.empty:
+        return []
+    
+    results = []
+    query_lower = query.lower().strip()
+    
+    # Create searchable text combining Disease, Short_Definition, and Code
+    df_namaste['searchable_text'] = (
+        df_namaste['Disease'].astype(str) + ' ' + 
+        df_namaste['Short_Definition'].astype(str) + ' ' + 
+        df_namaste['Code'].astype(str)
+    ).str.lower()
+    
+    # 1. Exact matches (highest priority)
+    exact_matches = df_namaste[
+        df_namaste['Disease'].str.lower().str.contains(query_lower, na=False, regex=False) |
+        df_namaste['Short_Definition'].str.lower().str.contains(query_lower, na=False, regex=False) |
+        df_namaste['Code'].str.lower().str.contains(query_lower, na=False, regex=False)
+    ]
+    
+    for _, row in exact_matches.iterrows():
+        results.append({
+            'namaste_code': row['Code'],
+            'display_name': row['Disease'],
+            'definition': row['Short_Definition'],
+            'tm2_mapping': row['icd11_tm2_code'],
+            'biomedicine_mapping': row['icd11_biomed_code'],
+            'confidence_score': 100,
+            'match_type': 'exact'
+        })
+    
+    # 2. Fuzzy matches for remaining results
+    if len(results) < limit:
+        remaining_limit = limit - len(results)
+        
+        # Get all unique searchable texts for fuzzy matching
+        search_texts = df_namaste['searchable_text'].unique()
+        
+        # Use fuzzywuzzy for intelligent matching
+        fuzzy_matches = process.extract(
+            query_lower, 
+            search_texts, 
+            limit=remaining_limit * 2,  # Get more to filter
+            scorer=fuzz.partial_ratio
+        )
+        
+        for match_text, score in fuzzy_matches:
+            if score >= threshold:
+                # Find the row with this searchable text
+                matched_rows = df_namaste[df_namaste['searchable_text'] == match_text]
+                
+                for _, row in matched_rows.iterrows():
+                    # Avoid duplicates from exact matches
+                    if not any(r['namaste_code'] == row['Code'] for r in results):
+                        results.append({
+                            'namaste_code': row['Code'],
+                            'display_name': row['Disease'],
+                            'definition': row['Short_Definition'],
+                            'tm2_mapping': row['icd11_tm2_code'],
+                            'biomedicine_mapping': row['icd11_biomed_code'],
+                            'confidence_score': score,
+                            'match_type': 'fuzzy'
+                        })
+                        
+                        if len(results) >= limit:
+                            break
+            
+            if len(results) >= limit:
+                break
+    
+    # Sort by confidence score (descending)
+    results.sort(key=lambda x: x['confidence_score'], reverse=True)
+    
+    return results[:limit]
+
+# FHIR ValueSet/$expand endpoint for auto-complete lookup
+@app.get("/ValueSet/$expand", response_model=Dict)
+def valueset_expand(
+    url: Optional[str] = Query(None, description="ValueSet canonical URL"),
+    filter: Optional[str] = Query(None, description="Search filter term"),
+    count: Optional[int] = Query(10, description="Maximum number of results"),
+    token: str = Depends(verify_abha_token)
+):
+    """
+    FHIR-compliant ValueSet expansion endpoint with auto-complete functionality.
+    Supports queries like: /ValueSet/$expand?filter=Prameha&count=5
+    """
+    if not filter:
+        raise HTTPException(status_code=400, detail="Filter parameter is required for search")
+    
+    # Perform enhanced search
+    search_results = fuzzy_search_terms(filter, limit=count, threshold=60)
+    
+    # Format as FHIR ValueSet expansion
+    expansion = {
+        "resourceType": "ValueSet",
+        "url": url or "http://ayush.gov.in/namaste/vs-all",
+        "version": "1.0.0",
+        "name": "NAMASTE_AutoComplete",
+        "status": "active",
+        "expansion": {
+            "identifier": f"urn:uuid:search-{datetime.utcnow().isoformat()}",
+            "timestamp": datetime.utcnow().isoformat(),
+            "total": len(search_results),
+            "parameter": [
+                {"name": "filter", "valueString": filter},
+                {"name": "count", "valueInteger": count}
+            ],
+            "contains": []
+        }
+    }
+    
+    for result in search_results:
+        contains_entry = {
+            "system": "http://ayush.gov.in/namaste",
+            "code": result['namaste_code'],
+            "display": result['display_name'],
+            "designation": [
+                {
+                    "language": "en",
+                    "value": result['definition']
+                }
+            ],
+            "extension": [
+                {
+                    "url": "http://ayush.gov.in/namaste/extension/icd11-tm2",
+                    "valueCode": result['tm2_mapping']
+                },
+                {
+                    "url": "http://ayush.gov.in/namaste/extension/icd11-biomedicine",
+                    "valueCode": result['biomedicine_mapping']
+                },
+                {
+                    "url": "http://ayush.gov.in/namaste/extension/confidence-score",
+                    "valueInteger": result['confidence_score']
+                },
+                {
+                    "url": "http://ayush.gov.in/namaste/extension/match-type",
+                    "valueString": result['match_type']
+                }
+            ]
+        }
+        expansion["expansion"]["contains"].append(contains_entry)
+    
+    logging.info(f"ValueSet expansion for filter '{filter}' returned {len(search_results)} results")
+    return expansion
+
+# Custom search endpoint with enhanced functionality
+@app.post("/search", response_model=Dict)
+def custom_search(request: SearchRequest, token: str = Depends(verify_abha_token)):
+    """
+    Custom search endpoint with advanced fuzzy matching and auto-complete.
+    Example: POST /search {"query": "Prameha", "limit": 5, "threshold": 70}
+    """
+    search_results = fuzzy_search_terms(
+        request.query, 
+        limit=request.limit, 
+        threshold=request.threshold
+    )
+    
+    # Enhanced response format
+    response = {
+        "query": request.query,
+        "total_results": len(search_results),
+        "search_parameters": {
+            "limit": request.limit,
+            "include_fuzzy": request.include_fuzzy,
+            "threshold": request.threshold
+        },
+        "timestamp": datetime.utcnow().isoformat(),
+        "results": []
+    }
+    
+    for result in search_results:
+        formatted_result = {
+            "namaste_code": result['namaste_code'],
+            "display_name": result['display_name'],
+            "definition": result['definition'],
+            "mappings": {
+                "icd11_tm2": result['tm2_mapping'],
+                "icd11_biomedicine": result['biomedicine_mapping']
+            },
+            "match_info": {
+                "confidence_score": result['confidence_score'],
+                "match_type": result['match_type']
+            }
+        }
+        response["results"].append(formatted_result)
+    
+    logging.info(f"Custom search for '{request.query}' returned {len(search_results)} results")
+    return response
+
+# Auto-complete suggestions endpoint
+@app.get("/search/suggestions", response_model=List[str])
+def get_search_suggestions(
+    q: str = Query(..., description="Query term for suggestions"),
+    limit: int = Query(5, description="Maximum number of suggestions"),
+    token: str = Depends(verify_abha_token)
+):
+    """
+    Get auto-complete suggestions for search terms.
+    Returns simple list of suggested terms based on existing terminology.
+    """
+    if df_namaste.empty:
+        return []
+    
+    # Get unique disease names and codes for suggestions
+    all_terms = list(df_namaste['Disease'].unique()) + list(df_namaste['Code'].unique())
+    
+    # Use fuzzy matching to find similar terms
+    suggestions = process.extract(q.lower(), [term.lower() for term in all_terms], limit=limit*2)
+    
+    # Return original case suggestions with good scores
+    result_suggestions = []
+    for suggestion, score in suggestions:
+        if score >= 60 and len(result_suggestions) < limit:
+            # Find original case version
+            original_term = next((term for term in all_terms if term.lower() == suggestion), suggestion)
+            if original_term not in result_suggestions:
+                result_suggestions.append(original_term)
+    
+    logging.info(f"Auto-complete suggestions for '{q}': {result_suggestions}")
+    return result_suggestions
+
+# Legacy endpoint for backward compatibility
 @app.post("/valueset-lookup", response_model=Dict)
 def valueset_lookup(query: SearchQuery, token: str = Depends(verify_abha_token)):
     matches = df_namaste[

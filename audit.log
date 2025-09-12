@@ -72,3 +72,25 @@ You can install "python-multipart" with:
 
 pip install python-multipart
 
+2025-09-12 13:42:20,220 - INFO - Access granted with token: mock-abha-token
+2025-09-12 13:42:20,226 - INFO - Synced ICD data for query: traditional medicine
+2025-09-12 13:42:20,226 - INFO - NAMASTE ingested and synced
+2025-09-12 13:42:27,700 - INFO - Access granted with token: mock-abha-token
+2025-09-12 13:42:27,706 - INFO - ValueSet expansion for filter 'Prameha' returned 1 results
+2025-09-12 13:42:35,913 - INFO - Access granted with token: mock-abha-token
+2025-09-12 13:42:35,918 - INFO - Custom search for 'Prameha' returned 1 results
+2025-09-12 13:42:42,836 - INFO - Access granted with token: mock-abha-token
+2025-09-12 13:42:42,837 - INFO - Auto-complete suggestions for 'San': ['Sandhigatvata', 'Arsha', 'Madhumeha/Kshaudrameha']
+2025-09-12 13:45:31,260 - INFO - Access granted with token: mock-abha-token
+2025-09-12 13:45:31,266 - INFO - Synced ICD data for query: traditional medicine
+2025-09-12 13:45:31,266 - INFO - NAMASTE ingested and synced
+2025-09-12 13:45:31,273 - INFO - Access granted with token: mock-abha-token
+2025-09-12 13:45:31,278 - INFO - ValueSet expansion for filter 'Prameha' returned 1 results
+2025-09-12 13:45:31,285 - INFO - Access granted with token: mock-abha-token
+2025-09-12 13:45:31,288 - INFO - Custom search for 'Sandhigatvata' returned 3 results
+2025-09-12 13:45:31,296 - INFO - Access granted with token: mock-abha-token
+2025-09-12 13:45:31,296 - INFO - Auto-complete suggestions for 'San': ['Sandhigatvata', 'Arsha', 'Madhumeha/Kshaudrameha']
+2025-09-12 13:45:31,306 - INFO - Access granted with token: mock-abha-token
+2025-09-12 13:45:31,309 - INFO - Custom search for 'Madhu' returned 5 results
+2025-09-12 13:45:31,316 - INFO - Access granted with token: mock-abha-token
+2025-09-12 13:45:31,319 - INFO - Custom search for 'Vata' returned 10 results
