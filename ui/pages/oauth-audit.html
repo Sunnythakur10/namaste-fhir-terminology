@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth 2.0 & Audit Trail | NAMASTE-FHIR Bridge</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
+    <style>
+        .oauth-header {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: var(--text-inverse);
+            padding: var(--space-2xl) 0;
+        }
+
+        .auth-workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-2xl);
+        }
+
+        @media (max-width: 768px) {
+            .auth-workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .auth-panel {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            border: 2px solid transparent;
+            transition: all var(--transition-normal);
+        }
+
+        .auth-panel.authenticated {
+            border-color: var(--color-success);
+            background-color: var(--color-success-light);
+        }
+
+        .auth-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-lg);
+            font-weight: 600;
+        }
+
+        .status-authenticated {
+            background-color: var(--color-success-light);
+            color: var(--color-success);
+            border: 2px solid var(--color-success);
+        }
+
+        .status-unauthenticated {
+            background-color: var(--color-error-light);
+            color: var(--color-error);
+            border: 2px solid var(--color-error);
+        }
+
+        .status-pending {
+            background-color: var(--color-warning-light);
+            color: var(--color-warning);
+            border: 2px solid var(--color-warning);
+        }
+
+        .token-display {
+            background-color: var(--bg-inverse);
+            color: var(--text-inverse);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            font-family: var(--font-family-mono);
+            font-size: var(--text-sm);
+            margin: var(--space-lg) 0;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            padding: var(--space-xs);
+            color: var(--text-inverse);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .copy-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .audit-log {
+            background-color: var(--bg-inverse);
+            color: var(--text-inverse);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            font-family: var(--font-family-mono);
+            font-size: var(--text-sm);
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: var(--space-lg);
+        }
+
+        .log-entry {
+            display: grid;
+            grid-template-columns: auto auto 1fr auto;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xs);
+            padding: var(--space-xs) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            align-items: center;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-timestamp {
+            color: var(--color-accent);
+            white-space: nowrap;
+            font-size: var(--text-xs);
+        }
+
+        .log-level {
+            font-weight: 600;
+            width: 60px;
+            text-align: center;
+            padding: 2px 4px;
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+        }
+
+        .log-info { background-color: var(--color-primary); color: white; }
+        .log-success { background-color: var(--color-success); color: white; }
+        .log-warning { background-color: var(--color-warning); color: white; }
+        .log-error { background-color: var(--color-error); color: white; }
+
+        .log-message {
+            color: var(--text-inverse);
+        }
+
+        .log-user {
+            color: var(--color-accent);
+            font-size: var(--text-xs);
+        }
+
+        .user-profile {
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .profile-avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: var(--text-inverse);
+            border-radius: var(--radius-full);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .access-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+
+        .control-card {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            border: 2px solid transparent;
+            transition: all var(--transition-normal);
+        }
+
+        .control-card.enabled {
+            border-color: var(--color-success);
+            background-color: var(--color-success-light);
+        }
+
+        .control-card.disabled {
+            border-color: var(--color-error);
+            background-color: var(--color-error-light);
+        }
+
+        .control-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+        }
+
+        .control-toggle {
+            width: 48px;
+            height: 24px;
+            background-color: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            position: relative;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .control-toggle.active {
+            background-color: var(--color-success);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: var(--radius-full);
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .control-toggle.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .compliance-section {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            margin-top: var(--space-2xl);
+        }
+
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .compliance-item {
+            text-align: center;
+            padding: var(--space-lg);
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            position: relative;
+        }
+
+        .compliance-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-success), var(--color-primary));
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .compliance-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background-color: var(--color-success-light);
+            border-radius: var(--radius-full);
+            color: var(--color-success);
+            font-size: 1.5rem;
+            margin: 0 auto var(--space-md);
+        }
+
+        .session-management {
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--border-light);
+            transition: background-color var(--transition-normal);
+        }
+
+        .session-item:hover {
+            background-color: var(--bg-primary);
+        }
+
+        .session-item:last-child {
+            border-bottom: none;
+        }
+
+        .session-status {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 600;
+        }
+
+        .session-active {
+            background-color: var(--color-success-light);
+            color: var(--color-success);
+        }
+
+        .session-expired {
+            background-color: var(--color-error-light);
+            color: var(--color-error);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <nav class="header-nav">
+                    <a href="/ui/pages/landing.html" class="logo">
+                        <span class="material-symbols-outlined" style="color: var(--color-primary);">healing</span>
+                        <span>NAMASTE-FHIR Bridge</span>
+                    </a>
+                    <div class="nav-links">
+                        <a href="/ui/pages/landing.html" class="nav-link">Home</a>
+                        <a href="/ui/pages/deliverables-overview.html" class="nav-link">Deliverables</a>
+                        <a href="#auth" class="nav-link">Authentication</a>
+                        <a href="/ui/pages/api-docs.html" class="nav-link">API Docs</a>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- OAuth Header -->
+        <section class="oauth-header">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/ui/pages/deliverables-overview.html">← Deliverables</a>
+                    <span>OAuth 2.0 & Audit Trail</span>
+                </div>
+                <h1 class="display-large">OAuth 2.0 Authentication & Audit Trail</h1>
+                <p class="headline-medium" style="margin-top: var(--space-lg); max-width: 800px;">
+                    ABHA-linked OAuth 2.0 authentication system with comprehensive audit trails for EHR Standards compliance and security monitoring
+                </p>
+            </div>
+        </section>
+
+        <!-- Main Authentication Interface -->
+        <section class="section" id="auth">
+            <div class="container">
+                <!-- Authentication Status -->
+                <div id="auth-status" class="auth-status status-authenticated">
+                    <span class="material-symbols-outlined">verified_user</span>
+                    <span>Authenticated - ABHA ID: user@abha.gov.in | Session expires in 1h 45m</span>
+                </div>
+
+                <!-- Authentication Workspace -->
+                <div class="auth-workspace">
+                    <!-- OAuth Panel -->
+                    <div class="auth-panel authenticated">
+                        <div class="panel-header">
+                            <div class="panel-icon">
+                                <span class="material-symbols-outlined">security</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium">OAuth 2.0 Authentication</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">ABHA-linked token management</p>
+                            </div>
+                        </div>
+
+                        <div class="user-profile">
+                            <div class="profile-header">
+                                <div class="profile-avatar">
+                                    DK
+                                </div>
+                                <div>
+                                    <h4 class="headline-medium">Dr. Kavita Sharma</h4>
+                                    <p class="body-medium" style="color: var(--text-secondary);">
+                                        ABHA ID: user@abha.gov.in<br>
+                                        Role: Healthcare Provider<br>
+                                        Organization: AIIA Delhi
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Current Access Token</label>
+                                <div class="token-display">
+                                    eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGFiaGEuZ292LmluIiwibmFtZSI6IkRyLiBLYXZpdGEgU2hhcm1hIiwiaWF0IjoxNzA1OTI3MjAwLCJleHAiOjE3MDU5MzQ0MDAsInNjb3BlIjoiZmhpci5yZWFkIGZoaXIud3JpdGUgYXVkaXQucmVhZCJ9
+                                    <button class="copy-button" onclick="copyToken()">
+                                        <span class="material-symbols-outlined">content_copy</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Token Scope</label>
+                                <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+                                    <span class="status-badge status-success">fhir.read</span>
+                                    <span class="status-badge status-success">fhir.write</span>
+                                    <span class="status-badge status-success">audit.read</span>
+                                    <span class="status-badge status-success">terminology.manage</span>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-lg);">
+                                <button class="btn btn-secondary" onclick="refreshToken()">
+                                    <span class="material-symbols-outlined">refresh</span>
+                                    Refresh Token
+                                </button>
+                                <button class="btn btn-error" onclick="revokeToken()">
+                                    <span class="material-symbols-outlined">logout</span>
+                                    Revoke Access
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audit Trail Panel -->
+                    <div class="auth-panel">
+                        <div class="panel-header">
+                            <div class="panel-icon">
+                                <span class="material-symbols-outlined">fact_check</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium">Audit Trail</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">ISO 22600 compliance monitoring</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Audit Filter</label>
+                            <select class="form-select" id="audit-filter" onchange="filterAuditLog()">
+                                <option value="all">All Events</option>
+                                <option value="auth">Authentication Events</option>
+                                <option value="api">API Access</option>
+                                <option value="data">Data Operations</option>
+                                <option value="error">Errors & Warnings</option>
+                            </select>
+                        </div>
+
+                        <div class="audit-log" id="audit-log">
+                            <div class="log-entry">
+                                <span class="log-timestamp">14:30:15</span>
+                                <span class="log-level log-success">AUTH</span>
+                                <span class="log-message">Token refresh successful</span>
+                                <span class="log-user">user@abha</span>
+                            </div>
+                            <div class="log-entry">
+                                <span class="log-timestamp">14:28:42</span>
+                                <span class="log-level log-info">API</span>
+                                <span class="log-message">FHIR Bundle uploaded - ID: bundle-001</span>
+                                <span class="log-user">user@abha</span>
+                            </div>
+                            <div class="log-entry">
+                                <span class="log-timestamp">14:27:33</span>
+                                <span class="log-level log-info">DATA</span>
+                                <span class="log-message">Translation request: jwara → ICD-11</span>
+                                <span class="log-user">user@abha</span>
+                            </div>
+                            <div class="log-entry">
+                                <span class="log-timestamp">14:25:18</span>
+                                <span class="log-level log-info">API</span>
+                                <span class="log-message">ValueSet expansion: filter=madhumeha</span>
+                                <span class="log-user">user@abha</span>
+                            </div>
+                            <div class="log-entry">
+                                <span class="log-timestamp">14:20:05</span>
+                                <span class="log-level log-success">AUTH</span>
+                                <span class="log-message">OAuth 2.0 authentication successful</span>
+                                <span class="log-user">user@abha</span>
+                            </div>
+                            <div class="log-entry">
+                                <span class="log-timestamp">14:19:58</span>
+                                <span class="log-level log-warning">AUTH</span>
+                                <span class="log-message">Previous session expired</span>
+                                <span class="log-user">user@abha</span>
+                            </div>
+                            <div class="log-entry">
+                                <span class="log-timestamp">09:15:22</span>
+                                <span class="log-level log-info">DATA</span>
+                                <span class="log-message">NAMASTE CSV ingestion completed</span>
+                                <span class="log-user">admin@aiia</span>
+                            </div>
+                            <div class="log-entry">
+                                <span class="log-timestamp">09:10:11</span>
+                                <span class="log-level log-error">API</span>
+                                <span class="log-message">Bundle validation failed - Invalid resource type</span>
+                                <span class="log-user">user@abha</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: var(--space-lg);" onclick="exportAuditLog()">
+                            <span class="material-symbols-outlined">download</span>
+                            Export Audit Log
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Access Controls -->
+                <div class="workflow-card">
+                    <h3 class="headline-large" style="margin-bottom: var(--space-lg);">Access Control Management</h3>
+                    <p class="body-large" style="color: var(--text-secondary); margin-bottom: var(--space-lg);">
+                        ISO 22600 role-based access control with granular permissions for healthcare data operations.
+                    </p>
+                    
+                    <div class="access-controls">
+                        <div class="control-card enabled">
+                            <div class="control-header">
+                                <h4 class="headline-small">FHIR Resource Access</h4>
+                                <div class="control-toggle active" onclick="toggleControl(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                            <p class="body-medium" style="color: var(--text-secondary);">Read and write access to FHIR resources including Condition, Patient, and Bundle resources.</p>
+                            <ul style="margin-top: var(--space-md); padding-left: var(--space-lg); color: var(--text-secondary);">
+                                <li>Patient resource management</li>
+                                <li>Condition dual-coding support</li>
+                                <li>Bundle transaction processing</li>
+                            </ul>
+                        </div>
+
+                        <div class="control-card enabled">
+                            <div class="control-header">
+                                <h4 class="headline-small">Terminology Services</h4>
+                                <div class="control-toggle active" onclick="toggleControl(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                            <p class="body-medium" style="color: var(--text-secondary);">Access to NAMASTE-ICD11 translation and search services with audit trail logging.</p>
+                            <ul style="margin-top: var(--space-md); padding-left: var(--space-lg); color: var(--text-secondary);">
+                                <li>Code translation operations</li>
+                                <li>ValueSet expansion queries</li>
+                                <li>Auto-complete functionality</li>
+                            </ul>
+                        </div>
+
+                        <div class="control-card enabled">
+                            <div class="control-header">
+                                <h4 class="headline-small">Audit Log Access</h4>
+                                <div class="control-toggle active" onclick="toggleControl(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                            <p class="body-medium" style="color: var(--text-secondary);">View and export audit trails for compliance monitoring and security analysis.</p>
+                            <ul style="margin-top: var(--space-md); padding-left: var(--space-lg); color: var(--text-secondary);">
+                                <li>Real-time audit monitoring</li>
+                                <li>Historical event tracking</li>
+                                <li>Compliance report generation</li>
+                            </ul>
+                        </div>
+
+                        <div class="control-card disabled">
+                            <div class="control-header">
+                                <h4 class="headline-small">Administrative Functions</h4>
+                                <div class="control-toggle" onclick="toggleControl(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                            <p class="body-medium" style="color: var(--text-secondary);">System administration and user management capabilities (requires elevated privileges).</p>
+                            <ul style="margin-top: var(--space-md); padding-left: var(--space-lg); color: var(--text-secondary);">
+                                <li>User role management</li>
+                                <li>System configuration</li>
+                                <li>Data export/import</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Session Management -->
+                <div class="workflow-card">
+                    <h3 class="headline-large" style="margin-bottom: var(--space-lg);">Session Management</h3>
+                    <div class="session-management">
+                        <div class="session-item">
+                            <div>
+                                <h4 class="headline-small">Current Session</h4>
+                                <p class="body-small" style="color: var(--text-secondary);">
+                                    Started: 2025-01-11 14:20:05 | IP: 192.168.1.100
+                                </p>
+                            </div>
+                            <div class="session-status session-active">
+                                <span class="material-symbols-outlined" style="font-size: 1rem;">check_circle</span>
+                                Active
+                            </div>
+                        </div>
+                        
+                        <div class="session-item">
+                            <div>
+                                <h4 class="headline-small">Previous Session</h4>
+                                <p class="body-small" style="color: var(--text-secondary);">
+                                    Started: 2025-01-11 09:30:12 | IP: 192.168.1.100
+                                </p>
+                            </div>
+                            <div class="session-status session-expired">
+                                <span class="material-symbols-outlined" style="font-size: 1rem;">schedule</span>
+                                Expired
+                            </div>
+                        </div>
+                        
+                        <div class="session-item">
+                            <div>
+                                <h4 class="headline-small">Previous Session</h4>
+                                <p class="body-small" style="color: var(--text-secondary);">
+                                    Started: 2025-01-10 16:45:22 | IP: 10.0.0.50
+                                </p>
+                            </div>
+                            <div class="session-status session-expired">
+                                <span class="material-symbols-outlined" style="font-size: 1rem;">logout</span>
+                                Logged Out
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance Section -->
+                <div class="compliance-section">
+                    <h3 class="headline-large" style="text-align: center; margin-bottom: var(--space-xl);">EHR Standards Compliance</h3>
+                    <div class="compliance-grid">
+                        <div class="compliance-item">
+                            <div class="compliance-icon">
+                                <span class="material-symbols-outlined">security</span>
+                            </div>
+                            <h4 class="headline-medium" style="margin-bottom: var(--space-sm);">OAuth 2.0</h4>
+                            <p class="body-small" style="color: var(--text-secondary);">ABHA-linked authentication with secure token management</p>
+                        </div>
+                        
+                        <div class="compliance-item">
+                            <div class="compliance-icon">
+                                <span class="material-symbols-outlined">verified_user</span>
+                            </div>
+                            <h4 class="headline-medium" style="margin-bottom: var(--space-sm);">ISO 22600</h4>
+                            <p class="body-small" style="color: var(--text-secondary);">Health informatics access control and audit trails</p>
+                        </div>
+                        
+                        <div class="compliance-item">
+                            <div class="compliance-icon">
+                                <span class="material-symbols-outlined">shield</span>
+                            </div>
+                            <h4 class="headline-medium" style="margin-bottom: var(--space-sm);">FHIR R4</h4>
+                            <p class="body-small" style="color: var(--text-secondary);">HL7 FHIR R4 security and consent framework</p>
+                        </div>
+                        
+                        <div class="compliance-item">
+                            <div class="compliance-icon">
+                                <span class="material-symbols-outlined">fact_check</span>
+                            </div>
+                            <h4 class="headline-medium" style="margin-bottom: var(--space-sm);">Audit Trail</h4>
+                            <p class="body-small" style="color: var(--text-secondary);">Comprehensive logging for compliance monitoring</p>
+                        </div>
+                        
+                        <div class="compliance-item">
+                            <div class="compliance-icon">
+                                <span class="material-symbols-outlined">privacy_tip</span>
+                            </div>
+                            <h4 class="headline-medium" style="margin-bottom: var(--space-sm);">Data Privacy</h4>
+                            <p class="body-small" style="color: var(--text-secondary);">Patient consent and data protection mechanisms</p>
+                        </div>
+                        
+                        <div class="compliance-item">
+                            <div class="compliance-icon">
+                                <span class="material-symbols-outlined">account_balance</span>
+                            </div>
+                            <h4 class="headline-medium" style="margin-bottom: var(--space-sm);">Regulatory</h4>
+                            <p class="body-small" style="color: var(--text-secondary);">India EHR Standards 2016 compliance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="background-color: var(--bg-inverse); color: var(--text-inverse); padding: var(--space-2xl) 0; text-align: center;">
+            <div class="container">
+                <p style="font-size: var(--text-sm);">© 2025 NAMASTE-FHIR Bridge. Ministry of Ayush - AIIA</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Authentication state management
+        let isAuthenticated = true;
+        let auditEvents = [];
+
+        function copyToken() {
+            const tokenText = document.querySelector('.token-display').textContent.trim();
+            navigator.clipboard.writeText(tokenText).then(() => {
+                const button = document.querySelector('.copy-button');
+                button.innerHTML = '<span class="material-symbols-outlined">check</span>';
+                setTimeout(() => {
+                    button.innerHTML = '<span class="material-symbols-outlined">content_copy</span>';
+                }, 2000);
+            });
+        }
+
+        function refreshToken() {
+            const button = event.target;
+            button.disabled = true;
+            button.innerHTML = '<span class="material-symbols-outlined">hourglass_empty</span> Refreshing...';
+            
+            // Simulate token refresh
+            setTimeout(() => {
+                addAuditEvent('AUTH', 'Token refresh successful', 'success');
+                button.disabled = false;
+                button.innerHTML = '<span class="material-symbols-outlined">refresh</span> Refresh Token';
+                
+                // Update token display
+                const tokenDisplay = document.querySelector('.token-display');
+                const newToken = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGFiaGEuZ292LmluIiwibmFtZSI6IkRyLiBLYXZpdGEgU2hhcm1hIiwiaWF0IjoxNzA1OTMwODAwLCJleHAiOjE3MDU5MzgwMDAsInNjb3BlIjoiZmhpci5yZWFkIGZoaXIud3JpdGUgYXVkaXQucmVhZCJ9';
+                tokenDisplay.innerHTML = newToken + tokenDisplay.querySelector('.copy-button').outerHTML;
+            }, 2000);
+        }
+
+        function revokeToken() {
+            if (confirm('Are you sure you want to revoke access? This will log you out.')) {
+                isAuthenticated = false;
+                addAuditEvent('AUTH', 'Token revoked - user logged out', 'warning');
+                
+                // Update UI to show unauthenticated state
+                const authStatus = document.getElementById('auth-status');
+                authStatus.className = 'auth-status status-unauthenticated';
+                authStatus.innerHTML = `
+                    <span class="material-symbols-outlined">error</span>
+                    <span>Not Authenticated - Please log in to access NAMASTE-FHIR services</span>
+                `;
+                
+                // Disable auth panel
+                document.querySelector('.auth-panel').classList.remove('authenticated');
+            }
+        }
+
+        function addAuditEvent(level, message, type) {
+            const timestamp = new Date().toLocaleTimeString();
+            const auditLog = document.getElementById('audit-log');
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <span class="log-timestamp">${timestamp}</span>
+                <span class="log-level log-${type}">${level}</span>
+                <span class="log-message">${message}</span>
+                <span class="log-user">user@abha</span>
+            `;
+            
+            auditLog.insertBefore(entry, auditLog.firstChild);
+            
+            // Keep only last 50 entries
+            while (auditLog.children.length > 50) {
+                auditLog.removeChild(auditLog.lastChild);
+            }
+            
+            // Store for filtering
+            auditEvents.unshift({ timestamp, level, message, type, user: 'user@abha' });
+        }
+
+        function filterAuditLog() {
+            const filter = document.getElementById('audit-filter').value;
+            const auditLog = document.getElementById('audit-log');
+            
+            let filteredEvents = auditEvents;
+            if (filter !== 'all') {
+                filteredEvents = auditEvents.filter(event => {
+                    switch (filter) {
+                        case 'auth': return event.level === 'AUTH';
+                        case 'api': return event.level === 'API';
+                        case 'data': return event.level === 'DATA';
+                        case 'error': return event.type === 'error' || event.type === 'warning';
+                        default: return true;
+                    }
+                });
+            }
+            
+            auditLog.innerHTML = filteredEvents.map(event => `
+                <div class="log-entry">
+                    <span class="log-timestamp">${event.timestamp}</span>
+                    <span class="log-level log-${event.type}">${event.level}</span>
+                    <span class="log-message">${event.message}</span>
+                    <span class="log-user">${event.user}</span>
+                </div>
+            `).join('');
+        }
+
+        function toggleControl(toggle) {
+            toggle.classList.toggle('active');
+            const card = toggle.closest('.control-card');
+            
+            if (toggle.classList.contains('active')) {
+                card.classList.remove('disabled');
+                card.classList.add('enabled');
+                addAuditEvent('AUTH', `Access control enabled: ${card.querySelector('h4').textContent}`, 'success');
+            } else {
+                card.classList.remove('enabled');
+                card.classList.add('disabled');
+                addAuditEvent('AUTH', `Access control disabled: ${card.querySelector('h4').textContent}`, 'warning');
+            }
+        }
+
+        function exportAuditLog() {
+            const csvContent = "Timestamp,Level,Message,User\n" + 
+                auditEvents.map(event => 
+                    `"${event.timestamp}","${event.level}","${event.message}","${event.user}"`
+                ).join('\n');
+                
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `audit_log_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            addAuditEvent('AUDIT', 'Audit log exported', 'info');
+        }
+
+        // Initialize audit events from current log
+        document.addEventListener('DOMContentLoaded', function() {
+            const logEntries = document.querySelectorAll('.log-entry');
+            logEntries.forEach(entry => {
+                const timestamp = entry.querySelector('.log-timestamp').textContent;
+                const level = entry.querySelector('.log-level').textContent;
+                const message = entry.querySelector('.log-message').textContent;
+                const user = entry.querySelector('.log-user').textContent;
+                const type = entry.querySelector('.log-level').className.includes('log-error') ? 'error' :
+                           entry.querySelector('.log-level').className.includes('log-warning') ? 'warning' :
+                           entry.querySelector('.log-level').className.includes('log-success') ? 'success' : 'info';
+                
+                auditEvents.push({ timestamp, level, message, type, user });
+            });
+        });
+
+        // Simulate periodic audit events
+        setInterval(() => {
+            const events = [
+                { level: 'API', message: 'Terminology search performed', type: 'info' },
+                { level: 'DATA', message: 'Translation request processed', type: 'info' },
+                { level: 'API', message: 'FHIR resource accessed', type: 'info' }
+            ];
+            
+            if (isAuthenticated && Math.random() > 0.7) {
+                const event = events[Math.floor(Math.random() * events.length)];
+                addAuditEvent(event.level, event.message, event.type);
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

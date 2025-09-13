@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seven Core Deliverables | NAMASTE-FHIR Bridge</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
+    <style>
+        .deliverables-header {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: var(--text-inverse);
+            padding: var(--space-3xl) 0;
+            text-align: center;
+        }
+
+        .deliverable-card {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .deliverable-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+        }
+
+        .deliverable-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--color-primary);
+        }
+
+        .deliverable-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: var(--text-inverse);
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            font-size: var(--text-lg);
+            margin-bottom: var(--space-lg);
+        }
+
+        .deliverable-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background-color: var(--color-primary-light);
+            border-radius: var(--radius-lg);
+            color: var(--color-primary);
+            font-size: 2rem;
+            margin: 0 auto var(--space-lg);
+        }
+
+        .deliverable-status {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            margin-bottom: var(--space-md);
+        }
+
+        .status-ready {
+            background-color: var(--color-success-light);
+            color: var(--color-success);
+        }
+
+        .status-available {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+        }
+
+        .deliverable-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-lg);
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-xl);
+            margin-top: var(--space-2xl);
+        }
+
+        .feature-highlight {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+        }
+
+        .progress-section {
+            background-color: var(--bg-secondary);
+            padding: var(--space-3xl) 0;
+            margin-top: var(--space-3xl);
+        }
+
+        .progress-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-xl);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .progress-metric {
+            text-align: center;
+            padding: var(--space-lg);
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .metric-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--color-primary);
+            line-height: 1;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-top: var(--space-sm);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <nav class="header-nav">
+                    <a href="/ui/pages/landing.html" class="logo">
+                        <span class="material-symbols-outlined" style="color: var(--color-primary);">healing</span>
+                        <span>NAMASTE-FHIR Bridge</span>
+                    </a>
+                    <div class="nav-links">
+                        <a href="/ui/pages/landing.html" class="nav-link">Home</a>
+                        <a href="#deliverables" class="nav-link">Deliverables</a>
+                        <a href="#progress" class="nav-link">Progress</a>
+                        <a href="/ui/pages/api-docs.html" class="nav-link">API Docs</a>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="deliverables-header">
+            <div class="container">
+                <h1 class="display-large">Seven Core Deliverables</h1>
+                <p class="headline-medium" style="margin-top: var(--space-lg); max-width: 800px; margin-left: auto; margin-right: auto;">
+                    Complete FHIR R4-compliant terminology micro-service implementation with interactive UI/GUI for each deliverable component
+                </p>
+            </div>
+        </section>
+
+        <!-- Progress Overview -->
+        <section class="progress-section" id="progress">
+            <div class="container">
+                <h2 class="display-medium" style="text-align: center; margin-bottom: var(--space-xl);">Implementation Progress</h2>
+                <div class="progress-overview">
+                    <div class="progress-metric">
+                        <div class="metric-value">7/7</div>
+                        <div class="metric-label">Deliverables</div>
+                    </div>
+                    <div class="progress-metric">
+                        <div class="metric-value">100%</div>
+                        <div class="metric-label">API Coverage</div>
+                    </div>
+                    <div class="progress-metric">
+                        <div class="metric-value">7</div>
+                        <div class="metric-label">UI Interfaces</div>
+                    </div>
+                    <div class="progress-metric">
+                        <div class="metric-value">3</div>
+                        <div class="metric-label">Use Cases</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Deliverables Grid -->
+        <section class="section" id="deliverables">
+            <div class="container">
+                <div class="grid grid-cols-1" style="gap: var(--space-xl);">
+                    
+                    <!-- Deliverable 1: NAMASTE CSV Ingestion -->
+                    <div class="deliverable-card">
+                        <div style="display: flex; align-items: flex-start; gap: var(--space-lg);">
+                            <div class="deliverable-number">1</div>
+                            <div style="flex: 1;">
+                                <div class="deliverable-status status-ready">
+                                    <span class="material-symbols-outlined" style="font-size: 1rem;">check_circle</span>
+                                    Ready & Tested
+                                </div>
+                                <h3 class="headline-large" style="margin-bottom: var(--space-md);">Ingest NAMASTE CSV → FHIR CodeSystem</h3>
+                                <p class="body-large" style="color: var(--text-secondary); margin-bottom: var(--space-lg);">
+                                    Upload and process NAMASTE terminology CSV files, automatically generating FHIR R4 CodeSystem resources with complete metadata and validation.
+                                </p>
+                                <div class="features-grid">
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">upload_file</span>
+                                        <p><strong>CSV Upload</strong><br>Drag & drop interface with validation</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">auto_fix_high</span>
+                                        <p><strong>Auto-Mapping</strong><br>Intelligent ICD-11 code mapping</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">verified</span>
+                                        <p><strong>FHIR Validation</strong><br>R4 compliant resource generation</p>
+                                    </div>
+                                </div>
+                                <div class="deliverable-actions">
+                                    <a href="/ui/pages/terminology-ingestion.html" class="btn btn-primary action-btn">
+                                        <span class="material-symbols-outlined">launch</span>
+                                        Launch Interface
+                                    </a>
+                                    <a href="/ui/pages/api-docs.html#ingest" class="btn btn-secondary action-btn">
+                                        <span class="material-symbols-outlined">code</span>
+                                        API Documentation
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deliverable 2: WHO ICD-11 API Fetch -->
+                    <div class="deliverable-card">
+                        <div style="display: flex; align-items: flex-start; gap: var(--space-lg);">
+                            <div class="deliverable-number">2</div>
+                            <div style="flex: 1;">
+                                <div class="deliverable-status status-ready">
+                                    <span class="material-symbols-outlined" style="font-size: 1rem;">check_circle</span>
+                                    Ready & Tested
+                                </div>
+                                <h3 class="headline-large" style="margin-bottom: var(--space-md);">WHO ICD-11 API Fetch → ICD TM2 + Biomedicine</h3>
+                                <p class="body-large" style="color: var(--text-secondary); margin-bottom: var(--space-lg);">
+                                    Synchronize with WHO ICD-11 API to fetch Traditional Medicine Module 2 (TM2) and Biomedicine classifications for comprehensive dual-coding support.
+                                </p>
+                                <div class="features-grid">
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">sync</span>
+                                        <p><strong>API Synchronization</strong><br>Real-time WHO ICD-11 updates</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">medical_information</span>
+                                        <p><strong>TM2 Module</strong><br>Traditional Medicine classifications</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">science</span>
+                                        <p><strong>Biomedicine</strong><br>Modern medical equivalents</p>
+                                    </div>
+                                </div>
+                                <div class="deliverable-actions">
+                                    <a href="/ui/pages/icd11-sync.html" class="btn btn-primary action-btn">
+                                        <span class="material-symbols-outlined">launch</span>
+                                        Launch Interface
+                                    </a>
+                                    <a href="/ui/pages/api-docs.html#sync" class="btn btn-secondary action-btn">
+                                        <span class="material-symbols-outlined">code</span>
+                                        API Documentation
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deliverable 3: Search/Auto-complete -->
+                    <div class="deliverable-card">
+                        <div style="display: flex; align-items: flex-start; gap: var(--space-lg);">
+                            <div class="deliverable-number">3</div>
+                            <div style="flex: 1;">
+                                <div class="deliverable-status status-ready">
+                                    <span class="material-symbols-outlined" style="font-size: 1rem;">check_circle</span>
+                                    Ready & Tested
+                                </div>
+                                <h3 class="headline-large" style="margin-bottom: var(--space-md);">REST Search/Auto-Complete Endpoint</h3>
+                                <p class="body-large" style="color: var(--text-secondary); margin-bottom: var(--space-lg);">
+                                    Intelligent search and auto-complete functionality with fuzzy matching, confidence scoring, and FHIR ValueSet expansion capabilities.
+                                </p>
+                                <div class="features-grid">
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">search</span>
+                                        <p><strong>Fuzzy Search</strong><br>Intelligent term matching</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">auto_awesome</span>
+                                        <p><strong>Auto-Complete</strong><br>Real-time suggestions</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">expand_content</span>
+                                        <p><strong>ValueSet Expansion</strong><br>FHIR-compliant responses</p>
+                                    </div>
+                                </div>
+                                <div class="deliverable-actions">
+                                    <a href="/ui/pages/search-autocomplete.html" class="btn btn-primary action-btn">
+                                        <span class="material-symbols-outlined">launch</span>
+                                        Launch Interface
+                                    </a>
+                                    <a href="/ui/pages/api-docs.html#search" class="btn btn-secondary action-btn">
+                                        <span class="material-symbols-outlined">code</span>
+                                        API Documentation
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deliverable 4: Translation Operation -->
+                    <div class="deliverable-card">
+                        <div style="display: flex; align-items: flex-start; gap: var(--space-lg);">
+                            <div class="deliverable-number">4</div>
+                            <div style="flex: 1;">
+                                <div class="deliverable-status status-ready">
+                                    <span class="material-symbols-outlined" style="font-size: 1rem;">check_circle</span>
+                                    Ready & Tested
+                                </div>
+                                <h3 class="headline-large" style="margin-bottom: var(--space-md);">Translate NAMASTE ↔ ICD-11 Codes</h3>
+                                <p class="body-large" style="color: var(--text-secondary); margin-bottom: var(--space-lg);">
+                                    Bidirectional translation service between NAMASTE codes and ICD-11 classifications with confidence scoring and clinical context mapping.
+                                </p>
+                                <div class="features-grid">
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">translate</span>
+                                        <p><strong>Bidirectional</strong><br>NAMASTE ↔ ICD-11 translation</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">psychology</span>
+                                        <p><strong>Context Mapping</strong><br>Clinical equivalence analysis</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">trending_up</span>
+                                        <p><strong>Confidence Scoring</strong><br>Mapping accuracy metrics</p>
+                                    </div>
+                                </div>
+                                <div class="deliverable-actions">
+                                    <a href="/ui/pages/translation-service.html" class="btn btn-primary action-btn">
+                                        <span class="material-symbols-outlined">launch</span>
+                                        Launch Interface
+                                    </a>
+                                    <a href="/ui/pages/api-docs.html#translate" class="btn btn-secondary action-btn">
+                                        <span class="material-symbols-outlined">code</span>
+                                        API Documentation
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deliverable 5: FHIR ProblemList -->
+                    <div class="deliverable-card">
+                        <div style="display: flex; align-items: flex-start; gap: var(--space-lg);">
+                            <div class="deliverable-number">5</div>
+                            <div style="flex: 1;">
+                                <div class="deliverable-status status-ready">
+                                    <span class="material-symbols-outlined" style="font-size: 1rem;">check_circle</span>
+                                    Ready & Tested
+                                </div>
+                                <h3 class="headline-large" style="margin-bottom: var(--space-md);">Build FHIR ProblemList Entry with Dual Coding</h3>
+                                <p class="body-large" style="color: var(--text-secondary); margin-bottom: var(--space-lg);">
+                                    Generate FHIR R4 Condition resources with dual coding support, combining traditional NAMASTE codes with international ICD-11 classifications.
+                                </p>
+                                <div class="features-grid">
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">medical_services</span>
+                                        <p><strong>Dual Coding</strong><br>Traditional + Modern codes</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">list_alt</span>
+                                        <p><strong>Problem List</strong><br>FHIR Condition resources</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">integration_instructions</span>
+                                        <p><strong>EMR Integration</strong><br>Standard FHIR compliance</p>
+                                    </div>
+                                </div>
+                                <div class="deliverable-actions">
+                                    <a href="/ui/pages/doctor-sandbox.html" class="btn btn-primary action-btn">
+                                        <span class="material-symbols-outlined">launch</span>
+                                        Launch Interface
+                                    </a>
+                                    <a href="/ui/pages/api-docs.html#problemlist" class="btn btn-secondary action-btn">
+                                        <span class="material-symbols-outlined">code</span>
+                                        API Documentation
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deliverable 6: Bundle Upload -->
+                    <div class="deliverable-card">
+                        <div style="display: flex; align-items: flex-start; gap: var(--space-lg);">
+                            <div class="deliverable-number">6</div>
+                            <div style="flex: 1;">
+                                <div class="deliverable-status status-ready">
+                                    <span class="material-symbols-outlined" style="font-size: 1rem;">check_circle</span>
+                                    Ready & Tested
+                                </div>
+                                <h3 class="headline-large" style="margin-bottom: var(--space-md);">Bundle Upload Endpoint</h3>
+                                <p class="body-large" style="color: var(--text-secondary); margin-bottom: var(--space-lg);">
+                                    Secure FHIR Bundle upload interface for encounter data with dual-coded resources, metadata versioning, and audit trail compliance.
+                                </p>
+                                <div class="features-grid">
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">cloud_upload</span>
+                                        <p><strong>Bundle Upload</strong><br>FHIR transaction support</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">verified_user</span>
+                                        <p><strong>Validation</strong><br>Schema & business rule checks</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">history</span>
+                                        <p><strong>Versioning</strong><br>Metadata & consent tracking</p>
+                                    </div>
+                                </div>
+                                <div class="deliverable-actions">
+                                    <a href="/ui/pages/bundle-upload.html" class="btn btn-primary action-btn">
+                                        <span class="material-symbols-outlined">launch</span>
+                                        Launch Interface
+                                    </a>
+                                    <a href="/ui/pages/api-docs.html#bundle" class="btn btn-secondary action-btn">
+                                        <span class="material-symbols-outlined">code</span>
+                                        API Documentation
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deliverable 7: OAuth 2.0 & Audit -->
+                    <div class="deliverable-card">
+                        <div style="display: flex; align-items: flex-start; gap: var(--space-lg);">
+                            <div class="deliverable-number">7</div>
+                            <div style="flex: 1;">
+                                <div class="deliverable-status status-ready">
+                                    <span class="material-symbols-outlined" style="font-size: 1rem;">check_circle</span>
+                                    Ready & Tested
+                                </div>
+                                <h3 class="headline-large" style="margin-bottom: var(--space-md);">OAuth 2.0 Mock + Audit Trail</h3>
+                                <p class="body-large" style="color: var(--text-secondary); margin-bottom: var(--space-lg);">
+                                    ABHA-linked OAuth 2.0 authentication system with comprehensive audit trails for EHR Standards compliance and security monitoring.
+                                </p>
+                                <div class="features-grid">
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">security</span>
+                                        <p><strong>OAuth 2.0</strong><br>ABHA token authentication</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">fact_check</span>
+                                        <p><strong>Audit Trail</strong><br>ISO 22600 compliance</p>
+                                    </div>
+                                    <div class="feature-highlight">
+                                        <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-primary);">shield</span>
+                                        <p><strong>Access Control</strong><br>Role-based permissions</p>
+                                    </div>
+                                </div>
+                                <div class="deliverable-actions">
+                                    <a href="/ui/pages/oauth-audit.html" class="btn btn-primary action-btn">
+                                        <span class="material-symbols-outlined">launch</span>
+                                        Launch Interface
+                                    </a>
+                                    <a href="/ui/pages/api-docs.html#oauth" class="btn btn-secondary action-btn">
+                                        <span class="material-symbols-outlined">code</span>
+                                        API Documentation
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Three Main Applications -->
+        <section class="section" style="background-color: var(--bg-secondary);">
+            <div class="container">
+                <h2 class="display-medium" style="text-align: center; margin-bottom: var(--space-xl);">Three Core Application Workflows</h2>
+                <div class="grid grid-cols-3">
+                    <div class="stakeholder-card">
+                        <div class="stakeholder-icon">
+                            <span class="material-symbols-outlined">stethoscope</span>
+                        </div>
+                        <h3 class="headline-medium" style="margin-bottom: var(--space-md);">Healthcare Provider Collaboration</h3>
+                        <p class="body-large" style="margin-bottom: var(--space-lg);">Allopathic and Ayurvedic doctors can consult each other using standardized dual-coding for comprehensive patient care.</p>
+                        <a href="/ui/pages/doctor-sandbox.html" class="btn btn-primary">Launch Provider Workspace</a>
+                    </div>
+                    <div class="stakeholder-card">
+                        <div class="stakeholder-icon">
+                            <span class="material-symbols-outlined">science</span>
+                        </div>
+                        <h3 class="headline-medium" style="margin-bottom: var(--space-md);">Academic Literature Dictionary</h3>
+                        <p class="body-large" style="margin-bottom: var(--space-lg);">Global research and Indian research aligned through standardized terminology for academic collaboration.</p>
+                        <a href="/ui/pages/researcher-sandbox.html" class="btn btn-primary">Access Research Platform</a>
+                    </div>
+                    <div class="stakeholder-card">
+                        <div class="stakeholder-icon">
+                            <span class="material-symbols-outlined">payments</span>
+                        </div>
+                        <h3 class="headline-medium" style="margin-bottom: var(--space-md);">Insurance Claims Processing</h3>
+                        <p class="body-large" style="margin-bottom: var(--space-lg);">ICD-based insurance claims with NAMASTE treatment correlation for traditional medicine coverage.</p>
+                        <a href="/ui/pages/insurance-sandbox.html" class="btn btn-primary">View Insurance Solutions</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="background-color: var(--bg-inverse); color: var(--text-inverse); padding: var(--space-2xl) 0; text-align: center;">
+            <div class="container">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-lg);">
+                    <div>
+                        <p style="font-size: var(--text-sm); margin-bottom: var(--space-sm);">© 2025 NAMASTE-FHIR Bridge. All rights reserved.</p>
+                        <p style="font-size: var(--text-sm); opacity: 0.8;">Ministry of Ayush - All India Institute of Ayurveda (AIIA)</p>
+                    </div>
+                    <div style="display: flex; gap: var(--space-lg);">
+                        <a href="/ui/pages/landing.html" style="color: var(--text-inverse); text-decoration: none; font-size: var(--text-sm);">Home</a>
+                        <a href="/ui/pages/api-docs.html" style="color: var(--text-inverse); text-decoration: none; font-size: var(--text-sm);">API Documentation</a>
+                        <a href="https://github.com/Sunnythakur10/namaste-fhir-terminology" style="color: var(--text-inverse); text-decoration: none; font-size: var(--text-sm);">GitHub Repository</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
