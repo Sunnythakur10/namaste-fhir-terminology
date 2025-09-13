@@ -104,3 +104,21 @@ pip install python-multipart
 2025-09-12 20:23:13,607 - INFO - Access granted with token: mock-abha-token
 2025-09-12 20:23:13,614 - INFO - Custom search for 'jwara' returned 4 results
 2025-09-12 20:23:20,372 - INFO - Access granted with token: mock-abha-token
+2025-09-13 02:12:44,372 - INFO - Access granted with token: mock-abha-token
+2025-09-13 02:12:44,379 - INFO - Synced ICD data for query: traditional medicine
+2025-09-13 02:12:44,379 - INFO - NAMASTE ingested and synced
+2025-09-13 02:12:50,107 - INFO - Access granted with token: mock-abha-token
+2025-09-13 02:12:50,108 - INFO - Analytics requested with chart
+2025-09-13 02:12:56,374 - INFO - Access granted with token: mock-abha-token
+2025-09-13 02:12:56,376 - INFO - Lookup for Diabetes
+2025-09-13 02:13:01,754 - INFO - Access granted with token: mock-abha-token
+2025-09-13 02:13:01,758 - INFO - Custom search for 'Diabetes' returned 5 results
+2025-09-13 02:18:12,574 - INFO - Access granted with token: mock-abha-token
+2025-09-13 02:18:12,575 - INFO - Analytics requested with chart
+2025-09-13 02:18:12,637 - INFO - Access granted with token: mock-abha-token
+2025-09-13 02:18:12,640 - INFO - Custom search for 'Diabetes' returned 5 results
+2025-09-13 02:18:12,747 - INFO - Access granted with token: mock-abha-token
+2025-09-13 02:18:12,749 - INFO - Lookup for Diabetes
+2025-09-13 02:18:12,789 - INFO - Access granted with token: mock-abha-token
+2025-09-13 02:18:12,792 - INFO - ValueSet expansion for filter 'Madhumeha' returned 5 results
+2025-09-13 02:18:12,833 - INFO - Access granted with token: mock-abha-token
