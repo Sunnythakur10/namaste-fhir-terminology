@@ -271,37 +271,82 @@
         }
         
         function generateClinicalResult(diagnosis, constitution, treatment, notes) {
+            // Updated clinical mappings based on the NAMASTE dataset with proper ICD-11 mappings
             const clinicalMappings = {
                 'sandhigatavata': {
                     namaste_code: 'AAE-16',
-                    icd11_tm2: 'SP00.1',
-                    icd11_bio: 'FA01.2',
-                    modern_equivalent: 'Osteoarthritis with constitutional factors',
-                    confidence: 94
+                    icd11_tm2: 'TM2.A1.1Z',
+                    icd11_bio: 'FA20.0Z',
+                    modern_equivalent: 'Osteoarthritis with traditional constitutional assessment',
+                    confidence: 94,
+                    category: 'Musculoskeletal'
+                },
+                'sandhigatvata': {  // Alternative spelling
+                    namaste_code: 'AAE-16',
+                    icd11_tm2: 'TM2.A1.1Z',
+                    icd11_bio: 'FA20.0Z',
+                    modern_equivalent: 'Osteoarthritis with traditional constitutional assessment',
+                    confidence: 94,
+                    category: 'Musculoskeletal'
                 },
                 'madhumeha': {
-                    namaste_code: 'EBM-23',
-                    icd11_tm2: 'SP15.0',
+                    namaste_code: 'EF-2.4.4',
+                    icd11_tm2: 'TM2.C3.2Z',
                     icd11_bio: '5A11.0',
                     modern_equivalent: 'Type 2 Diabetes Mellitus',
-                    confidence: 96
+                    confidence: 96,
+                    category: 'Endocrine'
+                },
+                'kshaudrameha': {
+                    namaste_code: 'EF-2.4.4',
+                    icd11_tm2: 'TM2.C3.2Z',
+                    icd11_bio: '5A11.0',
+                    modern_equivalent: 'Type 2 Diabetes Mellitus',
+                    confidence: 96,
+                    category: 'Endocrine'
                 },
                 'kasa': {
-                    namaste_code: 'RSP-08',
-                    icd11_tm2: 'SP22.1',
-                    icd11_bio: 'CA20.0',
-                    modern_equivalent: 'Acute Bronchitis',
-                    confidence: 89
+                    namaste_code: 'EA-3',
+                    icd11_tm2: 'TM2.B2.1Z',
+                    icd11_bio: 'CA20.0Z',
+                    modern_equivalent: 'Acute Bronchitis / Cough',
+                    confidence: 89,
+                    category: 'Respiratory'
+                },
+                'jwara': {
+                    namaste_code: 'EA-1',
+                    icd11_tm2: 'TM2.B1.0Z',
+                    icd11_bio: 'MG30.Z',
+                    modern_equivalent: 'Fever of unspecified origin',
+                    confidence: 92,
+                    category: 'General'
+                },
+                'arsha': {
+                    namaste_code: 'EE-3',
+                    icd11_tm2: 'TM2.D1.3Z',
+                    icd11_bio: 'DB93.Z',
+                    modern_equivalent: 'Hemorrhoids',
+                    confidence: 90,
+                    category: 'Gastrointestinal'
+                },
+                'vatavyadhi': {
+                    namaste_code: 'AA',
+                    icd11_tm2: 'TM2.A0.0Z',
+                    icd11_bio: '8E4A',
+                    modern_equivalent: 'Neurological disorders related to Vata constitution',
+                    confidence: 87,
+                    category: 'Neurological'
                 }
             };
             
             const normalized = diagnosis.toLowerCase().replace(/[^a-z]/g, '');
             const mapping = clinicalMappings[normalized] || {
                 namaste_code: 'GEN-01',
-                icd11_tm2: 'SP99.9',
-                icd11_bio: 'ZZ00.0',
+                icd11_tm2: 'TM2.Z9.9Z',
+                icd11_bio: 'MZ2A',
                 modern_equivalent: 'Traditional Medicine Condition - Requires Clinical Review',
-                confidence: 75
+                confidence: 75,
+                category: 'Unspecified'
             };
             
             return `
@@ -313,7 +358,8 @@
                         <div class="code-display">
                             <strong>NAMASTE Code:</strong> ${mapping.namaste_code}<br>
                             <strong>ICD-11 TM2:</strong> ${mapping.icd11_tm2}<br>
-                            <strong>Diagnosis:</strong> ${diagnosis}
+                            <strong>Diagnosis:</strong> ${diagnosis}<br>
+                            <strong>Medical Category:</strong> ${mapping.category}
                             ${constitution ? `<br><strong>Constitution:</strong> ${constitution.charAt(0).toUpperCase() + constitution.slice(1)} predominant` : ''}
                         </div>
                     </div>

@@ -45,7 +45,8 @@ icd_mappings = {
     "AA": {"tm2": "SP10", "biomed": "FA20", "name": "Vatavyadhi"},  # Mock for Vata disorders
     "EE-3": {"tm2": "SL01", "biomed": "ME83", "name": "Arsha"},  # Mock for Hemorrhoids
     "EF-2.4.4": {"tm2": "SJ00", "biomed": "5A11", "name": "Madhumeha/Kshaudrameha"},  # Mock for Diabetes
-    "EA-3": {"tm2": "SB00", "biomed": "CA22", "name": "Kasa"}  # Mock for Cough
+    "EA-3": {"tm2": "SB00", "biomed": "CA22", "name": "Kasa"},  # Mock for Cough
+    "EA-1": {"tm2": "TM2.B1.0Z", "biomed": "MG30.Z", "name": "Jwara"}  # Fixed mapping for Fever (Jwara)
     # Add more if new codes appear in future data
 }
 
