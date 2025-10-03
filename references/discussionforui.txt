@@ -1,0 +1,63 @@
+Poora ehr banani ki jarurat nahi, theatre ke sets ki tarah, inputs fields jitne lagenge utne hi
+
+Proposal: Two-Layer Demo Approach
+
+1. API Engine Website (Core “Brain”)
+
+This will be similar to API Setu, but specialized for NAMASTE ↔ ICD-11 TM2/Biomedicine translation.
+
+Features:
+
+REST APIs documented (Swagger/Redoc).
+
+Endpoints:
+
+/search → search NAMASTE/ICD terms.
+
+/translate → bidirectional mapping (NAMASTE ↔ ICD-11 TM2/Biomedicine).
+
+/autocomplete → for doctor UI integration.
+
+/fhir-upload → accept FHIR Bundles with dual coding.
+
+FHIR Terminology resources exposed: CodeSystem, ValueSet, ConceptMap.
+
+Authentication: OAuth2.0 with ABHA token simulation.
+
+Audit logs: show consent/versioning (basic demo).
+
+Tech stack: Django REST API (or FastAPI), Postgres/SQLite for codes, WHO ICD-API sync, Swagger UI for live testing.
+
+2. Sandbox Demo UI (Use-Case Layer)
+
+A lightweight front-end web app that consumes the above API.
+
+Purpose: to show practical use cases for doctors, researchers, insurers, government evaluators.
+
+Scenarios:
+
+Doctor workflow: Type “Amlapitta” → auto-complete suggests NAMASTE + ICD-11 TM2 mapping → save to “Problem List.”
+
+Researcher workflow: Query prevalence of codes → export in FHIR JSON/CSV.
+
+Insurance workflow: Show ICD-11 compliant claim eligibility.
+
+Tech stack: React (or Django templates for speed), connected to API Engine endpoints.
+
+This UI is not a full EMR—just a sandbox demo proving how the engine can plug into real systems.
+
+Why This Approach?
+
+Judges see both layers:
+
+Backend Engine (serious, technical, standards-compliant).
+
+Frontend Sandbox (real-world impact, user-facing).
+
+Matches real-world adoption model:
+
+National API registries (like API Setu) provide core APIs.
+
+Ecosystem apps/systems build on those APIs for doctors, insurers, public health.
+
+Keeps scope manageable: we don’t build everything, we just prove the translation brain + use-case showcase.

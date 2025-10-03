@@ -2,32 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NAMASTE-ICD11 Morbidity Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAMASTE-FHIR Terminology Bridge</title>
+    <meta http-equiv="refresh" content="0;url=/ui/pages/landing.html">
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        h1 { color: #333; }
-        canvas { max-width: 600px; margin: 20px auto; }
+        body {
+            font-family: 'Inter', 'Noto Sans', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f9fafb;
+            color: #1f2937;
+        }
+        .redirect-message {
+            text-align: center;
+            padding: 2rem;
+        }
+        a {
+            color: #38e07b;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <h1>NAMASTE-ICD11 Morbidity Dashboard</h1>
-    <canvas id="diseaseChart" width="600" height="400"></canvas>
-    <script>
-        async function fetchAnalytics() {
-            try {
-                const response = await fetch('http://127.0.0.1:8000/analytics', {
-                    headers: { 'Authorization': 'Bearer mock-abha-token' }
-                });
-                if (!response.ok) throw new Error('Failed to fetch analytics');
-                const data = await response.json();
-                const ctx = document.getElementById('diseaseChart').getContext('2d');
-                new Chart(ctx, data.chart);
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-        fetchAnalytics();
-    </script>
+    <div class="redirect-message">
+        <h1>NAMASTE-FHIR Terminology Bridge</h1>
+        <p>Redirecting to the application...</p>
+        <p>If you are not redirected automatically, <a href="/ui/pages/landing.html">click here</a>.</p>
+    </div>
 </body>
 </html>

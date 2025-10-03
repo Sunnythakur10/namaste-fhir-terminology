@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAMASTE-FHIR Morbidity Analytics Demo for Ministry of Ayush</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(45deg, #FF6B35, #F7931E);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 40px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #2c3e50;
+            border-bottom: 3px solid #FF6B35;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .api-response {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            margin: 15px 0;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .metric-card {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .metric-card h3 {
+            margin: 0;
+            font-size: 2em;
+        }
+        .metric-card p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        .demo-button {
+            background: linear-gradient(45deg, #FF6B35, #F7931E);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+        .demo-button:hover {
+            transform: translateY(-2px);
+        }
+        .status {
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .chart-visual {
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            height: 300px;
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+        }
+        .bar {
+            background: linear-gradient(to top, #FF6B35, #F7931E);
+            border-radius: 5px 5px 0 0;
+            color: white;
+            display: flex;
+            align-items: end;
+            justify-content: center;
+            padding: 10px 5px;
+            margin: 0 5px;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            min-width: 80px;
+            position: relative;
+        }
+        .bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -25px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+        .bar-label {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 10px;
+            padding: 5px;
+        }
+        .highlight {
+            background: linear-gradient(to top, #27ae60, #2ecc71) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 NAMASTE-FHIR Morbidity Analytics</h1>
+            <p>Ministry of Ayush Digital Health Surveillance Dashboard</p>
+            <div class="status">✅ System Active - Real-time WHO ICD-11 Integration</div>
+        </div>
+        
+        <div class="content">
+            <!-- Key Metrics Section -->
+            <div class="section">
+                <h2>📊 Key Health Metrics</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h3>50</h3>
+                        <p>Total Patients Tracked</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>6</h3>
+                        <p>Disease Categories</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>9</h3>
+                        <p>States Reporting</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>100%</h3>
+                        <p>ICD-11 Mapping Coverage</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disease Distribution Chart -->
+            <div class="section">
+                <h2>🔍 Disease Distribution Analysis</h2>
+                <p><strong>Real-time morbidity patterns across traditional Ayurvedic diagnoses with WHO ICD-11 TM2 and Biomedicine mapping</strong></p>
+                <div class="chart-visual">
+                    <div class="bar" style="height: 200px;" data-value="10">
+                        <div class="bar-label">Sandhigatvata (Osteoarthritis)</div>
+                    </div>
+                    <div class="bar" style="height: 200px;" data-value="10">
+                        <div class="bar-label">Kasa (Cough)</div>
+                    </div>
+                    <div class="bar highlight" style="height: 180px;" data-value="9">
+                        <div class="bar-label">Madhumeha (Diabetes)</div>
+                    </div>
+                    <div class="bar" style="height: 180px;" data-value="9">
+                        <div class="bar-label">Vatavyadhi (Vata Disorders)</div>
+                    </div>
+                    <div class="bar" style="height: 180px;" data-value="9">
+                        <div class="bar-label">Arsha (Hemorrhoids)</div>
+                    </div>
+                    <div class="bar" style="height: 60px;" data-value="3">
+                        <div class="bar-label">Jwara (Fever)</div>
+                    </div>
+                </div>
+                <p style="text-align: center; color: #666; font-size: 14px;">
+                    <strong>Chart shows patient count by traditional Ayurvedic diagnosis</strong><br>
+                    Each diagnosis automatically maps to WHO ICD-11 TM2 and Biomedicine codes
+                </p>
+            </div>
+
+            <!-- API Demo Section -->
+            <div class="section">
+                <h2>🔄 Live API Demonstration</h2>
+                <p><strong>Interactive search for "Diabetes" (Madhumeha) showing NAMASTE→ICD-11 mapping</strong></p>
+                
+                <button class="demo-button" onclick="searchDiabetes()">🔍 Search "Diabetes"</button>
+                <button class="demo-button" onclick="getAnalytics()">📈 Get Analytics</button>
+                <button class="demo-button" onclick="lookupValueSet()">🏥 ValueSet Lookup</button>
+
+                <div id="apiResults">
+                    <h3>✅ Search Results: "Diabetes" → "Madhumeha/Kshaudrameha"</h3>
+                    <div class="api-response" id="searchResponse">{
+  "query": "Diabetes",
+  "total_results": 1,
+  "search_parameters": {
+    "limit": 5,
+    "include_fuzzy": true,
+    "threshold": 60
+  },
+  "timestamp": "2025-09-13T02:13:01.758392",
+  "results": [
+    {
+      "namaste_code": "EF-2.4.4",
+      "display_name": "Madhumeha/Kshaudrameha",
+      "definition": "Diabetes Mellitus",
+      "mappings": {
+        "icd11_tm2": "SJ00",
+        "icd11_biomedicine": "5A11"
+      },
+      "match_info": {
+        "confidence_score": 100,
+        "match_type": "exact"
+      }
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- Analytics API Output -->
+            <div class="section">
+                <h2>📈 /analytics Endpoint Output</h2>
+                <p><strong>Real-time morbidity statistics for Ministry surveillance</strong></p>
+                <div class="api-response">{
+  "resourceType": "Observation",
+  "status": "final", 
+  "code": {
+    "coding": [
+      {
+        "system": "http://ayush.gov.in",
+        "code": "morbidity-stats"
+      }
+    ]
+  },
+  "value": {
+    "by_disease": {
+      "Sandhigatvata": 10,
+      "Kasa": 10,
+      "Vatavyadhi": 9,
+      "Arsha": 9,
+      "Madhumeha/Kshaudrameha": 9,
+      "Jwara": 3
+    },
+    "by_state": {
+      "Karnataka": 6,
+      "Delhi": 6,
+      "Uttar Pradesh": 6,
+      "Maharashtra": 6,
+      "Tamil Nadu": 6,
+      "Kerala": 5,
+      "Gujarat": 5,
+      "Rajasthan": 5,
+      "Haryana": 5
+    },
+    "by_icd11_tm2": {
+      "SP00": 10,
+      "SB00": 10,
+      "SP10": 9,
+      "SL01": 9,
+      "SJ00": 9,
+      "TM2.B1.0Z": 3
+    },
+    "by_icd11_biomed": {
+      "FA01": 10,
+      "CA22": 10,
+      "FA20": 9,
+      "ME83": 9,
+      "5A11": 9,
+      "MG30.Z": 3
+    },
+    "total_patients": 50
+  }
+}</div>
+            </div>
+
+            <!-- ValueSet Lookup -->
+            <div class="section">
+                <h2>🏥 /valueset-lookup Endpoint Output</h2>
+                <p><strong>FHIR-compliant ValueSet expansion for "Diabetes" search</strong></p>
+                <div class="api-response">{
+  "resourceType": "ValueSet",
+  "expansion": {
+    "contains": [
+      {
+        "system": "http://ayush.gov.in/namaste",
+        "code": "EF-2.4.4",
+        "display": "Madhumeha/Kshaudrameha",
+        "extension": [
+          {
+            "url": "icd11_tm2",
+            "valueCode": "SJ00"
+          },
+          {
+            "url": "icd11_biomed",
+            "valueCode": "5A11"
+          }
+        ]
+      }
+    ]
+  }
+}</div>
+            </div>
+
+            <!-- Benefits Section -->
+            <div class="section">
+                <h2>🎯 Ministry Benefits & Value Proposition</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h3>📈 Enhanced Surveillance</h3>
+                        <ul>
+                            <li><strong>Real-time disease pattern tracking</strong></li>
+                            <li><strong>Geographic morbidity mapping</strong></li>
+                            <li><strong>Traditional medicine integration</strong></li>
+                            <li><strong>WHO ICD-11 compliance</strong></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>🔍 Intelligent Search</h3>
+                        <ul>
+                            <li><strong>Fuzzy matching for Sanskrit terms</strong></li>
+                            <li><strong>Bidirectional NAMASTE↔ICD-11 translation</strong></li>
+                            <li><strong>Auto-complete suggestions</strong></li>
+                            <li><strong>Confidence scoring</strong></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="background: #e8f5e8; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3>🏆 Key Achievement: Seamless Traditional-Modern Medicine Bridge</h3>
+                    <p>This system enables the Ministry to track Ayurvedic diagnoses like <strong>"Madhumeha"</strong> while maintaining global health standard compliance through automatic ICD-11 mapping (<strong>TM2: SJ00, Biomedicine: 5A11</strong>).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function searchDiabetes() {
+            document.getElementById('searchResponse').textContent = `{
+  "query": "Diabetes",
+  "total_results": 1,
+  "search_parameters": {
+    "limit": 5,
+    "include_fuzzy": true,
+    "threshold": 60
+  },
+  "timestamp": "${new Date().toISOString()}",
+  "results": [
+    {
+      "namaste_code": "EF-2.4.4",
+      "display_name": "Madhumeha/Kshaudrameha",
+      "definition": "Diabetes Mellitus",
+      "mappings": {
+        "icd11_tm2": "SJ00",
+        "icd11_biomedicine": "5A11"
+      },
+      "match_info": {
+        "confidence_score": 100,
+        "match_type": "exact"
+      }
+    }
+  ]
+}`;
+        }
+
+        function getAnalytics() {
+            document.getElementById('searchResponse').textContent = `{
+  "resourceType": "Observation",
+  "status": "final",
+  "code": {
+    "coding": [{"system": "http://ayush.gov.in", "code": "morbidity-stats"}]
+  },
+  "value": {
+    "by_disease": {
+      "Sandhigatvata": 10,
+      "Kasa": 10,
+      "Vatavyadhi": 9,
+      "Arsha": 9,
+      "Madhumeha/Kshaudrameha": 9,
+      "Jwara": 3
+    },
+    "by_state": {
+      "Karnataka": 6,
+      "Delhi": 6,
+      "Uttar Pradesh": 6,
+      "Maharashtra": 6,
+      "Tamil Nadu": 6,
+      "Kerala": 5,
+      "Gujarat": 5,
+      "Rajasthan": 5,
+      "Haryana": 5
+    },
+    "total_patients": 50
+  }
+}`;
+        }
+
+        function lookupValueSet() {
+            document.getElementById('searchResponse').textContent = `{
+  "resourceType": "ValueSet",
+  "expansion": {
+    "contains": [
+      {
+        "system": "http://ayush.gov.in/namaste",
+        "code": "EF-2.4.4",
+        "display": "Madhumeha/Kshaudrameha",
+        "extension": [
+          {
+            "url": "icd11_tm2",
+            "valueCode": "SJ00"
+          },
+          {
+            "url": "icd11_biomed", 
+            "valueCode": "5A11"
+          }
+        ]
+      }
+    ]
+  }
+}`;
+        }
+    </script>
+</body>
+</html>

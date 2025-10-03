@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation Service | NAMASTE-FHIR Bridge</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
+    <style>
+        .translation-header {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: var(--text-inverse);
+            padding: var(--space-2xl) 0;
+        }
+
+        .translation-workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-2xl);
+        }
+
+        @media (max-width: 768px) {
+            .translation-workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .translation-panel {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            border: 2px solid transparent;
+            transition: all var(--transition-normal);
+        }
+
+        .translation-panel.active {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .panel-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background-color: var(--color-primary-light);
+            border-radius: var(--radius-lg);
+            color: var(--color-primary);
+            font-size: 1.5rem;
+        }
+
+        .translation-direction {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+            justify-content: center;
+        }
+
+        .direction-btn {
+            padding: var(--space-md) var(--space-lg);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .direction-btn.active {
+            border-color: var(--color-primary);
+            background-color: var(--color-primary);
+            color: var(--text-inverse);
+        }
+
+        .direction-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background-color: var(--color-primary);
+            color: var(--text-inverse);
+            border-radius: var(--radius-full);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .direction-arrow:hover {
+            transform: scale(1.1);
+        }
+
+        .code-input {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            font-family: var(--font-family-mono);
+            font-size: var(--text-lg);
+            font-weight: 600;
+            text-align: center;
+            transition: all var(--transition-normal);
+        }
+
+        .code-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .translation-result {
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+            border: 2px solid var(--border-light);
+        }
+
+        .result-active {
+            border-color: var(--color-primary);
+            background-color: var(--color-primary-light);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-sm);
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-value {
+            font-family: var(--font-family-mono);
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .confidence-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .confidence-bar {
+            height: 8px;
+            background-color: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-primary));
+            border-radius: var(--radius-full);
+            transition: width var(--transition-normal);
+        }
+
+        .batch-translation {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            margin-top: var(--space-2xl);
+        }
+
+        .batch-upload {
+            border: 2px dashed var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-2xl);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .batch-upload:hover {
+            border-color: var(--color-primary);
+            background-color: var(--color-primary-light);
+        }
+
+        .batch-upload.active {
+            border-color: var(--color-primary);
+            background-color: var(--color-primary-light);
+        }
+
+        .batch-results {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: var(--space-lg);
+        }
+
+        .batch-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 2fr 1fr;
+            gap: var(--space-md);
+            align-items: center;
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .batch-item:last-child {
+            border-bottom: none;
+        }
+
+        .mapping-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-2xl);
+        }
+
+        .example-card {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .example-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .example-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .example-category {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <nav class="header-nav">
+                    <a href="/ui/pages/landing.html" class="logo">
+                        <span class="material-symbols-outlined" style="color: var(--color-primary);">healing</span>
+                        <span>NAMASTE-FHIR Bridge</span>
+                    </a>
+                    <div class="nav-links">
+                        <a href="/ui/pages/landing.html" class="nav-link">Home</a>
+                        <a href="/ui/pages/deliverables-overview.html" class="nav-link">Deliverables</a>
+                        <a href="#translate" class="nav-link">Translation</a>
+                        <a href="/ui/pages/api-docs.html" class="nav-link">API Docs</a>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Translation Header -->
+        <section class="translation-header">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/ui/pages/deliverables-overview.html">← Deliverables</a>
+                    <span>Translation Service</span>
+                </div>
+                <h1 class="display-large">NAMASTE ↔ ICD-11 Translation Service</h1>
+                <p class="headline-medium" style="margin-top: var(--space-lg); max-width: 800px;">
+                    Bidirectional translation between NAMASTE codes and ICD-11 classifications with confidence scoring and clinical context mapping
+                </p>
+            </div>
+        </section>
+
+        <!-- Main Translation Interface -->
+        <section class="section" id="translate">
+            <div class="container">
+                <!-- Translation Direction -->
+                <div class="translation-direction">
+                    <div class="direction-btn active" onclick="setDirection('namaste-to-icd')">
+                        NAMASTE → ICD-11
+                    </div>
+                    <div class="direction-arrow" onclick="toggleDirection()">
+                        <span class="material-symbols-outlined">swap_horiz</span>
+                    </div>
+                    <div class="direction-btn" onclick="setDirection('icd-to-namaste')">
+                        ICD-11 → NAMASTE
+                    </div>
+                </div>
+
+                <!-- Translation Workspace -->
+                <div class="translation-workspace">
+                    <!-- Input Panel -->
+                    <div class="translation-panel active">
+                        <div class="panel-header">
+                            <div class="panel-icon">
+                                <span class="material-symbols-outlined">input</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium" id="input-title">NAMASTE Code Input</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">Enter traditional medicine terminology</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" id="input-label">NAMASTE Code or Term</label>
+                            <input type="text" id="translation-input" class="code-input" 
+                                   placeholder="e.g., EA-1, jwara, sandhigatavata..." 
+                                   oninput="performTranslation()">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Translation Context</label>
+                            <select class="form-select" id="translation-context">
+                                <option value="clinical">Clinical Practice</option>
+                                <option value="research">Research & Academic</option>
+                                <option value="insurance">Insurance Claims</option>
+                                <option value="general">General Translation</option>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%;" onclick="performTranslation()">
+                            <span class="material-symbols-outlined">translate</span>
+                            Translate Code
+                        </button>
+                    </div>
+
+                    <!-- Output Panel -->
+                    <div class="translation-panel">
+                        <div class="panel-header">
+                            <div class="panel-icon">
+                                <span class="material-symbols-outlined">output</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium" id="output-title">ICD-11 Translation Result</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">Standardized classification output</p>
+                            </div>
+                        </div>
+
+                        <div id="translation-output">
+                            <div class="output-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; border: 2px dashed var(--border-light); border-radius: var(--radius-lg); color: var(--text-secondary); text-align: center;">
+                                <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: var(--space-lg); color: var(--color-primary);">translate</span>
+                                <p><strong>Ready for Translation</strong></p>
+                                <p>Enter a code or term to see the translation result</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Batch Translation -->
+                <div class="batch-translation">
+                    <h3 class="headline-large" style="margin-bottom: var(--space-lg);">Batch Translation</h3>
+                    <p class="body-large" style="color: var(--text-secondary); margin-bottom: var(--space-lg);">
+                        Upload a CSV file with multiple codes for bulk translation processing.
+                    </p>
+                    
+                    <div class="batch-upload" onclick="document.getElementById('batch-file').click()">
+                        <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--color-primary); margin-bottom: var(--space-md);">cloud_upload</span>
+                        <h4 class="headline-medium" style="margin-bottom: var(--space-sm);">Upload CSV File</h4>
+                        <p class="body-medium" style="color: var(--text-secondary);">Drag & drop or click to select file</p>
+                        <input type="file" id="batch-file" accept=".csv" style="display: none;" onchange="processBatchFile()">
+                    </div>
+
+                    <div id="batch-results" class="batch-results" style="display: none;">
+                        <h4 class="headline-medium" style="margin-bottom: var(--space-lg);">Translation Results</h4>
+                        <div class="batch-item" style="background-color: var(--bg-secondary); font-weight: 600;">
+                            <div>Input Code</div>
+                            <div>Confidence</div>
+                            <div>Translation</div>
+                            <div>Status</div>
+                        </div>
+                        <div id="batch-items"></div>
+                        <button class="btn btn-primary" style="margin-top: var(--space-lg);" onclick="downloadResults()">
+                            <span class="material-symbols-outlined">download</span>
+                            Download Results
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mapping Examples -->
+                <div class="workflow-card">
+                    <h3 class="headline-large" style="margin-bottom: var(--space-lg);">Example Mappings</h3>
+                    <p class="body-large" style="color: var(--text-secondary); margin-bottom: var(--space-lg);">
+                        Click on any example to see the translation in action.
+                    </p>
+                    
+                    <div class="mapping-examples">
+                        <div class="example-card" onclick="loadExample('EA-1', 'jwara')">
+                            <div class="example-header">
+                                <span class="example-category">General Medicine</span>
+                            </div>
+                            <h4 class="headline-medium" style="margin-bottom: var(--space-sm);">Jwara (Fever)</h4>
+                            <p class="body-medium" style="color: var(--text-secondary); margin-bottom: var(--space-md);">
+                                <strong>NAMASTE:</strong> EA-1<br>
+                                <strong>ICD-11 TM2:</strong> TM2.B1.0Z<br>
+                                <strong>ICD-11 Bio:</strong> MG30.Z
+                            </p>
+                            <div class="confidence-indicator">
+                                <span class="body-small">Confidence:</span>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: 92%;"></div>
+                                </div>
+                                <span class="body-small">92%</span>
+                            </div>
+                        </div>
+
+                        <div class="example-card" onclick="loadExample('AAE-16', 'sandhigatavata')">
+                            <div class="example-header">
+                                <span class="example-category">Musculoskeletal</span>
+                            </div>
+                            <h4 class="headline-medium" style="margin-bottom: var(--space-sm);">Sandhigatavata</h4>
+                            <p class="body-medium" style="color: var(--text-secondary); margin-bottom: var(--space-md);">
+                                <strong>NAMASTE:</strong> AAE-16<br>
+                                <strong>ICD-11 TM2:</strong> SP00<br>
+                                <strong>ICD-11 Bio:</strong> FA01
+                            </p>
+                            <div class="confidence-indicator">
+                                <span class="body-small">Confidence:</span>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: 95%;"></div>
+                                </div>
+                                <span class="body-small">95%</span>
+                            </div>
+                        </div>
+
+                        <div class="example-card" onclick="loadExample('EBM-23', 'madhumeha')">
+                            <div class="example-header">
+                                <span class="example-category">Endocrine</span>
+                            </div>
+                            <h4 class="headline-medium" style="margin-bottom: var(--space-sm);">Madhumeha</h4>
+                            <p class="body-medium" style="color: var(--text-secondary); margin-bottom: var(--space-md);">
+                                <strong>NAMASTE:</strong> EBM-23<br>
+                                <strong>ICD-11 TM2:</strong> SP15<br>
+                                <strong>ICD-11 Bio:</strong> 5A11
+                            </p>
+                            <div class="confidence-indicator">
+                                <span class="body-small">Confidence:</span>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: 88%;"></div>
+                                </div>
+                                <span class="body-small">88%</span>
+                            </div>
+                        </div>
+
+                        <div class="example-card" onclick="loadExample('RSP-08', 'kasa')">
+                            <div class="example-header">
+                                <span class="example-category">Respiratory</span>
+                            </div>
+                            <h4 class="headline-medium" style="margin-bottom: var(--space-sm);">Kasa (Cough)</h4>
+                            <p class="body-medium" style="color: var(--text-secondary); margin-bottom: var(--space-md);">
+                                <strong>NAMASTE:</strong> RSP-08<br>
+                                <strong>ICD-11 TM2:</strong> SP22<br>
+                                <strong>ICD-11 Bio:</strong> CA20
+                            </p>
+                            <div class="confidence-indicator">
+                                <span class="body-small">Confidence:</span>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: 90%;"></div>
+                                </div>
+                                <span class="body-small">90%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="background-color: var(--bg-inverse); color: var(--text-inverse); padding: var(--space-2xl) 0; text-align: center;">
+            <div class="container">
+                <p style="font-size: var(--text-sm);">© 2025 NAMASTE-FHIR Bridge. Ministry of Ayush - AIIA</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let currentDirection = 'namaste-to-icd';
+        
+        // Mock translation mappings
+        const translations = {
+            'ea-1': { namaste: 'EA-1', term: 'jwara', tm2: 'TM2.B1.0Z', bio: 'MG30.Z', confidence: 92, description: 'Fever of unspecified origin' },
+            'jwara': { namaste: 'EA-1', term: 'jwara', tm2: 'TM2.B1.0Z', bio: 'MG30.Z', confidence: 92, description: 'Fever of unspecified origin' },
+            'aae-16': { namaste: 'AAE-16', term: 'sandhigatavata', tm2: 'SP00', bio: 'FA01', confidence: 95, description: 'Joint degeneration with Vata predominance' },
+            'sandhigatavata': { namaste: 'AAE-16', term: 'sandhigatavata', tm2: 'SP00', bio: 'FA01', confidence: 95, description: 'Joint degeneration with Vata predominance' },
+            'ebm-23': { namaste: 'EBM-23', term: 'madhumeha', tm2: 'SP15', bio: '5A11', confidence: 88, description: 'Diabetes mellitus in traditional medicine context' },
+            'madhumeha': { namaste: 'EBM-23', term: 'madhumeha', tm2: 'SP15', bio: '5A11', confidence: 88, description: 'Diabetes mellitus in traditional medicine context' },
+            'rsp-08': { namaste: 'RSP-08', term: 'kasa', tm2: 'SP22', bio: 'CA20', confidence: 90, description: 'Cough with traditional pathophysiology' },
+            'kasa': { namaste: 'RSP-08', term: 'kasa', tm2: 'SP22', bio: 'CA20', confidence: 90, description: 'Cough with traditional pathophysiology' }
+        };
+
+        function setDirection(direction) {
+            currentDirection = direction;
+            
+            // Update button states
+            document.querySelectorAll('.direction-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update interface labels
+            if (direction === 'namaste-to-icd') {
+                document.getElementById('input-title').textContent = 'NAMASTE Code Input';
+                document.getElementById('output-title').textContent = 'ICD-11 Translation Result';
+                document.getElementById('input-label').textContent = 'NAMASTE Code or Term';
+                document.getElementById('translation-input').placeholder = 'e.g., EA-1, jwara, sandhigatavata...';
+            } else {
+                document.getElementById('input-title').textContent = 'ICD-11 Code Input';
+                document.getElementById('output-title').textContent = 'NAMASTE Translation Result';
+                document.getElementById('input-label').textContent = 'ICD-11 Code';
+                document.getElementById('translation-input').placeholder = 'e.g., TM2.B1.0Z, MG30.Z, SP00...';
+            }
+            
+            // Clear current results
+            document.getElementById('translation-output').innerHTML = `
+                <div class="output-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; border: 2px dashed var(--border-light); border-radius: var(--radius-lg); color: var(--text-secondary); text-align: center;">
+                    <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: var(--space-lg); color: var(--color-primary);">translate</span>
+                    <p><strong>Ready for Translation</strong></p>
+                    <p>Enter a code or term to see the translation result</p>
+                </div>
+            `;
+        }
+
+        function toggleDirection() {
+            if (currentDirection === 'namaste-to-icd') {
+                setDirection('icd-to-namaste');
+                document.querySelectorAll('.direction-btn')[1].classList.add('active');
+                document.querySelectorAll('.direction-btn')[0].classList.remove('active');
+            } else {
+                setDirection('namaste-to-icd');
+                document.querySelectorAll('.direction-btn')[0].classList.add('active');
+                document.querySelectorAll('.direction-btn')[1].classList.remove('active');
+            }
+        }
+
+        function performTranslation() {
+            const input = document.getElementById('translation-input').value.trim().toLowerCase();
+            const context = document.getElementById('translation-context').value;
+            const output = document.getElementById('translation-output');
+            
+            if (!input) {
+                return;
+            }
+            
+            // Show loading state
+            output.innerHTML = `
+                <div class="output-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; border: 2px dashed var(--border-light); border-radius: var(--radius-lg); color: var(--text-secondary); text-align: center;">
+                    <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: var(--space-lg); color: var(--color-primary);">hourglass_empty</span>
+                    <p><strong>Translating...</strong></p>
+                    <p>Processing "${input}" for ${context} context</p>
+                </div>
+            `;
+            
+            // Simulate API delay
+            setTimeout(() => {
+                const result = translations[input] || {
+                    namaste: 'UNKNOWN',
+                    term: input,
+                    tm2: 'UNKNOWN',
+                    bio: 'UNKNOWN',
+                    confidence: 75,
+                    description: 'Translation requires manual review'
+                };
+                
+                displayTranslationResult(result, context);
+            }, 1500);
+        }
+
+        function displayTranslationResult(result, context) {
+            const output = document.getElementById('translation-output');
+            
+            let resultHtml = '';
+            
+            if (currentDirection === 'namaste-to-icd') {
+                resultHtml = `
+                    <div class="translation-result result-active">
+                        <div class="result-item">
+                            <span class="result-label">Input Term:</span>
+                            <span class="result-value">${result.term}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">NAMASTE Code:</span>
+                            <span class="result-value">${result.namaste}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">ICD-11 TM2:</span>
+                            <span class="result-value">${result.tm2}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">ICD-11 Biomedicine:</span>
+                            <span class="result-value">${result.bio}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Clinical Context:</span>
+                            <span class="result-value">${result.description}</span>
+                        </div>
+                        <div class="confidence-indicator">
+                            <span class="body-small">Mapping Confidence:</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" style="width: ${result.confidence}%;"></div>
+                            </div>
+                            <span class="body-small">${result.confidence}%</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultHtml = `
+                    <div class="translation-result result-active">
+                        <div class="result-item">
+                            <span class="result-label">Input Code:</span>
+                            <span class="result-value">${document.getElementById('translation-input').value.toUpperCase()}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">NAMASTE Code:</span>
+                            <span class="result-value">${result.namaste}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Traditional Term:</span>
+                            <span class="result-value">${result.term}</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Clinical Context:</span>
+                            <span class="result-value">${result.description}</span>
+                        </div>
+                        <div class="confidence-indicator">
+                            <span class="body-small">Mapping Confidence:</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" style="width: ${result.confidence}%;"></div>
+                            </div>
+                            <span class="body-small">${result.confidence}%</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            output.innerHTML = resultHtml;
+        }
+
+        function loadExample(code, term) {
+            document.getElementById('translation-input').value = term;
+            performTranslation();
+        }
+
+        function processBatchFile() {
+            const file = document.getElementById('batch-file').files[0];
+            if (!file) return;
+            
+            // Simulate batch processing
+            const batchResults = document.getElementById('batch-results');
+            const batchItems = document.getElementById('batch-items');
+            
+            // Mock batch data
+            const mockData = [
+                { input: 'jwara', confidence: 92, translation: 'TM2.B1.0Z → MG30.Z', status: 'Success' },
+                { input: 'sandhigatavata', confidence: 95, translation: 'SP00 → FA01', status: 'Success' },
+                { input: 'madhumeha', confidence: 88, translation: 'SP15 → 5A11', status: 'Success' },
+                { input: 'kasa', confidence: 90, translation: 'SP22 → CA20', status: 'Success' }
+            ];
+            
+            batchItems.innerHTML = '';
+            mockData.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'batch-item';
+                div.innerHTML = `
+                    <div>${item.input}</div>
+                    <div>${item.confidence}%</div>
+                    <div>${item.translation}</div>
+                    <div style="color: var(--color-success);">${item.status}</div>
+                `;
+                batchItems.appendChild(div);
+            });
+            
+            batchResults.style.display = 'block';
+        }
+
+        function downloadResults() {
+            // Mock CSV download
+            const csvContent = "Input,Confidence,Translation,Status\n" +
+                "jwara,92%,TM2.B1.0Z → MG30.Z,Success\n" +
+                "sandhigatavata,95%,SP00 → FA01,Success\n" +
+                "madhumeha,88%,SP15 → 5A11,Success\n" +
+                "kasa,90%,SP22 → CA20,Success";
+                
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'translation_results.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Auto-translate on input
+        document.getElementById('translation-input').addEventListener('input', () => {
+            clearTimeout(window.translationTimeout);
+            window.translationTimeout = setTimeout(performTranslation, 1000);
+        });
+    </script>
+</body>
+</html>

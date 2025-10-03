@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAMASTE-FHIR Terminology Bridge</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
+    <style>
+        /* Page-specific styles */
+        .process-flow {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-xl);
+            margin: var(--space-3xl) 0;
+        }
+
+        @media (max-width: 768px) {
+            .process-flow {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .process-step {
+            text-align: center;
+            padding: var(--space-xl);
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+        }
+
+        .process-step:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .process-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto var(--space-lg);
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            border-radius: var(--radius-full);
+            color: var(--text-inverse);
+            font-size: 2rem;
+        }
+
+        .stakeholder-card {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stakeholder-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+        }
+
+        .stakeholder-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stakeholder-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            margin-bottom: var(--space-lg);
+            background-color: var(--color-primary-light);
+            border-radius: var(--radius-lg);
+            color: var(--color-primary);
+            font-size: 1.5rem;
+        }
+
+        .feature-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            margin-bottom: var(--space-md);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-xl);
+            margin: var(--space-3xl) 0;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: var(--space-lg);
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .metric-value {
+            font-family: var(--font-family-primary);
+            font-size: var(--text-4xl);
+            font-weight: 800;
+            color: var(--color-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .metric-label {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+    </style>
+            cursor: pointer;
+        }
+
+        .mobile-menu-button:hover {
+            background-color: #f3f4f6;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-menu-button {
+                display: none;
+            }
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD1UiUMJ1SSA8RxDjN1wwy4aPkLscTe3soOeW69GFh9D3kb8we-9_WEkqIghEJU3k7a9Vhxcw32MX54yfA4ii8Lx6LN_Ne_kG7m8JXb05J19crLK9eVKy-WLiYi23O5Y2ytRHXfOlLI4ONL8rM5vU53o7oak6hvyXgq-KRZ3Gv-UwtkR3XvD0H7FUQLAT7HBo9vO8uLgfEGukN0qLHKFGQPVffOa5naJisk6LdRW9egZfwsrRXqgqUJqWzo1RbtFzN56toLA4_szQcf');
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3));
+            z-index: -1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .hero-title {
+                font-size: 4.5rem;
+            }
+        }
+
+        .hero-description {
+            font-size: 1.125rem;
+            max-width: 48rem;
+            margin: 0 auto 2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--primary-text-color);
+        }
+
+        .btn-white {
+            background-color: white;
+            color: var(--primary-text-color);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 5rem 0;
+            background-color: white;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: -0.025em;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .section-title {
+                font-size: 3rem;
+            }
+        }
+
+        .section-description {
+            font-size: 1.125rem;
+            color: var(--secondary-text-color);
+            max-width: 36rem;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .feature-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: var(--primary-color);
+        }
+
+        .feature-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 4rem;
+            width: 4rem;
+            border-radius: 9999px;
+            background-color: var(--primary-color);
+            color: var(--primary-text-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-description {
+            color: var(--secondary-text-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-button {
+            margin-top: auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary-text-color);
+            background-color: white;
+            border: 1px solid #d1d5db;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover .feature-button {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #111827;
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+                text-align: left;
+            }
+        }
+
+        .footer-info {
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-info {
+                margin-bottom: 0;
+            }
+        }
+
+        .copyright {
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+
+        .attribution {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-link {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="relative flex size-full min-h-screen flex-col overflow-x-hidden">
+        <header>
+            <div class="container">
+                <div class="navbar">
+                    <a href="#" class="logo">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUlicOOYilYhh9i5EyAMv5iYhaB2fV0HTCSMgYRLmtQkcGUR7YNYnNNn1_6CrZ9GGyNuwjMOv-YjFD3apF5RBRn62ZX4v_CRva9Sunw0Q-DZdpCeF_UL0w9V_qa5XdU7bAyl7uiHVSoTqRVu23TD8IQVW_IGl9yF0W4IvqRAt_7Jn8V1EtU2X2o-RYCY5yS3qUWe7nqUg_ISg_12-TtIe2eg1bCvwpZQ6_x8pfH__n8nhpw2HF-u5dpAAcCJHikhF9zfIPCQ1ypdV2" alt="Logo">
+                        <span>Terminology Bridge</span>
+                    </a>
+                    <nav class="nav-menu">
+                        <a href="#features">Features</a>
+                        <a href="/ui/pages/use-case-presentation.html">Use Case</a>
+                        <a href="#demos">Demos</a>
+                        <a href="#footer">Resources</a>
+                    </nav>
+                    <button class="mobile-menu-button">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-grow">
+            <section class="hero-section" id="hero">
+                <div class="hero-bg"></div>
+                <div class="hero-overlay"></div>
+                <div class="container">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Dual-code in seconds.</h1>
+                        <p class="hero-description">
+                            A FHIR-compliant terminology bridge that preserves traditional AYUSH vocabularies and standardizes them into ICD-11 for global interoperability.
+                        </p>
+                        <div class="hero-buttons" id="demos">
+                            <a href="/ui/pages/use-case-presentation.html" class="btn btn-primary">View Use Case</a>
+                            <a href="/ui/pages/doctor-sandbox.html" class="btn btn-white">Doctor Demo</a>
+                            <a href="/ui/pages/researcher-sandbox.html" class="btn btn-white">Researcher Demo</a>
+                            <a href="/ui/pages/insurance-sandbox.html" class="btn btn-white">Insurer Demo</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="features-section" id="features">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">Unlock the Power of Dual-Coding</h2>
+                        <p class="section-description">Seamlessly bridge traditional AYUSH vocabularies with ICD-11 for global interoperability.</p>
+                    </div>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <span class="material-symbols-outlined" style="font-size: 2rem;">stethoscope</span>
+                            </div>
+                            <h3 class="feature-title">For Doctors</h3>
+                            <p class="feature-description">Enhance patient care with standardized coding.</p>
+                            <a href="/ui/pages/doctor-sandbox.html" class="feature-button">Try it</a>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <span class="material-symbols-outlined" style="font-size: 2rem;">science</span>
+                            </div>
+                            <h3 class="feature-title">For Researchers</h3>
+                            <p class="feature-description">Analyze data across systems with ease.</p>
+                            <a href="/ui/pages/researcher-sandbox.html" class="feature-button">Try it</a>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <span class="material-symbols-outlined" style="font-size: 2rem;">payments</span>
+                            </div>
+                            <h3 class="feature-title">For Insurers</h3>
+                            <p class="feature-description">Streamline claims processing and reporting.</p>
+                            <a href="/ui/pages/insurance-sandbox.html" class="feature-button">Try it</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer id="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-info">
+                        <p class="copyright">© 2025 Terminology Bridge. All rights reserved.</p>
+                        <p class="attribution">Attribution to Ministry of Ayush</p>
+                    </div>
+                    <div class="footer-links">
+                        <a href="/ui/pages/api-docs.html" class="footer-link">Swagger</a>
+                        <a href="https://github.com/Sunnythakur10/namaste-fhir-terminology" class="footer-link">GitHub</a>
+                        <a href="https://www.ayush.gov.in/" class="footer-link">MoAYUSH</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle functionality
+            const mobileMenuButton = document.querySelector('.mobile-menu-button');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            if (mobileMenuButton && navMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

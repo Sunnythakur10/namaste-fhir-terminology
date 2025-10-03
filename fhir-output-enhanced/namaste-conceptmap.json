@@ -1,0 +1,113 @@
+{
+  "resourceType": "ConceptMap",
+  "id": "namaste-to-icd11",
+  "url": "http://example.com/namaste-to-icd11",
+  "version": "2.0.0",
+  "name": "NamasteToICD11Enhanced",
+  "title": "NAMASTE to ICD-11 Enhanced Concept Map",
+  "status": "active",
+  "experimental": false,
+  "date": "2025-09-12T10:24:47.381832",
+  "publisher": "Ministry of AYUSH, Government of India",
+  "description": "Enhanced mapping from NAMASTE traditional medicine terminology to ICD-11 Traditional Medicine 2 (TM2) and Biomedicine codes using WHO ICD-11 API integration",
+  "sourceUri": "http://ayush.gov.in/namaste",
+  "targetUri": "http://hl7.org/fhir/sid/icd-11",
+  "group": [
+    {
+      "source": "http://ayush.gov.in/namaste",
+      "target": "http://hl7.org/fhir/sid/icd-11",
+      "element": [
+        {
+          "code": "AAE-16",
+          "display": "Sandhigatvata",
+          "target": [
+            {
+              "code": "SP00",
+              "display": "ICD-11 TM2: SP00",
+              "equivalence": "equivalent",
+              "comment": "Traditional Medicine 2 (TM2) mapping - Source: FALLBACK"
+            },
+            {
+              "code": "FA01",
+              "display": "ICD-11 Biomedicine: FA01",
+              "equivalence": "equivalent",
+              "comment": "Biomedicine mapping - Source: FALLBACK"
+            }
+          ]
+        },
+        {
+          "code": "AA",
+          "display": "Vatavyadhi",
+          "target": [
+            {
+              "code": "SP10",
+              "display": "ICD-11 TM2: SP10",
+              "equivalence": "equivalent",
+              "comment": "Traditional Medicine 2 (TM2) mapping - Source: FALLBACK"
+            },
+            {
+              "code": "FA20",
+              "display": "ICD-11 Biomedicine: FA20",
+              "equivalence": "equivalent",
+              "comment": "Biomedicine mapping - Source: FALLBACK"
+            }
+          ]
+        },
+        {
+          "code": "EE-3",
+          "display": "Arsha",
+          "target": [
+            {
+              "code": "SL01",
+              "display": "ICD-11 TM2: SL01",
+              "equivalence": "equivalent",
+              "comment": "Traditional Medicine 2 (TM2) mapping - Source: FALLBACK"
+            },
+            {
+              "code": "ME83",
+              "display": "ICD-11 Biomedicine: ME83",
+              "equivalence": "equivalent",
+              "comment": "Biomedicine mapping - Source: FALLBACK"
+            }
+          ]
+        },
+        {
+          "code": "EF-2.4.4",
+          "display": "Madhumeha/Kshaudrameha",
+          "target": [
+            {
+              "code": "SJ00",
+              "display": "ICD-11 TM2: SJ00",
+              "equivalence": "equivalent",
+              "comment": "Traditional Medicine 2 (TM2) mapping - Source: FALLBACK"
+            },
+            {
+              "code": "5A11",
+              "display": "ICD-11 Biomedicine: 5A11",
+              "equivalence": "equivalent",
+              "comment": "Biomedicine mapping - Source: FALLBACK"
+            }
+          ]
+        },
+        {
+          "code": "EA-3",
+          "display": "Kasa",
+          "target": [
+            {
+              "code": "SB00",
+              "display": "ICD-11 TM2: SB00",
+              "equivalence": "equivalent",
+              "comment": "Traditional Medicine 2 (TM2) mapping - Source: FALLBACK"
+            },
+            {
+              "code": "CA22",
+              "display": "ICD-11 Biomedicine: CA22",
+              "equivalence": "equivalent",
+              "comment": "Biomedicine mapping - Source: FALLBACK"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

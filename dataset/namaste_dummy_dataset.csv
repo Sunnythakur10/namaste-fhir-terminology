@@ -4,20 +4,20 @@ C002,23,F,Vatavyadhi,AA,Disorders due to Vata,Delhi,2025-06-02
 C003,26,M,Arsha,EE-3,Hemorrhoids,Uttar Pradesh,2025-06-03
 C004,29,F,Madhumeha/Kshaudrameha,EF-2.4.4,Diabetes Mellitus,Maharashtra,2025-06-04
 C005,32,M,Kasa,EA-3,Cough/Tussis,Tamil Nadu,2025-06-05
-C006,35,F,Sandhigatvata,AAE-16,Vitiated Vata in Sandhi,Kerala,2025-06-06
-C007,38,M,Vatavyadhi,AA,Disorders due to Vata,Gujarat,2025-06-07
-C008,41,F,Arsha,EE-3,Hemorrhoids,Rajasthan,2025-06-08
-C009,44,M,Madhumeha/Kshaudrameha,EF-2.4.4,Diabetes Mellitus,Haryana,2025-06-09
-C010,47,F,Kasa,EA-3,Cough/Tussis,Karnataka,2025-06-10
-C011,50,M,Sandhigatvata,AAE-16,Vitiated Vata in Sandhi,Delhi,2025-06-11
-C012,53,F,Vatavyadhi,AA,Disorders due to Vata,Uttar Pradesh,2025-06-12
-C013,56,M,Arsha,EE-3,Hemorrhoids,Maharashtra,2025-06-13
-C014,59,F,Madhumeha/Kshaudrameha,EF-2.4.4,Diabetes Mellitus,Tamil Nadu,2025-06-14
-C015,62,M,Kasa,EA-3,Cough/Tussis,Kerala,2025-06-15
-C016,65,F,Sandhigatvata,AAE-16,Vitiated Vata in Sandhi,Gujarat,2025-06-16
-C017,68,M,Vatavyadhi,AA,Disorders due to Vata,Rajasthan,2025-06-17
-C018,71,F,Arsha,EE-3,Hemorrhoids,Haryana,2025-06-18
-C019,74,M,Madhumeha/Kshaudrameha,EF-2.4.4,Diabetes Mellitus,Karnataka,2025-06-19
+C006,35,F,Jwara,EA-1,Fever/Pyrexia,Kerala,2025-06-06
+C007,38,M,Sandhigatvata,AAE-16,Vitiated Vata in Sandhi,Gujarat,2025-06-07
+C008,41,F,Vatavyadhi,AA,Disorders due to Vata,Rajasthan,2025-06-08
+C009,44,M,Arsha,EE-3,Hemorrhoids,Haryana,2025-06-09
+C010,47,F,Madhumeha/Kshaudrameha,EF-2.4.4,Diabetes Mellitus,Karnataka,2025-06-10
+C011,50,M,Kasa,EA-3,Cough/Tussis,Delhi,2025-06-11
+C012,53,F,Jwara,EA-1,Fever/Pyrexia,Uttar Pradesh,2025-06-12
+C013,56,M,Sandhigatvata,AAE-16,Vitiated Vata in Sandhi,Maharashtra,2025-06-13
+C014,59,F,Vatavyadhi,AA,Disorders due to Vata,Tamil Nadu,2025-06-14
+C015,62,M,Arsha,EE-3,Hemorrhoids,Kerala,2025-06-15
+C016,65,F,Madhumeha/Kshaudrameha,EF-2.4.4,Diabetes Mellitus,Gujarat,2025-06-16
+C017,68,M,Kasa,EA-3,Cough/Tussis,Rajasthan,2025-06-17
+C018,71,F,Jwara,EA-1,Fever/Pyrexia,Haryana,2025-06-18
+C019,74,M,Sandhigatvata,AAE-16,Vitiated Vata in Sandhi,Karnataka,2025-06-19
 C020,77,F,Kasa,EA-3,Cough/Tussis,Delhi,2025-06-20
 C021,20,M,Sandhigatvata,AAE-16,Vitiated Vata in Sandhi,Uttar Pradesh,2025-06-21
 C022,23,F,Vatavyadhi,AA,Disorders due to Vata,Maharashtra,2025-06-22

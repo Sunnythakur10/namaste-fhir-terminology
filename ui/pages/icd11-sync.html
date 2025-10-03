@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WHO ICD-11 API Synchronization | NAMASTE-FHIR Bridge</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
+    <style>
+        .sync-header {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: var(--text-inverse);
+            padding: var(--space-2xl) 0;
+        }
+
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-lg);
+            font-weight: 600;
+        }
+
+        .status-connected {
+            background-color: var(--color-success-light);
+            color: var(--color-success);
+            border: 2px solid var(--color-success);
+        }
+
+        .status-syncing {
+            background-color: var(--color-warning-light);
+            color: var(--color-warning);
+            border: 2px solid var(--color-warning);
+        }
+
+        .status-error {
+            background-color: var(--color-error-light);
+            color: var(--color-error);
+            border: 2px solid var(--color-error);
+        }
+
+        .sync-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-xl);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .control-card {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            border: 2px solid transparent;
+            transition: all var(--transition-normal);
+        }
+
+        .control-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .control-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .control-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background-color: var(--color-primary-light);
+            border-radius: var(--radius-lg);
+            color: var(--color-primary);
+            font-size: 1.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin: var(--space-md) 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            border-radius: var(--radius-full);
+            transition: width var(--transition-slow);
+        }
+
+        .sync-log {
+            background-color: var(--bg-inverse);
+            color: var(--text-inverse);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            font-family: var(--font-family-mono);
+            font-size: var(--text-sm);
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: var(--space-lg);
+        }
+
+        .log-entry {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xs);
+            align-items: flex-start;
+        }
+
+        .log-timestamp {
+            color: var(--color-accent);
+            white-space: nowrap;
+        }
+
+        .log-level {
+            font-weight: 600;
+            width: 50px;
+        }
+
+        .log-info { color: var(--color-primary); }
+        .log-success { color: var(--color-success); }
+        .log-warning { color: var(--color-warning); }
+        .log-error { color: var(--color-error); }
+
+        .mapping-preview {
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .mapping-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .mapping-item {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            text-align: center;
+            border: 1px solid var(--border-light);
+        }
+
+        .mapping-code {
+            font-family: var(--font-family-mono);
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+
+        .stat-card {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--color-primary);
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+            margin-top: var(--space-sm);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <nav class="header-nav">
+                    <a href="/ui/pages/landing.html" class="logo">
+                        <span class="material-symbols-outlined" style="color: var(--color-primary);">healing</span>
+                        <span>NAMASTE-FHIR Bridge</span>
+                    </a>
+                    <div class="nav-links">
+                        <a href="/ui/pages/landing.html" class="nav-link">Home</a>
+                        <a href="/ui/pages/deliverables-overview.html" class="nav-link">Deliverables</a>
+                        <a href="#sync" class="nav-link">Sync Status</a>
+                        <a href="/ui/pages/api-docs.html" class="nav-link">API Docs</a>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Sync Header -->
+        <section class="sync-header">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/ui/pages/deliverables-overview.html">← Deliverables</a>
+                    <span>WHO ICD-11 API Synchronization</span>
+                </div>
+                <h1 class="display-large">WHO ICD-11 API Synchronization</h1>
+                <p class="headline-medium" style="margin-top: var(--space-lg); max-width: 800px;">
+                    Fetch Traditional Medicine Module 2 (TM2) and Biomedicine classifications from WHO ICD-11 API for comprehensive dual-coding support
+                </p>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <section class="section" id="sync">
+            <div class="container">
+                <!-- Sync Status -->
+                <div id="sync-status" class="sync-status status-connected">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    <span>Connected to WHO ICD-11 API - Last sync: 2025-01-11 14:30:00 UTC</span>
+                </div>
+
+                <!-- Sync Controls -->
+                <div class="sync-controls">
+                    <div class="control-card">
+                        <div class="control-header">
+                            <div class="control-icon">
+                                <span class="material-symbols-outlined">medical_information</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium">Traditional Medicine Module 2 (TM2)</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">529 disorder categories and 196 pattern codes</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;" onclick="syncTM2()">
+                            <span class="material-symbols-outlined">sync</span>
+                            Sync TM2 Classifications
+                        </button>
+                        <div class="progress-bar">
+                            <div id="tm2-progress" class="progress-fill" style="width: 100%;"></div>
+                        </div>
+                        <p class="body-small" style="color: var(--text-secondary);">Status: Up to date (529 codes synchronized)</p>
+                    </div>
+
+                    <div class="control-card">
+                        <div class="control-header">
+                            <div class="control-icon">
+                                <span class="material-symbols-outlined">science</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium">Biomedicine Classifications</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">Modern medical equivalents and mappings</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;" onclick="syncBiomedicine()">
+                            <span class="material-symbols-outlined">sync</span>
+                            Sync Biomedicine Codes
+                        </button>
+                        <div class="progress-bar">
+                            <div id="bio-progress" class="progress-fill" style="width: 100%;"></div>
+                        </div>
+                        <p class="body-small" style="color: var(--text-secondary);">Status: Up to date (3,247 codes synchronized)</p>
+                    </div>
+
+                    <div class="control-card">
+                        <div class="control-header">
+                            <div class="control-icon">
+                                <span class="material-symbols-outlined">sync_alt</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium">Auto-Sync Configuration</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">Automated synchronization settings</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Sync Frequency</label>
+                            <select class="form-select" id="sync-frequency">
+                                <option value="daily">Daily</option>
+                                <option value="weekly" selected>Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="manual">Manual Only</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary" style="width: 100%;" onclick="updateSyncSettings()">
+                            <span class="material-symbols-outlined">settings</span>
+                            Update Settings
+                        </button>
+                    </div>
+
+                    <div class="control-card">
+                        <div class="control-header">
+                            <div class="control-icon">
+                                <span class="material-symbols-outlined">refresh</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium">Full Synchronization</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">Complete refresh of all mappings</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-warning" style="width: 100%;" onclick="fullSync()">
+                            <span class="material-symbols-outlined">refresh</span>
+                            Full Sync (TM2 + Biomedicine)
+                        </button>
+                        <div class="progress-bar">
+                            <div id="full-progress" class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                        <p class="body-small" style="color: var(--text-secondary);">Last full sync: 2025-01-10 09:15:00 UTC</p>
+                    </div>
+                </div>
+
+                <!-- Sync Statistics -->
+                <div class="workflow-card">
+                    <h3 class="headline-large" style="margin-bottom: var(--space-lg);">Synchronization Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">529</div>
+                            <div class="stat-label">TM2 Classifications</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">3,247</div>
+                            <div class="stat-label">Biomedicine Codes</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">4,500+</div>
+                            <div class="stat-label">NAMASTE Terms</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">98.7%</div>
+                            <div class="stat-label">Mapping Coverage</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">15</div>
+                            <div class="stat-label">Sync Operations Today</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">1.2s</div>
+                            <div class="stat-label">Avg Response Time</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mapping Preview -->
+                <div class="workflow-card">
+                    <h3 class="headline-large" style="margin-bottom: var(--space-lg);">Recent Mapping Updates</h3>
+                    <div class="mapping-preview">
+                        <div class="mapping-grid">
+                            <div class="mapping-item">
+                                <h4 class="headline-small">NAMASTE</h4>
+                                <div class="mapping-code">EA-1</div>
+                                <p class="body-small">Jwara (Fever)</p>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: center;">
+                                <span class="material-symbols-outlined" style="color: var(--color-primary);">trending_flat</span>
+                            </div>
+                            <div class="mapping-item">
+                                <h4 class="headline-small">ICD-11 TM2</h4>
+                                <div class="mapping-code">TM2.B1.0Z</div>
+                                <p class="body-small">Traditional fever pattern</p>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: center;">
+                                <span class="material-symbols-outlined" style="color: var(--color-primary);">trending_flat</span>
+                            </div>
+                            <div class="mapping-item">
+                                <h4 class="headline-small">ICD-11 Bio</h4>
+                                <div class="mapping-code">MG30.Z</div>
+                                <p class="body-small">Fever of unspecified origin</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sync Log -->
+                <div class="workflow-card">
+                    <h3 class="headline-large" style="margin-bottom: var(--space-lg);">Synchronization Log</h3>
+                    <div id="sync-log" class="sync-log">
+                        <div class="log-entry">
+                            <span class="log-timestamp">14:30:15</span>
+                            <span class="log-level log-success">INFO</span>
+                            <span>TM2 synchronization completed successfully - 529 codes updated</span>
+                        </div>
+                        <div class="log-entry">
+                            <span class="log-timestamp">14:30:10</span>
+                            <span class="log-level log-info">INFO</span>
+                            <span>Connecting to WHO ICD-11 API endpoint</span>
+                        </div>
+                        <div class="log-entry">
+                            <span class="log-timestamp">14:29:45</span>
+                            <span class="log-level log-success">INFO</span>
+                            <span>Biomedicine codes synchronization completed - 3,247 codes updated</span>
+                        </div>
+                        <div class="log-entry">
+                            <span class="log-timestamp">14:29:30</span>
+                            <span class="log-level log-info">INFO</span>
+                            <span>Starting automated weekly synchronization</span>
+                        </div>
+                        <div class="log-entry">
+                            <span class="log-timestamp">09:15:22</span>
+                            <span class="log-level log-success">INFO</span>
+                            <span>Full synchronization completed - All mappings up to date</span>
+                        </div>
+                        <div class="log-entry">
+                            <span class="log-timestamp">09:14:30</span>
+                            <span class="log-level log-warning">WARN</span>
+                            <span>Rate limit approached - throttling requests</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="background-color: var(--bg-inverse); color: var(--text-inverse); padding: var(--space-2xl) 0; text-align: center;">
+            <div class="container">
+                <p style="font-size: var(--text-sm);">© 2025 NAMASTE-FHIR Bridge. Ministry of Ayush - AIIA</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Mock API functions for demonstration
+        async function syncTM2() {
+            const button = event.target;
+            const progressBar = document.getElementById('tm2-progress');
+            
+            button.disabled = true;
+            button.innerHTML = '<span class="material-symbols-outlined">hourglass_empty</span> Syncing...';
+            
+            // Simulate sync progress
+            progressBar.style.width = '0%';
+            
+            for (let i = 0; i <= 100; i += 10) {
+                progressBar.style.width = i + '%';
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+            
+            // Add log entry
+            addLogEntry('TM2 synchronization completed successfully - 529 codes updated', 'success');
+            
+            button.disabled = false;
+            button.innerHTML = '<span class="material-symbols-outlined">sync</span> Sync TM2 Classifications';
+        }
+
+        async function syncBiomedicine() {
+            const button = event.target;
+            const progressBar = document.getElementById('bio-progress');
+            
+            button.disabled = true;
+            button.innerHTML = '<span class="material-symbols-outlined">hourglass_empty</span> Syncing...';
+            
+            progressBar.style.width = '0%';
+            
+            for (let i = 0; i <= 100; i += 15) {
+                progressBar.style.width = i + '%';
+                await new Promise(resolve => setTimeout(resolve, 150));
+            }
+            
+            addLogEntry('Biomedicine codes synchronization completed - 3,247 codes updated', 'success');
+            
+            button.disabled = false;
+            button.innerHTML = '<span class="material-symbols-outlined">sync</span> Sync Biomedicine Codes';
+        }
+
+        async function fullSync() {
+            const button = event.target;
+            const progressBar = document.getElementById('full-progress');
+            
+            button.disabled = true;
+            button.innerHTML = '<span class="material-symbols-outlined">hourglass_empty</span> Full Syncing...';
+            
+            progressBar.style.width = '0%';
+            
+            addLogEntry('Starting full synchronization of all mappings', 'info');
+            
+            for (let i = 0; i <= 100; i += 5) {
+                progressBar.style.width = i + '%';
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            
+            addLogEntry('Full synchronization completed - All mappings up to date', 'success');
+            
+            button.disabled = false;
+            button.innerHTML = '<span class="material-symbols-outlined">refresh</span> Full Sync (TM2 + Biomedicine)';
+        }
+
+        function updateSyncSettings() {
+            const frequency = document.getElementById('sync-frequency').value;
+            addLogEntry(`Auto-sync frequency updated to: ${frequency}`, 'info');
+        }
+
+        function addLogEntry(message, level) {
+            const log = document.getElementById('sync-log');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <span class="log-timestamp">${timestamp}</span>
+                <span class="log-level log-${level}">${level.toUpperCase()}</span>
+                <span>${message}</span>
+            `;
+            
+            log.insertBefore(entry, log.firstChild);
+            
+            // Keep only last 20 entries
+            while (log.children.length > 20) {
+                log.removeChild(log.lastChild);
+            }
+        }
+
+        // Auto-refresh status every 30 seconds
+        setInterval(() => {
+            const status = document.getElementById('sync-status');
+            const now = new Date().toISOString().replace('T', ' ').split('.')[0] + ' UTC';
+            status.innerHTML = `
+                <span class="material-symbols-outlined">check_circle</span>
+                <span>Connected to WHO ICD-11 API - Last sync: ${now}</span>
+            `;
+        }, 30000);
+    </script>
+</body>
+</html>

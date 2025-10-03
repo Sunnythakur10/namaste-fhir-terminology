@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHIR Bundle Upload | NAMASTE-FHIR Bridge</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
+    <style>
+        .bundle-header {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: var(--text-inverse);
+            padding: var(--space-2xl) 0;
+        }
+
+        .upload-workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-2xl);
+        }
+
+        @media (max-width: 768px) {
+            .upload-workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .upload-panel {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            border: 2px solid transparent;
+            transition: all var(--transition-normal);
+        }
+
+        .upload-panel.active {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .upload-zone {
+            border: 3px dashed var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3xl);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            background-color: var(--bg-secondary);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--color-primary);
+            background-color: var(--color-primary-light);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--color-primary);
+            background-color: var(--color-primary-light);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--color-primary);
+            margin-bottom: var(--space-lg);
+        }
+
+        .bundle-editor {
+            background-color: var(--bg-inverse);
+            color: var(--text-inverse);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            font-family: var(--font-family-mono);
+            font-size: var(--text-sm);
+            min-height: 400px;
+            overflow-y: auto;
+            border: 2px solid var(--border-light);
+        }
+
+        .bundle-editor:focus {
+            border-color: var(--color-primary);
+            outline: none;
+        }
+
+        .validation-result {
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+            border: 2px solid var(--border-light);
+        }
+
+        .validation-success {
+            border-color: var(--color-success);
+            background-color: var(--color-success-light);
+        }
+
+        .validation-error {
+            border-color: var(--color-error);
+            background-color: var(--color-error-light);
+        }
+
+        .validation-warning {
+            border-color: var(--color-warning);
+            background-color: var(--color-warning-light);
+        }
+
+        .validation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+            padding: var(--space-sm);
+            border-radius: var(--radius-md);
+            background-color: var(--bg-primary);
+        }
+
+        .validation-icon {
+            color: var(--color-primary);
+            margin-top: 2px;
+        }
+
+        .validation-icon.success { color: var(--color-success); }
+        .validation-icon.error { color: var(--color-error); }
+        .validation-icon.warning { color: var(--color-warning); }
+
+        .bundle-templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .template-card {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            border: 2px solid transparent;
+        }
+
+        .template-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--color-primary);
+        }
+
+        .template-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .template-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background-color: var(--color-primary-light);
+            border-radius: var(--radius-lg);
+            color: var(--color-primary);
+            font-size: 1.5rem;
+        }
+
+        .upload-history {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            margin-top: var(--space-2xl);
+        }
+
+        .history-item {
+            display: grid;
+            grid-template-columns: auto 1fr auto auto auto;
+            gap: var(--space-md);
+            align-items: center;
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--border-light);
+            transition: background-color var(--transition-normal);
+        }
+
+        .history-item:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 600;
+        }
+
+        .status-success {
+            background-color: var(--color-success-light);
+            color: var(--color-success);
+        }
+
+        .status-processing {
+            background-color: var(--color-warning-light);
+            color: var(--color-warning);
+        }
+
+        .status-error {
+            background-color: var(--color-error-light);
+            color: var(--color-error);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin: var(--space-md) 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            border-radius: var(--radius-full);
+            transition: width var(--transition-normal);
+        }
+
+        .metadata-section {
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .metadata-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .metadata-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+        }
+
+        .metadata-value {
+            font-family: var(--font-family-mono);
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <nav class="header-nav">
+                    <a href="/ui/pages/landing.html" class="logo">
+                        <span class="material-symbols-outlined" style="color: var(--color-primary);">healing</span>
+                        <span>NAMASTE-FHIR Bridge</span>
+                    </a>
+                    <div class="nav-links">
+                        <a href="/ui/pages/landing.html" class="nav-link">Home</a>
+                        <a href="/ui/pages/deliverables-overview.html" class="nav-link">Deliverables</a>
+                        <a href="#upload" class="nav-link">Upload</a>
+                        <a href="/ui/pages/api-docs.html" class="nav-link">API Docs</a>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Bundle Header -->
+        <section class="bundle-header">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/ui/pages/deliverables-overview.html">← Deliverables</a>
+                    <span>Bundle Upload</span>
+                </div>
+                <h1 class="display-large">FHIR Bundle Upload Interface</h1>
+                <p class="headline-medium" style="margin-top: var(--space-lg); max-width: 800px;">
+                    Secure upload and validation of FHIR Bundles with dual-coded resources, metadata versioning, and audit trail compliance
+                </p>
+            </div>
+        </section>
+
+        <!-- Bundle Templates -->
+        <section class="section" id="upload">
+            <div class="container">
+                <h2 class="display-medium" style="text-align: center; margin-bottom: var(--space-xl);">Bundle Templates</h2>
+                <p class="body-large" style="text-align: center; color: var(--text-secondary); margin-bottom: var(--space-2xl); max-width: 800px; margin-left: auto; margin-right: auto;">
+                    Start with pre-configured FHIR Bundle templates or create your own custom bundle with dual-coded resources.
+                </p>
+                
+                <div class="bundle-templates">
+                    <div class="template-card" onclick="loadTemplate('patient-encounter')">
+                        <div class="template-header">
+                            <div class="template-icon">
+                                <span class="material-symbols-outlined">person</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium">Patient Encounter Bundle</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">Complete patient visit with dual-coded conditions</p>
+                            </div>
+                        </div>
+                        <p class="body-small" style="color: var(--text-secondary);">
+                            Includes Patient, Encounter, Condition resources with NAMASTE and ICD-11 coding
+                        </p>
+                    </div>
+
+                    <div class="template-card" onclick="loadTemplate('problem-list')">
+                        <div class="template-header">
+                            <div class="template-icon">
+                                <span class="material-symbols-outlined">list_alt</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium">Problem List Bundle</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">Comprehensive problem list with traditional medicine mappings</p>
+                            </div>
+                        </div>
+                        <p class="body-small" style="color: var(--text-secondary);">
+                            Multiple Condition resources with dual coding and clinical context
+                        </p>
+                    </div>
+
+                    <div class="template-card" onclick="loadTemplate('medication-bundle')">
+                        <div class="template-header">
+                            <div class="template-icon">
+                                <span class="material-symbols-outlined">medication</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium">Medication Bundle</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">Traditional and modern medication prescriptions</p>
+                            </div>
+                        </div>
+                        <p class="body-small" style="color: var(--text-secondary);">
+                            MedicationRequest and MedicationStatement with cross-system references
+                        </p>
+                    </div>
+
+                    <div class="template-card" onclick="loadTemplate('empty')">
+                        <div class="template-header">
+                            <div class="template-icon">
+                                <span class="material-symbols-outlined">add</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium">Empty Bundle</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">Start with a blank FHIR Bundle template</p>
+                            </div>
+                        </div>
+                        <p class="body-small" style="color: var(--text-secondary);">
+                            Minimal Bundle structure ready for custom resource addition
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Upload Workspace -->
+                <div class="upload-workspace">
+                    <!-- Upload Panel -->
+                    <div class="upload-panel active">
+                        <div class="panel-header">
+                            <div class="panel-icon">
+                                <span class="material-symbols-outlined">cloud_upload</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium">Bundle Upload</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">Upload or create FHIR Bundle</p>
+                            </div>
+                        </div>
+                        
+                        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('bundle-file').click()">
+                            <span class="material-symbols-outlined upload-icon">cloud_upload</span>
+                            <h4 class="headline-medium" style="margin-bottom: var(--space-sm);">Upload FHIR Bundle</h4>
+                            <p class="body-medium" style="color: var(--text-secondary); margin-bottom: var(--space-md);">Drag & drop JSON file or click to browse</p>
+                            <p class="body-small" style="color: var(--text-secondary);">Supports .json, .xml files up to 10MB</p>
+                            <input type="file" id="bundle-file" accept=".json,.xml" style="display: none;" onchange="handleFileUpload()">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Bundle Type</label>
+                            <select class="form-select" id="bundle-type">
+                                <option value="transaction">Transaction Bundle</option>
+                                <option value="collection">Collection Bundle</option>
+                                <option value="batch">Batch Bundle</option>
+                                <option value="document">Document Bundle</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Upload Context</label>
+                            <select class="form-select" id="upload-context">
+                                <option value="clinical">Clinical Practice</option>
+                                <option value="research">Research Data</option>
+                                <option value="insurance">Insurance Claims</option>
+                                <option value="test">Testing/Development</option>
+                            </select>
+                        </div>
+
+                        <div id="upload-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <p class="body-small" style="color: var(--text-secondary); text-align: center;">
+                                <span id="progress-text">Uploading...</span>
+                            </p>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%;" onclick="validateAndUpload()" id="upload-btn">
+                            <span class="material-symbols-outlined">upload</span>
+                            Validate & Upload Bundle
+                        </button>
+                    </div>
+
+                    <!-- Bundle Editor Panel -->
+                    <div class="upload-panel">
+                        <div class="panel-header">
+                            <div class="panel-icon">
+                                <span class="material-symbols-outlined">code</span>
+                            </div>
+                            <div>
+                                <h3 class="headline-medium">Bundle Editor</h3>
+                                <p class="body-medium" style="color: var(--text-secondary);">Edit FHIR Bundle JSON</p>
+                            </div>
+                        </div>
+
+                        <textarea id="bundle-editor" class="bundle-editor" placeholder="Paste or edit FHIR Bundle JSON here..."></textarea>
+
+                        <div class="form-group" style="margin-top: var(--space-lg);">
+                            <button class="btn btn-secondary" onclick="validateBundle()" style="margin-right: var(--space-sm);">
+                                <span class="material-symbols-outlined">verified</span>
+                                Validate Bundle
+                            </button>
+                            <button class="btn btn-secondary" onclick="formatBundle()">
+                                <span class="material-symbols-outlined">format_shapes</span>
+                                Format JSON
+                            </button>
+                        </div>
+
+                        <div id="validation-results"></div>
+                    </div>
+                </div>
+
+                <!-- Metadata Section -->
+                <div class="workflow-card">
+                    <h3 class="headline-large" style="margin-bottom: var(--space-lg);">Bundle Metadata & Compliance</h3>
+                    <div class="metadata-section">
+                        <div class="metadata-grid">
+                            <div class="metadata-item">
+                                <span class="metadata-label">Bundle ID</span>
+                                <span class="metadata-value" id="bundle-id">Not generated</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Version</span>
+                                <span class="metadata-value" id="bundle-version">1.0.0</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Timestamp</span>
+                                <span class="metadata-value" id="bundle-timestamp">-</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Security Classification</span>
+                                <span class="metadata-value" id="bundle-security">Normal (N)</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">FHIR Version</span>
+                                <span class="metadata-value">R4 (4.0.1)</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Consent Status</span>
+                                <span class="metadata-value" id="consent-status">Verified</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: var(--space-lg); padding: var(--space-lg); background-color: var(--color-primary-light); border-radius: var(--radius-md); border-left: 4px solid var(--color-primary);">
+                        <h4 class="headline-small" style="color: var(--color-primary); margin-bottom: var(--space-sm);">EHR Standards Compliance</h4>
+                        <ul style="margin: 0; padding-left: var(--space-lg); color: var(--text-primary);">
+                            <li>FHIR R4 resource validation</li>
+                            <li>ISO 22600 access control compliance</li>
+                            <li>ABHA-linked OAuth 2.0 authentication</li>
+                            <li>Audit trail and consent metadata</li>
+                            <li>SNOMED CT and LOINC semantic validation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Upload History -->
+                <div class="upload-history">
+                    <h3 class="headline-large" style="margin-bottom: var(--space-lg);">Upload History</h3>
+                    <div id="upload-history">
+                        <div class="history-item">
+                            <span class="material-symbols-outlined" style="color: var(--color-success);">check_circle</span>
+                            <div>
+                                <h4 class="headline-small">Patient_Encounter_Bundle_20250111.json</h4>
+                                <p class="body-small" style="color: var(--text-secondary);">Patient encounter with dual-coded jwara condition</p>
+                            </div>
+                            <span class="body-small" style="color: var(--text-secondary);">2025-01-11 14:30:15</span>
+                            <span class="status-badge status-success">
+                                <span class="material-symbols-outlined" style="font-size: 1rem;">check</span>
+                                Success
+                            </span>
+                            <button class="btn btn-small btn-secondary">
+                                <span class="material-symbols-outlined">download</span>
+                            </button>
+                        </div>
+
+                        <div class="history-item">
+                            <span class="material-symbols-outlined" style="color: var(--color-success);">check_circle</span>
+                            <div>
+                                <h4 class="headline-small">Research_Data_Bundle_20250111.json</h4>
+                                <p class="body-small" style="color: var(--text-secondary);">Research dataset with traditional medicine mappings</p>
+                            </div>
+                            <span class="body-small" style="color: var(--text-secondary);">2025-01-11 09:15:22</span>
+                            <span class="status-badge status-success">
+                                <span class="material-symbols-outlined" style="font-size: 1rem;">check</span>
+                                Success
+                            </span>
+                            <button class="btn btn-small btn-secondary">
+                                <span class="material-symbols-outlined">download</span>
+                            </button>
+                        </div>
+
+                        <div class="history-item">
+                            <span class="material-symbols-outlined" style="color: var(--color-warning);">warning</span>
+                            <div>
+                                <h4 class="headline-small">Insurance_Claims_Bundle_20250110.json</h4>
+                                <p class="body-small" style="color: var(--text-secondary);">Insurance claims with validation warnings</p>
+                            </div>
+                            <span class="body-small" style="color: var(--text-secondary);">2025-01-10 16:45:33</span>
+                            <span class="status-badge status-processing">
+                                <span class="material-symbols-outlined" style="font-size: 1rem;">warning</span>
+                                Warnings
+                            </span>
+                            <button class="btn btn-small btn-secondary">
+                                <span class="material-symbols-outlined">download</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="background-color: var(--bg-inverse); color: var(--text-inverse); padding: var(--space-2xl) 0; text-align: center;">
+            <div class="container">
+                <p style="font-size: var(--text-sm);">© 2025 NAMASTE-FHIR Bridge. Ministry of Ayush - AIIA</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Bundle templates
+        const bundleTemplates = {
+            'patient-encounter': {
+                resourceType: 'Bundle',
+                id: 'patient-encounter-example',
+                type: 'transaction',
+                timestamp: new Date().toISOString(),
+                entry: [
+                    {
+                        resource: {
+                            resourceType: 'Patient',
+                            id: 'patient-001',
+                            name: [{ family: 'Sharma', given: ['Rajesh'] }],
+                            gender: 'male',
+                            birthDate: '1975-03-15'
+                        },
+                        request: { method: 'POST', url: 'Patient' }
+                    },
+                    {
+                        resource: {
+                            resourceType: 'Condition',
+                            id: 'condition-jwara',
+                            subject: { reference: 'Patient/patient-001' },
+                            code: {
+                                coding: [
+                                    {
+                                        system: 'http://ayush.gov.in/namaste',
+                                        code: 'EA-1',
+                                        display: 'Jwara'
+                                    },
+                                    {
+                                        system: 'http://hl7.org/fhir/sid/icd-11',
+                                        code: 'TM2.B1.0Z',
+                                        display: 'Traditional fever pattern'
+                                    },
+                                    {
+                                        system: 'http://hl7.org/fhir/sid/icd-11',
+                                        code: 'MG30.Z',
+                                        display: 'Fever of unspecified origin'
+                                    }
+                                ]
+                            },
+                            clinicalStatus: {
+                                coding: [{
+                                    system: 'http://terminology.hl7.org/CodeSystem/condition-clinical',
+                                    code: 'active'
+                                }]
+                            }
+                        },
+                        request: { method: 'POST', url: 'Condition' }
+                    }
+                ]
+            },
+            'problem-list': {
+                resourceType: 'Bundle',
+                id: 'problem-list-example',
+                type: 'collection',
+                timestamp: new Date().toISOString(),
+                entry: [
+                    {
+                        resource: {
+                            resourceType: 'Condition',
+                            id: 'condition-sandhigatavata',
+                            code: {
+                                coding: [
+                                    {
+                                        system: 'http://ayush.gov.in/namaste',
+                                        code: 'AAE-16',
+                                        display: 'Sandhigatavata'
+                                    },
+                                    {
+                                        system: 'http://hl7.org/fhir/sid/icd-11',
+                                        code: 'SP00',
+                                        display: 'Joint degeneration pattern'
+                                    },
+                                    {
+                                        system: 'http://hl7.org/fhir/sid/icd-11',
+                                        code: 'FA01',
+                                        display: 'Osteoarthritis'
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            'medication-bundle': {
+                resourceType: 'Bundle',
+                id: 'medication-bundle-example',
+                type: 'transaction',
+                timestamp: new Date().toISOString(),
+                entry: [
+                    {
+                        resource: {
+                            resourceType: 'MedicationRequest',
+                            id: 'medication-request-001',
+                            medicationCodeableConcept: {
+                                coding: [
+                                    {
+                                        system: 'http://ayush.gov.in/namaste-medications',
+                                        code: 'TM-001',
+                                        display: 'Triphala Churna'
+                                    }
+                                ]
+                            },
+                            intent: 'order',
+                            status: 'active'
+                        },
+                        request: { method: 'POST', url: 'MedicationRequest' }
+                    }
+                ]
+            },
+            'empty': {
+                resourceType: 'Bundle',
+                id: 'empty-bundle',
+                type: 'transaction',
+                timestamp: new Date().toISOString(),
+                entry: []
+            }
+        };
+
+        function loadTemplate(templateId) {
+            const template = bundleTemplates[templateId];
+            if (template) {
+                const editor = document.getElementById('bundle-editor');
+                editor.value = JSON.stringify(template, null, 2);
+                updateMetadata(template);
+            }
+        }
+
+        function handleFileUpload() {
+            const file = document.getElementById('bundle-file').files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    const bundle = JSON.parse(content);
+                    document.getElementById('bundle-editor').value = JSON.stringify(bundle, null, 2);
+                    updateMetadata(bundle);
+                    validateBundle();
+                } catch (error) {
+                    showValidationResult('error', 'Invalid JSON file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function updateMetadata(bundle) {
+            document.getElementById('bundle-id').textContent = bundle.id || 'Auto-generated';
+            document.getElementById('bundle-timestamp').textContent = bundle.timestamp || new Date().toISOString();
+            
+            if (bundle.meta && bundle.meta.versionId) {
+                document.getElementById('bundle-version').textContent = bundle.meta.versionId;
+            }
+        }
+
+        function validateBundle() {
+            const editor = document.getElementById('bundle-editor');
+            const resultsDiv = document.getElementById('validation-results');
+            
+            try {
+                const bundle = JSON.parse(editor.value);
+                let validationResults = [];
+                
+                // Basic FHIR Bundle validation
+                if (bundle.resourceType !== 'Bundle') {
+                    validationResults.push({ type: 'error', message: 'Resource type must be "Bundle"' });
+                }
+                
+                if (!bundle.type) {
+                    validationResults.push({ type: 'error', message: 'Bundle type is required' });
+                }
+                
+                if (!bundle.timestamp) {
+                    validationResults.push({ type: 'warning', message: 'Bundle timestamp is recommended' });
+                }
+                
+                if (!bundle.entry || bundle.entry.length === 0) {
+                    validationResults.push({ type: 'warning', message: 'Bundle has no entries' });
+                }
+                
+                // Check for dual coding in Condition resources
+                if (bundle.entry) {
+                    bundle.entry.forEach((entry, index) => {
+                        if (entry.resource && entry.resource.resourceType === 'Condition') {
+                            const condition = entry.resource;
+                            if (condition.code && condition.code.coding) {
+                                const namasteCode = condition.code.coding.find(c => c.system === 'http://ayush.gov.in/namaste');
+                                const icdCode = condition.code.coding.find(c => c.system === 'http://hl7.org/fhir/sid/icd-11');
+                                
+                                if (namasteCode && icdCode) {
+                                    validationResults.push({ 
+                                        type: 'success', 
+                                        message: `Entry ${index + 1}: Dual coding detected (NAMASTE + ICD-11)` 
+                                    });
+                                } else if (namasteCode) {
+                                    validationResults.push({ 
+                                        type: 'warning', 
+                                        message: `Entry ${index + 1}: Only NAMASTE coding found, ICD-11 mapping recommended` 
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                if (validationResults.length === 0) {
+                    validationResults.push({ type: 'success', message: 'Bundle structure is valid' });
+                }
+                
+                displayValidationResults(validationResults);
+                
+            } catch (error) {
+                displayValidationResults([{ type: 'error', message: 'Invalid JSON: ' + error.message }]);
+            }
+        }
+
+        function displayValidationResults(results) {
+            const resultsDiv = document.getElementById('validation-results');
+            const hasErrors = results.some(r => r.type === 'error');
+            const hasWarnings = results.some(r => r.type === 'warning');
+            
+            let resultClass = 'validation-success';
+            if (hasErrors) resultClass = 'validation-error';
+            else if (hasWarnings) resultClass = 'validation-warning';
+            
+            resultsDiv.innerHTML = `
+                <div class="validation-result ${resultClass}">
+                    <h4 class="headline-small" style="margin-bottom: var(--space-md);">Validation Results</h4>
+                    ${results.map(result => `
+                        <div class="validation-item">
+                            <span class="material-symbols-outlined validation-icon ${result.type}">
+                                ${result.type === 'success' ? 'check_circle' : result.type === 'warning' ? 'warning' : 'error'}
+                            </span>
+                            <span>${result.message}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function formatBundle() {
+            const editor = document.getElementById('bundle-editor');
+            try {
+                const bundle = JSON.parse(editor.value);
+                editor.value = JSON.stringify(bundle, null, 2);
+            } catch (error) {
+                alert('Cannot format invalid JSON');
+            }
+        }
+
+        async function validateAndUpload() {
+            const editor = document.getElementById('bundle-editor');
+            const progressDiv = document.getElementById('upload-progress');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            const uploadBtn = document.getElementById('upload-btn');
+            
+            if (!editor.value.trim()) {
+                alert('Please provide a FHIR Bundle to upload');
+                return;
+            }
+            
+            try {
+                const bundle = JSON.parse(editor.value);
+                
+                // Show progress
+                progressDiv.style.display = 'block';
+                uploadBtn.disabled = true;
+                
+                // Simulate upload progress
+                const steps = [
+                    { progress: 20, text: 'Validating bundle structure...' },
+                    { progress: 40, text: 'Checking dual coding compliance...' },
+                    { progress: 60, text: 'Verifying FHIR R4 schema...' },
+                    { progress: 80, text: 'Processing metadata...' },
+                    { progress: 100, text: 'Upload complete!' }
+                ];
+                
+                for (const step of steps) {
+                    progressFill.style.width = step.progress + '%';
+                    progressText.textContent = step.text;
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                }
+                
+                // Add to history
+                addToHistory(bundle);
+                
+                // Reset form
+                setTimeout(() => {
+                    progressDiv.style.display = 'none';
+                    uploadBtn.disabled = false;
+                    progressFill.style.width = '0%';
+                    alert('Bundle uploaded successfully!');
+                }, 1000);
+                
+            } catch (error) {
+                progressDiv.style.display = 'none';
+                uploadBtn.disabled = false;
+                alert('Upload failed: ' + error.message);
+            }
+        }
+
+        function addToHistory(bundle) {
+            const historyDiv = document.getElementById('upload-history');
+            const timestamp = new Date().toISOString().replace('T', ' ').split('.')[0];
+            const filename = `${bundle.type}_Bundle_${new Date().toISOString().split('T')[0].replace(/-/g, '')}.json`;
+            
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.innerHTML = `
+                <span class="material-symbols-outlined" style="color: var(--color-success);">check_circle</span>
+                <div>
+                    <h4 class="headline-small">${filename}</h4>
+                    <p class="body-small" style="color: var(--text-secondary);">${bundle.type} bundle with ${bundle.entry ? bundle.entry.length : 0} entries</p>
+                </div>
+                <span class="body-small" style="color: var(--text-secondary);">${timestamp}</span>
+                <span class="status-badge status-success">
+                    <span class="material-symbols-outlined" style="font-size: 1rem;">check</span>
+                    Success
+                </span>
+                <button class="btn btn-small btn-secondary">
+                    <span class="material-symbols-outlined">download</span>
+                </button>
+            `;
+            
+            historyDiv.insertBefore(historyItem, historyDiv.firstChild);
+        }
+
+        // Drag and drop functionality
+        const uploadZone = document.getElementById('upload-zone');
+        
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+        
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+        
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('bundle-file').files = files;
+                handleFileUpload();
+            }
+        });
+
+        // Initialize with empty template
+        loadTemplate('empty');
+    </script>
+</body>
+</html>

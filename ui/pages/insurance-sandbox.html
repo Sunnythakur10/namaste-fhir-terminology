@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Claims Processing | NAMASTE-FHIR Terminology</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=SF+Pro+Text:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="/ui/assets/css/unified-design-system.css">
+    <style>
+        /* Insurance-specific styles */
+        .insurance-header {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: var(--text-inverse);
+            padding: var(--space-xl) 0;
+        }
+
+        .claims-workflow {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-xl);
+        }
+
+        @media (max-width: 768px) {
+            .claims-workflow {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .claim-form {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .claim-preview {
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 500;
+        }
+
+        .status-approved {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: var(--color-accent);
+        }
+
+        .status-pending {
+            background-color: rgba(255, 149, 0, 0.1);
+            color: var(--color-warning);
+        }
+
+        .status-review {
+            background-color: rgba(0, 122, 255, 0.1);
+            color: var(--color-primary);
+        }
+
+        .claim-summary {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            background-color: var(--bg-secondary);
+            margin: var(--space-sm) calc(-1 * var(--space-lg));
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--text-inverse);
+        }
+
+        .compliance-check {
+            background-color: var(--color-primary-light);
+            border: 1px solid var(--color-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+        }
+
+        .check-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .check-passed {
+            color: var(--color-accent);
+        }
+
+        .check-warning {
+            color: var(--color-warning);
+        }
+    </style>
+</head>
+<body>
+    <div class="layout-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/ui/pages/landing.html" class="nav-link">Home</a>
+                    <span>→</span>
+                    <span class="body-emphasis">Insurance Claims Processing</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Insurance Header -->
+        <section class="insurance-header">
+            <div class="container">
+                <h1 class="display-medium" style="margin-bottom: var(--space-md);">Insurance Claims Processing</h1>
+                <p class="body-large" style="opacity: 0.9;">Streamlined claims processing with standardized dual-coding for traditional medicine treatments and global insurance compatibility.</p>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main style="padding: var(--space-2xl) 0;">
+            <div class="container">
+                <!-- Claims Processing Workflow -->
+                <div class="claims-workflow">
+                    <div class="claim-form">
+                        <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Traditional Medicine Claim Submission</h2>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Patient Information</label>
+                            <input type="text" class="form-input" id="patient-id" placeholder="Patient ID / Policy Number" />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Healthcare Provider</label>
+                            <input type="text" class="form-input" id="provider" placeholder="Authorized AYUSH Practitioner" />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Traditional Diagnosis</label>
+                            <input type="text" class="form-input" id="diagnosis" placeholder="Traditional medicine diagnosis (e.g., Sandhigatavata)" />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Treatment Provided</label>
+                            <select class="form-select" id="treatment">
+                                <option value="">Select Treatment Type</option>
+                                <option value="consultation">Traditional Medicine Consultation</option>
+                                <option value="panchakarma">Panchakarma Therapy</option>
+                                <option value="herbal">Herbal Medicine Treatment</option>
+                                <option value="yoga">Yoga Therapy Session</option>
+                                <option value="combined">Combined Treatment Protocol</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Treatment Duration</label>
+                            <input type="number" class="form-input" id="duration" placeholder="Number of sessions/days" />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Claim Amount</label>
+                            <input type="number" class="form-input" id="amount" placeholder="Total claim amount (₹)" />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Supporting Documentation</label>
+                            <textarea class="form-textarea" id="documentation" rows="3" 
+                                     placeholder="Additional notes, prescription details, treatment outcomes..."></textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="processClaim()">
+                            <span class="material-symbols-outlined">receipt_long</span>
+                            Process Insurance Claim
+                        </button>
+                    </div>
+                    
+                    <div class="claim-preview">
+                        <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Claim Processing & Validation</h2>
+                        
+                        <div id="claim-status">
+                            <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
+                                <span class="material-symbols-outlined" style="font-size: 4rem; margin-bottom: var(--space-lg); color: var(--color-warning);">receipt_long</span>
+                                <p class="body-large"><strong>Claim Processing Ready</strong></p>
+                                <p>Complete the claim form to generate standardized dual-coded documentation for insurance processing.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insurance Analytics Dashboard -->
+                <div class="workflow-card" style="background-color: var(--bg-primary); border-radius: var(--radius-xl); padding: var(--space-xl); box-shadow: var(--shadow-sm);">
+                    <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Insurance Processing Analytics</h2>
+                    
+                    <div class="grid grid-cols-4">
+                        <div class="metric-card" style="background-color: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-lg); text-align: center;">
+                            <div class="metric-value" style="font-family: var(--font-family-primary); font-size: var(--text-3xl); font-weight: 700; color: var(--color-accent); margin-bottom: var(--space-sm);">2,847</div>
+                            <div class="caption">Claims Processed</div>
+                        </div>
+                        <div class="metric-card" style="background-color: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-lg); text-align: center;">
+                            <div class="metric-value" style="font-family: var(--font-family-primary); font-size: var(--text-3xl); font-weight: 700; color: var(--color-primary); margin-bottom: var(--space-sm);">94.2%</div>
+                            <div class="caption">Approval Rate</div>
+                        </div>
+                        <div class="metric-card" style="background-color: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-lg); text-align: center;">
+                            <div class="metric-value" style="font-family: var(--font-family-primary); font-size: var(--text-3xl); font-weight: 700; color: var(--color-warning); margin-bottom: var(--space-sm);">₹12.4L</div>
+                            <div class="caption">Average Processing</div>
+                        </div>
+                        <div class="metric-card" style="background-color: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-lg); text-align: center;">
+                            <div class="metric-value" style="font-family: var(--font-family-primary); font-size: var(--text-3xl); font-weight: 700; color: var(--color-accent); margin-bottom: var(--space-sm);">2.1 days</div>
+                            <div class="caption">Avg Processing Time</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Claims -->
+                <div class="workflow-card" style="background-color: var(--bg-primary); border-radius: var(--radius-xl); padding: var(--space-xl); box-shadow: var(--shadow-sm); margin-top: var(--space-xl);">
+                    <h2 class="headline-large" style="margin-bottom: var(--space-lg);">Recent Claims Processing</h2>
+                    
+                    <div class="grid grid-cols-1" style="gap: var(--space-md);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-md); background-color: var(--bg-secondary); border-radius: var(--radius-md);">
+                            <div>
+                                <div class="body-emphasis">Claim #INS-2024-001</div>
+                                <div class="caption">Sandhigatavata Treatment - Dr. Sharma</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="status-badge status-approved">
+                                    <span class="material-symbols-outlined">check_circle</span>
+                                    Approved
+                                </div>
+                                <div class="caption">₹8,500</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-md); background-color: var(--bg-secondary); border-radius: var(--radius-md);">
+                            <div>
+                                <div class="body-emphasis">Claim #INS-2024-002</div>
+                                <div class="caption">Madhumeha Management - Dr. Patel</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="status-badge status-pending">
+                                    <span class="material-symbols-outlined">schedule</span>
+                                    Processing
+                                </div>
+                                <div class="caption">₹12,200</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-md); background-color: var(--bg-secondary); border-radius: var(--radius-md);">
+                            <div>
+                                <div class="body-emphasis">Claim #INS-2024-003</div>
+                                <div class="caption">Panchakarma Therapy - Dr. Kumar</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="status-badge status-review">
+                                    <span class="material-symbols-outlined">rate_review</span>
+                                    Under Review
+                                </div>
+                                <div class="caption">₹15,800</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function processClaim() {
+            const patientId = document.getElementById('patient-id').value.trim();
+            const provider = document.getElementById('provider').value.trim();
+            const diagnosis = document.getElementById('diagnosis').value.trim();
+            const treatment = document.getElementById('treatment').value;
+            const duration = document.getElementById('duration').value;
+            const amount = document.getElementById('amount').value;
+            const documentation = document.getElementById('documentation').value.trim();
+            const statusDiv = document.getElementById('claim-status');
+            
+            if (!patientId || !diagnosis || !treatment || !amount) {
+                alert('Please fill in all required fields to process the claim.');
+                return;
+            }
+            
+            // Show processing state
+            statusDiv.innerHTML = `
+                <div style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
+                    <span class="material-symbols-outlined" style="font-size: 4rem; margin-bottom: var(--space-lg); color: var(--color-warning);">hourglass_empty</span>
+                    <p class="body-large"><strong>Processing Insurance Claim...</strong></p>
+                    <p>Validating dual-coded documentation and insurance compliance...</p>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                const result = generateClaimResult(diagnosis, treatment, amount, patientId, provider, duration, documentation);
+                statusDiv.innerHTML = result;
+            }, 3000);
+        }
+        
+        function generateClaimResult(diagnosis, treatment, amount, patientId, provider, duration, documentation) {
+            // Mock coding mappings
+            const claimMappings = {
+                'sandhigatavata': {
+                    namaste_code: 'AAE-16',
+                    icd11_tm2: 'SP00.1',
+                    icd11_bio: 'FA01.2',
+                    coverage: 'Covered',
+                    approval_likelihood: 95
+                },
+                'madhumeha': {
+                    namaste_code: 'EBM-23',
+                    icd11_tm2: 'SP15.0',
+                    icd11_bio: '5A11.0',
+                    coverage: 'Covered',
+                    approval_likelihood: 92
+                },
+                'kasa': {
+                    namaste_code: 'RSP-08',
+                    icd11_tm2: 'SP22.1',
+                    icd11_bio: 'CA20.0',
+                    coverage: 'Covered',
+                    approval_likelihood: 88
+                }
+            };
+            
+            const normalized = diagnosis.toLowerCase().replace(/[^a-z]/g, '');
+            const mapping = claimMappings[normalized] || {
+                namaste_code: 'GEN-01',
+                icd11_tm2: 'SP99.9',
+                icd11_bio: 'ZZ00.0',
+                coverage: 'Review Required',
+                approval_likelihood: 75
+            };
+            
+            const coverageAmount = Math.round(amount * 0.8); // 80% coverage example
+            const deductible = Math.round(amount * 0.1); // 10% deductible
+            const copay = amount - coverageAmount - deductible;
+            
+            return `
+                <div class="status-badge ${mapping.approval_likelihood > 90 ? 'status-approved' : mapping.approval_likelihood > 80 ? 'status-pending' : 'status-review'}" style="margin-bottom: var(--space-lg);">
+                    <span class="material-symbols-outlined">${mapping.approval_likelihood > 90 ? 'check_circle' : mapping.approval_likelihood > 80 ? 'schedule' : 'rate_review'}</span>
+                    ${mapping.approval_likelihood > 90 ? 'Pre-Approved' : mapping.approval_likelihood > 80 ? 'Likely Approval' : 'Review Required'}
+                </div>
+                
+                <div class="claim-summary">
+                    <h4 class="headline-medium" style="margin-bottom: var(--space-lg);">Claim Summary & Dual-Coding</h4>
+                    
+                    <div class="summary-row">
+                        <span>Patient ID:</span>
+                        <span class="body-emphasis">${patientId}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Provider:</span>
+                        <span class="body-emphasis">${provider}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Traditional Diagnosis:</span>
+                        <span class="body-emphasis">${diagnosis}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>NAMASTE Code:</span>
+                        <span style="font-family: var(--font-family-mono);">${mapping.namaste_code}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>ICD-11 TM2:</span>
+                        <span style="font-family: var(--font-family-mono);">${mapping.icd11_tm2}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>ICD-11 Biomedicine:</span>
+                        <span style="font-family: var(--font-family-mono);">${mapping.icd11_bio}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Treatment:</span>
+                        <span class="body-emphasis">${treatment.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</span>
+                    </div>
+                    ${duration ? `<div class="summary-row"><span>Duration:</span><span class="body-emphasis">${duration} sessions/days</span></div>` : ''}
+                    
+                    <div class="summary-row">
+                        <span>Total Claim Amount:</span>
+                        <span class="body-emphasis">₹${amount}</span>
+                    </div>
+                </div>
+                
+                <div class="compliance-check">
+                    <h5 class="body-emphasis" style="margin-bottom: var(--space-md);">Insurance Compliance Check</h5>
+                    
+                    <div class="check-item">
+                        <span class="material-symbols-outlined check-passed">check_circle</span>
+                        <span>Authorized AYUSH Provider Verification</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="material-symbols-outlined check-passed">check_circle</span>
+                        <span>Dual-Coding Standards Compliance</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="material-symbols-outlined check-passed">check_circle</span>
+                        <span>ICD-11 Global Standards Compatibility</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="material-symbols-outlined ${mapping.coverage === 'Covered' ? 'check-passed' : 'check-warning'}">${mapping.coverage === 'Covered' ? 'check_circle' : 'warning'}</span>
+                        <span>Policy Coverage: ${mapping.coverage}</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: var(--space-md); margin-top: var(--space-lg);">
+                    <button class="btn btn-primary btn-small">Submit Claim</button>
+                    <button class="btn btn-secondary btn-small">Save Draft</button>
+                    <button class="btn btn-ghost btn-small">Print Summary</button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
